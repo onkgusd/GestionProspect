@@ -14,7 +14,6 @@ interface AuthResponse {
 
 export class AuthService {
   token: string;
-  redirectUrl: string;
 
   constructor(private http: HttpClient) { }
 
