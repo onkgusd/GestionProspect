@@ -98,10 +98,10 @@ app.MapPost("/authentication/getToken",
 });
 
 // Gestion des produits
-app.MapGet("/produits", [Authorize(Policy = "Admin")] async (ProspectManagerDbContext db) =>
+app.MapGet("/produits", [Authorize] async (ProspectManagerDbContext db) =>
     await db.Produits.ToListAsync());
 
-app.MapPost("/produits", [Authorize] async ([FromBody] Produit produit, ProspectManagerDbContext db) =>
+app.MapPost("/produits", [Authorize(Policy = "Admin")] async ([FromBody] Produit produit, ProspectManagerDbContext db) =>
     {
         db.Produits.Add(produit);
         await db.SaveChangesAsync();
