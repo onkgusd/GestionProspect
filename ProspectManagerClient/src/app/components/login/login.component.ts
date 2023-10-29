@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { NgForm } from '@angular/forms';
-import { SnackbarService } from '../services/snackbar.service';
+import { SnackbarService } from '../../services/snackbar.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -24,10 +24,12 @@ export class LoginComponent implements OnInit {
 
   onSubmit(form: NgForm) {
     if (form.valid) {
-      this.snackbarService.openSnackBar("Tentative de connexion en cours...", 10000000);
+      this.snackbarService.openSnackBar("Tentative de connexion en cours...");
       this.authService.login(this.username, this.password).subscribe((isLoggedIn: boolean) => {
         if (isLoggedIn) {
           this.snackbarService.openSnackBar("Connecté :)");
+          this.snackbarService.openSnackBar("Connecté :) :)");
+          this.snackbarService.openSnackBar("Connecté :) :) :)");
           this.router.navigate(['/produits']);
         } else {
           console.log("retour ok");

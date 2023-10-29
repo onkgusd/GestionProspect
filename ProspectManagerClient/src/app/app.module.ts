@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './components/login/login.component';
 import { RouterModule, Routes } from '@angular/router';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -24,8 +24,9 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SnackbarService } from './services/snackbar.service';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
-import { GestionProspectModule } from './gestion-prospect/gestion-prospect.module';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { GestionProspectModule } from './modules/gestion-prospect/gestion-prospect.module';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
@@ -37,7 +38,8 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     LoginComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    NavbarComponent
   ],
   imports: [
     HttpClientModule,
