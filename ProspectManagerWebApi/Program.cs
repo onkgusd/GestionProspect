@@ -5,12 +5,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProspectManagerWebApi.Data;
+using ProspectManagerWebApi.DTO.Request;
+using ProspectManagerWebApi.DTO.Response;
 using ProspectManagerWebApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
 
 // Add services to the container.
 builder.Services.AddDbContext<ProspectManagerDbContext>();
@@ -49,32 +61,35 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
+app.UseCors();
 
 app.MapPost("/authentication/getToken",
-[AllowAnonymous] (Utilisateur user) =>
+[AllowAnonymous] (LoginRequestDTO user) =>
 {
-if (user.Login == "User" || user.Login == "Admin")
-{
-    var issuer = builder.Configuration["Jwt:Issuer"];
-    var audience = builder.Configuration["Jwt:Audience"];
-    var securityKey = new SymmetricSecurityKey
-(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new Exception("Jwt key is not set.")));
-    var credentials = new SigningCredentials(securityKey,
-SecurityAlgorithms.HmacSha512);
+    if (user.Login == "User" || user.Login == "Admin")
+    {
+        var issuer = builder.Configuration["Jwt:Issuer"];
+        var audience = builder.Configuration["Jwt:Audience"];
+        var securityKey = new SymmetricSecurityKey
+    (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new Exception("Jwt key is not set.")));
+        var credentials = new SigningCredentials(securityKey,
+    SecurityAlgorithms.HmacSha512);
 
-    var token = new JwtSecurityToken(issuer: issuer,
-        audience: audience,
-        signingCredentials: credentials,
-        claims: new[]
-            {
+        var expirationDate = DateTime.UtcNow.AddMinutes(1);
+        var token = new JwtSecurityToken(issuer: issuer,
+            audience: audience,
+            signingCredentials: credentials,
+            claims: new[]
+                {
             new Claim(ClaimTypes.Name, user.Login),
             new Claim(ClaimTypes.Role, user.Login)
-        });
+            },
+            expires: expirationDate);
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var stringToken = tokenHandler.WriteToken(token);
 
-        return Results.Ok(stringToken);
+        return Results.Ok(new LoginResponseDTO() { Token = stringToken, ExpirationDate = expirationDate });
     }
     else
     {
@@ -86,7 +101,7 @@ SecurityAlgorithms.HmacSha512);
 app.MapGet("/produits", [Authorize(Policy = "Admin")] async (ProspectManagerDbContext db) =>
     await db.Produits.ToListAsync());
 
-app.MapPost("/produits", [Authorize] async ([FromBody]Produit produit, ProspectManagerDbContext db) =>
+app.MapPost("/produits", [Authorize] async ([FromBody] Produit produit, ProspectManagerDbContext db) =>
     {
         db.Produits.Add(produit);
         await db.SaveChangesAsync();
@@ -127,7 +142,7 @@ app.MapGet("/prospects/{idprospect:int}", [Authorize] async (int idprospect, Pro
 
 app.MapPatch("/prospects/{idprospect:int}", [Authorize] async (int idprospect, [FromBody] Prospect updatedProspect, ProspectManagerDbContext db) =>
 {
-    if(await db.Prospects.FindAsync(idprospect) is Prospect prospect)
+    if (await db.Prospects.FindAsync(idprospect) is Prospect prospect)
     {
         prospect = updatedProspect;
         Results.Ok(prospect);
