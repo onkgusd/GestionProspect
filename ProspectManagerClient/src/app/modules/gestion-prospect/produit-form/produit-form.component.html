@@ -1,0 +1,26 @@
+<div fxLayout="row" fxLayoutAlign="center center" class="container">
+    <mat-card class="example-card">
+      <mat-card-header>
+        <mat-card-title>Formulaire Produit</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form #produitForm="ngForm" class="example-form" (ngSubmit)="onSubmit()">
+            <mat-form-field  *ngIf="!isAddForm">
+            <input matInput placeholder="ID" [(ngModel)]="produit.id" name="id" readonly>
+            </mat-form-field><br><br>
+            <mat-form-field>
+            <input matInput placeholder="Référence" [(ngModel)]="produit.reference" name="reference" required>
+            </mat-form-field><br><br>
+            <mat-form-field>
+            <input matInput placeholder="Libellé" [(ngModel)]="produit.libelle" name="libelle" required>
+            </mat-form-field><br><br>
+            <mat-form-field>
+            <input matInput placeholder="Description" [(ngModel)]="produit.description" name="description">
+            </mat-form-field><br><br>
+        
+            <button mat-raised-button color="secondary" type="button" routerLink="..">Annuler</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting || !produitForm.form.valid">Ajouter</button>
+        </form>
+    </mat-card-content>
+</mat-card>
+</div>
