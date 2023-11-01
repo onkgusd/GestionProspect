@@ -1,4 +1,4 @@
-<div class="mat-elevation-z8" *ngIf="produits">
+<div class="mat-elevation-z8" [hidden]="!produits">
   <table mat-table [dataSource]="produits" matSort>
 
     <!-- ID Column -->
@@ -36,6 +36,10 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/produits', row.id]" class="clickable highlight-row"></tr>
   </table>
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                 showFirstLastButtons
+                 aria-label="Select page of periodic elements">
+  </mat-paginator>
 </div>
 
 <app-loader *ngIf="!produits"></app-loader>

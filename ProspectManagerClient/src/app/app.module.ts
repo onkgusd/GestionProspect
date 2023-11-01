@@ -27,8 +27,9 @@ import { SnackbarService } from './services/snackbar.service';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { GestionProspectModule } from './modules/gestion-prospect/gestion-prospect.module';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
 import { LoaderModule } from './modules/loader/loader.module';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 
 const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
@@ -40,8 +41,7 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     LoginComponent,
-    PageNotFoundComponent,
-    NavbarComponent
+    PageNotFoundComponent
   ],
   imports: [
     HttpClientModule,
@@ -64,6 +64,8 @@ const routes: Routes = [
     MatSnackBarModule,
     MatProgressSpinnerModule,
     FlexLayoutModule,
+    MatSidenavModule,
+    MatListModule,
     GestionProspectModule,
     LoaderModule
   ],

@@ -15,6 +15,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatPaginatorModule} from '@angular/material/paginator';
 import { ProduitAddComponent } from './components/produit-add/produit-add.component';
 import { ProduitFormComponent } from './components/produit-form/produit-form.component';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +23,8 @@ import { ProduitEditComponent } from './components/produit-edit/produit-edit.com
 import { ProduitViewComponent } from './components/produit-view/produit-view.component';
 import { LoaderModule } from '../loader/loader.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 const gestionProspectRoutes: Routes = [
   { path: "produits", component: ProduitsListComponent, canActivate: [AuthGuard] },
@@ -33,21 +36,23 @@ const gestionProspectRoutes: Routes = [
   declarations: [ProduitsListComponent, ProduitAddComponent, ProduitFormComponent, ProduitEditComponent, ProduitViewComponent],
   imports: [
     CommonModule,
-    FormsModule,
+    BrowserModule,
+    BrowserAnimationsModule,
     MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    FormsModule,
     MatToolbarModule,
     MatInputModule,
     MatCardModule,
     MatMenuModule,
     MatIconModule,
     MatButtonModule,
-    MatTableModule,
     MatSlideToggleModule,
     MatSelectModule,
     MatOptionModule,
     MatSnackBarModule,
     MatIconModule,
-    MatSortModule,
     RouterModule.forChild(gestionProspectRoutes),
     FlexLayoutModule,
     LoaderModule
