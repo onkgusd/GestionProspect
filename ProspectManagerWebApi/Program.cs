@@ -93,6 +93,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+#region Authentification
 app.MapPost("/authentication/getToken",
 [AllowAnonymous] (LoginRequestDTO user) =>
 {
@@ -126,8 +127,9 @@ app.MapPost("/authentication/getToken",
         return Results.Unauthorized();
     }
 });
+#endregion
 
-// Gestion des produits
+#region Gestion des produits
 app.MapGet("/produits", [Authorize] async (ProspectManagerDbContext db) =>
     await db.Produits.ToListAsync());
 
@@ -146,15 +148,11 @@ app.MapGet("/produits/{idproduit:int}", [Authorize] async (int idProduit, Prospe
 app.MapPut("/produits/{idproduit:int}", [Authorize] async ([FromBody] Produit updatedProduit, int idProduit, ProspectManagerDbContext db) =>
 {
     if (idProduit != updatedProduit.Id)
-    {
         return Results.BadRequest("Les identifiants produits ne sont pas cohérents.");
-    }
 
     var existingProduit = await db.Produits.FindAsync(idProduit);
     if (existingProduit == null)
-    {
         return Results.NotFound();
-    }
 
     db.Entry(existingProduit).CurrentValues.SetValues(updatedProduit);
     await db.SaveChangesAsync();
@@ -162,22 +160,43 @@ app.MapPut("/produits/{idproduit:int}", [Authorize] async ([FromBody] Produit up
     return Results.Ok(existingProduit);
 });
 
-// Gestion des prospects
+app.MapDelete("/produits/{idproduit:int}", [Authorize(Policy = "Admin")] async (int idProduit, ProspectManagerDbContext db) =>
+{
+    var existingProduit = await db.Produits.FindAsync(idProduit);
+    if (existingProduit == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.Produits.Remove(existingProduit);
+    await db.SaveChangesAsync();
+
+    return Results.Ok();
+});
+
+#endregion
+
+#region Gestion des prospects
 app.MapGet("/prospects", async (ProspectManagerDbContext db) =>
     await db.Prospects.ToListAsync());
 
 app.MapGet("/prospects/{idprospect:int}", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
-    await db.Prospects.FindAsync(idprospect) is Prospect prospect ?
+    await db.Prospects.Include(p => p.Contacts).FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
     Results.Ok(prospect) : Results.NotFound());
 
-app.MapPatch("/prospects/{idprospect:int}", [Authorize] async (int idprospect, [FromBody] Prospect updatedProspect, ProspectManagerDbContext db) =>
+app.MapPut("/prospects/{idprospect:int}", [Authorize] async ([FromBody] Produit updatedProspect, int idProduit, ProspectManagerDbContext db) =>
 {
-    if (await db.Prospects.FindAsync(idprospect) is Prospect prospect)
-    {
-        prospect = updatedProspect;
-        Results.Ok(prospect);
-    }
-    else Results.NotFound();
+    if (idProduit != updatedProspect.Id)
+        return Results.BadRequest("Les identifiants produits ne sont pas cohérents.");
+
+    var existingProduit = await db.Produits.FindAsync(idProduit);
+    if (existingProduit == null)
+        return Results.NotFound();
+
+    db.Entry(existingProduit).CurrentValues.SetValues(updatedProspect);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(existingProduit);
 });
 
 app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, ProspectManagerDbContext db) =>
@@ -188,9 +207,10 @@ app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, Pros
     return Results.Created($"/prospects/{prospect.Id}", prospect);
 });
 
-app.MapGet("/prospects/{idprospect:int}/contacts", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
+app.MapPost("/prospects/{idprospect:int}/contacts", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
     await db.Prospects.Where(p => p.Id == idprospect).Select(p => p.Contacts).ToListAsync());
 
+#endregion
 
 app.MapGet("/evenements", [Authorize] async (ProspectManagerDbContext db) =>
     await db.Evenements.ToListAsync());

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Produit } from '../../models/produit';
-import { GestionProspectService } from '../../gestion-prospect.service';
+import { ProduitService } from '../../services/produit-service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -12,7 +12,7 @@ export class ProduitViewComponent implements OnInit {
 
   produit: Produit;
   
-  constructor(private gestionProspectService: GestionProspectService, private route: ActivatedRoute) { }
+  constructor(private gestionProspectService: ProduitService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     const produitId: string | null = this.route.snapshot.paramMap.get("id");

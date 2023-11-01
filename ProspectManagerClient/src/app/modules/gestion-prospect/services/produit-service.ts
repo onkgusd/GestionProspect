@@ -1,13 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, tap } from 'rxjs';
-import { Produit } from './models/produit';
+import { Produit } from '../models/produit';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class GestionProspectService {
+export class ProduitService {
 
   constructor(private http: HttpClient) { }
 
@@ -46,6 +46,20 @@ export class GestionProspectService {
   }
 
   updateProduit(produit: Produit) {
+    const httpOptions = {
+      headers : new HttpHeaders({"Content-Type": "application/json"})
+    }
+
+    return this.http.put<Produit>(`${environment.baseUrl}/produits/${produit.id}`, produit, httpOptions).pipe(
+      tap(response => console.log(response)),
+      catchError((error) => {
+        console.error(error);
+        throw error;
+      })
+    );
+  }
+
+  deleteProduit(produit: Produit) {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }

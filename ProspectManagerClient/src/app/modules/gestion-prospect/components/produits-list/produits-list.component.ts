@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { GestionProspectService } from '../../gestion-prospect.service';
+import { ProduitService } from '../../services/produit-service';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Produit } from '../../models/produit';
@@ -17,7 +17,7 @@ export class ProduitsListComponent implements OnInit {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private gestionProspectService: GestionProspectService) { }
+  constructor(private gestionProspectService: ProduitService) { }
 
   ngOnInit(): void {
     this.gestionProspectService.getProduits().subscribe((produits: Produit[]) => {
