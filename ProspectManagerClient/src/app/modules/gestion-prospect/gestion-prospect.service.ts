@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, of, tap } from 'rxjs';
+import { Observable, catchError, tap } from 'rxjs';
 import { Produit } from './models/produit';
 import { environment } from 'src/environments/environment';
 
@@ -11,12 +11,50 @@ export class GestionProspectService {
 
   constructor(private http: HttpClient) { }
 
-  getProduits() {
+  getProduits(): Observable<Produit[]> {
     return this.http.get<Produit[]>(`${environment.baseUrl}/produits`).pipe(
-      tap(pokemonList => console.log(pokemonList)),
+      tap(produitsList => console.log(produitsList)),
       catchError((error) => {
         console.error(error);
-        return of([]);
+        throw error;
+      })
+    );
+  }
+
+  getProduit(id: number): Observable<Produit> {
+    return this.http.get<Produit>(`${environment.baseUrl}/produits/${id}`).pipe(
+      tap(produit => console.log(produit)),
+      catchError((error) => {
+        console.error(error);
+        throw error;
+      })
+    );
+  }
+
+  addProduits(produit: Produit): Observable<Produit> {
+    const httpOptions = {
+      headers : new HttpHeaders({"Content-Type": "application/json"})
+    }
+
+    return this.http.post<Produit>(`${environment.baseUrl}/produits`, produit, httpOptions).pipe(
+      tap(produit => console.log(produit)),
+      catchError((error) => {
+        console.error(error);
+        throw error;
+      })
+    )
+  }
+
+  updateProduit(produit: Produit) {
+    const httpOptions = {
+      headers : new HttpHeaders({"Content-Type": "application/json"})
+    }
+
+    return this.http.put<Produit>(`${environment.baseUrl}/produits/${produit.id}`, produit, httpOptions).pipe(
+      tap(response => console.log(response)),
+      catchError((error) => {
+        console.error(error);
+        throw error;
       })
     );
   }

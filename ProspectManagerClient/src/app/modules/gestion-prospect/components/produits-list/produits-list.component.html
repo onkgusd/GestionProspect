@@ -1,0 +1,43 @@
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="produits" matSort>
+
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        ID
+      </th>
+      <td mat-cell *matCellDef="let produit"> {{produit.id}} </td>
+    </ng-container>
+
+    <!-- Reference Column -->
+    <ng-container matColumnDef="reference">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Reference
+      </th>
+      <td mat-cell *matCellDef="let produit"> {{produit.reference}} </td>
+    </ng-container>
+
+    <!-- Libelle Column -->
+    <ng-container matColumnDef="libelle">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Libelle
+      </th>
+      <td mat-cell *matCellDef="let produit"> {{produit.libelle}} </td>
+    </ng-container>
+
+    <!-- Description Column -->
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Description
+      </th>
+      <td mat-cell *matCellDef="let produit"> {{produit.description}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/produits', row.id]" class="clickable highlight-row"></tr>
+  </table>
+</div>
+
+<button mat-fab color="primary" class="floating-button" routerLink="/produits/add">
+  <mat-icon>add</mat-icon>
+</button>

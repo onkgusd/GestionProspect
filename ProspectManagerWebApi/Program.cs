@@ -105,7 +105,7 @@ app.MapPost("/authentication/getToken",
         var credentials = new SigningCredentials(securityKey,
     SecurityAlgorithms.HmacSha512);
 
-        var expirationDate = DateTime.UtcNow.AddMinutes(1);
+        var expirationDate = DateTime.UtcNow.AddHours(24);
         var token = new JwtSecurityToken(issuer: issuer,
             audience: audience,
             signingCredentials: credentials,
