@@ -150,16 +150,16 @@ app.MapPut("/produits/{idproduit:int}", [Authorize] async ([FromBody] Produit up
         return Results.BadRequest("Les identifiants produits ne sont pas cohérents.");
     }
 
-    if (await db.Produits.FindAsync(idProduit) is Produit produit)
+    var existingProduit = await db.Produits.FindAsync(idProduit);
+    if (existingProduit == null)
     {
-        produit.Description = updatedProduit.Description;
-        produit.Libelle = updatedProduit.Libelle;
-
-        db.Produits.Update(produit);
-        await db.SaveChangesAsync();
-        return Results.Ok(produit);
+        return Results.NotFound();
     }
-    else return Results.NotFound();
+
+    db.Entry(existingProduit).CurrentValues.SetValues(updatedProduit);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(existingProduit);
 });
 
 // Gestion des prospects

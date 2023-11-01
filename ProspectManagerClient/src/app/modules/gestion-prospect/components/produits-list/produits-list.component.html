@@ -1,4 +1,4 @@
-<div class="mat-elevation-z8">
+<div class="mat-elevation-z8" *ngIf="produits">
   <table mat-table [dataSource]="produits" matSort>
 
     <!-- ID Column -->
@@ -37,6 +37,8 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/produits', row.id]" class="clickable highlight-row"></tr>
   </table>
 </div>
+
+<app-loader *ngIf="!produits"></app-loader>
 
 <button mat-fab color="primary" class="floating-button" routerLink="/produits/add">
   <mat-icon>add</mat-icon>

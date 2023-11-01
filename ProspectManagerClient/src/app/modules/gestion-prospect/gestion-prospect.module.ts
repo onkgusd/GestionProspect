@@ -20,6 +20,8 @@ import { ProduitFormComponent } from './components/produit-form/produit-form.com
 import { FormsModule } from '@angular/forms';
 import { ProduitEditComponent } from './components/produit-edit/produit-edit.component';
 import { ProduitViewComponent } from './components/produit-view/produit-view.component';
+import { LoaderModule } from '../loader/loader.module';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 const gestionProspectRoutes: Routes = [
   { path: "produits", component: ProduitsListComponent, canActivate: [AuthGuard] },
@@ -46,7 +48,9 @@ const gestionProspectRoutes: Routes = [
     MatSnackBarModule,
     MatIconModule,
     MatSortModule,
-    RouterModule.forChild(gestionProspectRoutes)
+    RouterModule.forChild(gestionProspectRoutes),
+    FlexLayoutModule,
+    LoaderModule
   ]
 })
 export class GestionProspectModule { }

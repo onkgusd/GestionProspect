@@ -20,6 +20,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SnackbarService } from './services/snackbar.service';
@@ -27,6 +28,7 @@ import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { GestionProspectModule } from './modules/gestion-prospect/gestion-prospect.module';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { LoaderModule } from './modules/loader/loader.module';
 
 const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
@@ -60,7 +62,10 @@ const routes: Routes = [
     MatSelectModule,
     MatOptionModule,
     MatSnackBarModule,
-    GestionProspectModule
+    MatProgressSpinnerModule,
+    FlexLayoutModule,
+    GestionProspectModule,
+    LoaderModule
   ],
   providers: [SnackbarService,     {
     provide: HTTP_INTERCEPTORS,
