@@ -11,7 +11,7 @@
           <mat-card-title>Authentification</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <form class="basic-form" #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+          <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
             <mat-form-field appearance="fill">
               <mat-label>Login</mat-label>
               <input matInput placeholder="Saisissez votre login" name="username" [(ngModel)]="username" required>
@@ -23,7 +23,7 @@
                 required>
             </mat-form-field>
             <br>
-            <button fxLayoutAlign="center center" mat-raised-button color="primary" type="submit"
+            <button fxLayoutAlign="center center" style="margin: auto;" mat-raised-button color="primary" type="submit"
               [disabled]="!loginForm.form.valid || isSubmitting">Login</button>
           </form>
         </mat-card-content>
