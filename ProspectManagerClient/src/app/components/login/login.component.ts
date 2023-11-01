@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
   username: string;
   password: string;
+  isSubmitting: boolean;
 
   constructor(private authService: AuthService,
     private snackbarService: SnackbarService,
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit(form: NgForm) {
     if (form.valid) {
+      this.isSubmitting = true;
       this.snackbarService.openSnackBar("Tentative de connexion en cours...");
       this.authService.login(this.username, this.password).subscribe((isLoggedIn: boolean) => {
         if (isLoggedIn) {
@@ -32,9 +34,10 @@ export class LoginComponent implements OnInit {
           this.snackbarService.openSnackBar("Connecté :) :) :)");
           this.router.navigate(['/produits']);
         } else {
-          console.log("retour ok");
           this.snackbarService.openErrorSnackBar("Erreur lors de la connexion !", 10000);
         }
+
+        this.isSubmitting = false;
       });
     }
   }

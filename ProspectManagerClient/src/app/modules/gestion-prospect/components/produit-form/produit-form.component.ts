@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Produit } from '../../models/produit'; // Assurez-vous d'importer correctement le chemin vers votre modèle de produit
-import { GestionProspectModule } from '../../gestion-prospect.module';
+import { Produit } from '../../models/produit';
 import { GestionProspectService } from '../../gestion-prospect.service';
 import { Router } from '@angular/router';
 import { SnackbarService } from 'src/app/services/snackbar.service';
@@ -19,16 +18,26 @@ export class ProduitFormComponent {
   constructor(private gestionProspectService: GestionProspectService, private router: Router, private snackbarService: SnackbarService) { }
 
   onSubmit() {
+    this.isSubmitting = true;
+
     if (this.isAddForm) {
       this.gestionProspectService.addProduits(this.produit).subscribe({
-        next: produit => this.router.navigate(['produits', produit?.id]),
-        error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue l'ajout :(`)
+        next: produit => {
+          this.router.navigate(['produits']);
+          this.snackbarService.openErrorSnackBar(`Ajout de "${produit.libelle}" réussie !`);
+        },
+        error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue l'ajout :(`),
+        complete: () => this.isSubmitting = false
     });
     }
     else {
       this.gestionProspectService.updateProduit(this.produit).subscribe({
-        next: produit => this.router.navigate(['produits']),
-        error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue lors de la sauvegarde :(`)
+        next: produit => {
+          this.router.navigate(['produits']);
+          this.snackbarService.openErrorSnackBar(`Mise à jour de "${produit.libelle}" réussie !`);
+        },
+        error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue lors de la sauvegarde :(`),
+        complete: () => this.isSubmitting = false
       })
     }
   }
