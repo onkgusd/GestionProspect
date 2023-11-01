@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Produit } from '../../models/produit';
-import { GestionProspectService } from '../../gestion-prospect.service';
+import { ProduitService } from '../../services/produit-service';
 import { Router } from '@angular/router';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 
@@ -15,7 +15,7 @@ export class ProduitFormComponent {
 
   isSubmitting: boolean = false;
 
-  constructor(private gestionProspectService: GestionProspectService, private router: Router, private snackbarService: SnackbarService) { }
+  constructor(private gestionProspectService: ProduitService, private router: Router, private snackbarService: SnackbarService) { }
 
   onSubmit() {
     this.isSubmitting = true;
