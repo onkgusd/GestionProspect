@@ -16,7 +16,17 @@ export class GestionProspectService {
       tap(produitsList => console.log(produitsList)),
       catchError((error) => {
         console.error(error);
-        throw new Error(error.message);
+        throw error;
+      })
+    );
+  }
+
+  getProduit(id: number): Observable<Produit> {
+    return this.http.get<Produit>(`${environment.baseUrl}/produits/${id}`).pipe(
+      tap(produit => console.log(produit)),
+      catchError((error) => {
+        console.error(error);
+        throw error;
       })
     );
   }
@@ -30,8 +40,22 @@ export class GestionProspectService {
       tap(produit => console.log(produit)),
       catchError((error) => {
         console.error(error);
-        throw new Error(error.message);
+        throw error;
       })
     )
+  }
+
+  updateProduit(produit: Produit) {
+    const httpOptions = {
+      headers : new HttpHeaders({"Content-Type": "application/json"})
+    }
+
+    return this.http.put<Produit>(`${environment.baseUrl}/produits/${produit.id}`, produit, httpOptions).pipe(
+      tap(response => console.log(response)),
+      catchError((error) => {
+        console.error(error);
+        throw error;
+      })
+    );
   }
 }

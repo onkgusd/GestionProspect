@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GestionProspectService } from '../gestion-prospect.service';
+import { GestionProspectService } from '../../gestion-prospect.service';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Produit } from '../models/produit';
+import { Produit } from '../../models/produit';
 
 @Component({
   selector: 'app-produits-list',
