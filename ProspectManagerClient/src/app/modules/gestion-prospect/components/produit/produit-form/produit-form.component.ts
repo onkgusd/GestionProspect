@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { Produit } from '../../models/produit';
-import { ProduitService } from '../../services/produit-service';
+import { Produit } from '../../../models/produit';
+import { ProduitService } from '../../../services/produit-service';
 import { Router } from '@angular/router';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 

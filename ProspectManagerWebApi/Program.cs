@@ -215,10 +215,10 @@ app.MapPost("/prospects/{idprospect:int}/contacts", [Authorize] async (int idpro
 app.MapGet("/evenements", [Authorize] async (ProspectManagerDbContext db) =>
     await db.Evenements.ToListAsync());
 
-app.MapGet("/typesevenement", [Authorize] async (ProspectManagerDbContext db) =>
+app.MapGet("/types-evenement", [Authorize] async (ProspectManagerDbContext db) =>
     await db.TypesEvenement.ToListAsync());
 
-app.MapGet("/typesorganisme", [Authorize] async (ProspectManagerDbContext db) =>
+app.MapGet("/types-organisme", [Authorize] async (ProspectManagerDbContext db) =>
     await db.TypesOrganisme.ToListAsync());
 
 app.MapGet("/utilisateurs", [Authorize(Policy = "Admin")] async (ProspectManagerDbContext db) =>
