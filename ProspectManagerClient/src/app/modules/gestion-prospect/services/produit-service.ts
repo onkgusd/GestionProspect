@@ -22,7 +22,7 @@ export class ProduitService {
   }
 
   getProduit(id: number): Observable<Produit> {
-    return this.http.delete<Produit>(`${environment.baseUrl}/produits/${id}`).pipe(
+    return this.http.get<Produit>(`${environment.baseUrl}/produits/${id}`).pipe(
       tap(produit => console.log(produit)),
       catchError((error) => {
         console.error(error);
