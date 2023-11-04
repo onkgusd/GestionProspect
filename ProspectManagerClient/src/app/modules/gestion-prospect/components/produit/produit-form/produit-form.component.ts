@@ -15,13 +15,13 @@ export class ProduitFormComponent {
 
   isSubmitting: boolean = false;
 
-  constructor(private gestionProspectService: ProduitService, private router: Router, private snackbarService: SnackbarService) { }
+  constructor(private produitService: ProduitService, private router: Router, private snackbarService: SnackbarService) { }
 
   onSubmit() {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.gestionProspectService.addProduits(this.produit).subscribe({
+      this.produitService.addProduits(this.produit).subscribe({
         next: produit => {
           this.router.navigate(['produits']);
           this.snackbarService.openErrorSnackBar(`Ajout de "${produit.libelle}" réussie !`);
@@ -31,7 +31,7 @@ export class ProduitFormComponent {
     });
     }
     else {
-      this.gestionProspectService.updateProduit(this.produit).subscribe({
+      this.produitService.updateProduit(this.produit).subscribe({
         next: produit => {
           this.router.navigate(['produits']);
           this.snackbarService.openErrorSnackBar(`Mise à jour de "${produit.libelle}" réussie !`);

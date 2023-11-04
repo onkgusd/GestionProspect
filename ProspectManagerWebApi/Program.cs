@@ -215,8 +215,51 @@ app.MapPost("/prospects/{idprospect:int}/contacts", [Authorize] async (int idpro
 app.MapGet("/evenements", [Authorize] async (ProspectManagerDbContext db) =>
     await db.Evenements.ToListAsync());
 
+#region Gestion des type d'événement
 app.MapGet("/types-evenement", [Authorize] async (ProspectManagerDbContext db) =>
     await db.TypesEvenement.ToListAsync());
+
+app.MapPost("/types-evenement", [Authorize(Policy = "Admin")] async ([FromBody] TypeEvenement typeEvenement, ProspectManagerDbContext db) =>
+{
+    db.TypesEvenement.Add(typeEvenement);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/produits/{typeEvenement.Id}", typeEvenement);
+});
+
+app.MapGet("/types-evenement/{idtypeevenement:int}", [Authorize] async (int idTypeEvenement, ProspectManagerDbContext db) =>
+    await db.TypesEvenement.FindAsync(idTypeEvenement) is TypeEvenement typeEvenement ?
+    Results.Ok(typeEvenement) : Results.NotFound());
+
+app.MapPut("/types-evenement/{idtypeevenement:int}", [Authorize] async ([FromBody] TypeEvenement updatedTypeEvenement, int idTypeEvenement, ProspectManagerDbContext db) =>
+{
+    if (idTypeEvenement != updatedTypeEvenement.Id)
+        return Results.BadRequest("Les identifiants ne sont pas cohérents.");
+
+    var existingTypeEvenement = await db.TypesEvenement.FindAsync(idTypeEvenement);
+    if (existingTypeEvenement == null)
+        return Results.NotFound();
+
+    db.Entry(existingTypeEvenement).CurrentValues.SetValues(updatedTypeEvenement);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(existingTypeEvenement);
+});
+
+app.MapDelete("/type-evenement/{idtypeevenement:int}", [Authorize(Policy = "Admin")] async (int idTypeEvenement, ProspectManagerDbContext db) =>
+{
+    var existingTypeEvenement = await db.TypesEvenement.FindAsync(idTypeEvenement);
+    if (existingTypeEvenement == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.TypesEvenement.Remove(existingTypeEvenement);
+    await db.SaveChangesAsync();
+
+    return Results.Ok();
+});
+#endregion
 
 app.MapGet("/types-organisme", [Authorize] async (ProspectManagerDbContext db) =>
     await db.TypesOrganisme.ToListAsync());
