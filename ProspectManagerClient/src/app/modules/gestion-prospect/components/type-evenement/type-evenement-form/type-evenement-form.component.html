@@ -1,21 +1,22 @@
 <mat-card class="centered-card">
-    <mat-card-header class="centered title">
-      <mat-card-title>Type d'événement</mat-card-title>
-    </mat-card-header>
-    <mat-card-content fxLayout="column" fxLayoutAlign="center stretch">
-      <form #typeEvenementForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
-        <mat-form-field *ngIf="!isAddForm">
-          <input matInput placeholder="ID" [(ngModel)]="typeEvenement.id" name="id" readonly>
-        </mat-form-field>
-        <mat-form-field class="full-width">
-          <input matInput placeholder="Libellé" [(ngModel)]="typeEvenement.libelle" name="libelle" required>
-        </mat-form-field>
-        <div fxLayout="row" fxLayoutAlign="center">
-            <button mat-raised-button color="secondary" type="button" routerLink="..">Annuler</button>
-            <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting || !typeEvenementForm.form.valid">{{
-              isAddForm ? "Ajouter" : "Enregistrer" }}</button>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
-    
+  <mat-card-header class="centered title">
+    <mat-card-title>Type d'événement</mat-card-title>
+  </mat-card-header>
+  <mat-card-content fxLayout="column" fxLayoutAlign="center stretch">
+    <form #typeEvenementForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
+      <mat-form-field *ngIf="!isAddForm">
+        <mat-label>ID</mat-label>
+        <input matInput placeholder="ID" [(ngModel)]="typeEvenement.id" name="id" readonly>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Libellé</mat-label>
+        <input matInput placeholder="Libellé" [(ngModel)]="typeEvenement.libelle" name="libelle" required>
+      </mat-form-field>
+      <div fxLayout="row" fxLayoutAlign="center">
+        <button mat-raised-button color="secondary" type="button" routerLink="..">Annuler</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting || !typeEvenementForm.form.valid">{{
+          isAddForm ? "Ajouter" : "Enregistrer" }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

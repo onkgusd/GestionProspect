@@ -1,0 +1,62 @@
+<div fxLayout="column" fxLayoutAlign="center center" class="container">
+  <table mat-table [dataSource]="prospects" matSort>
+
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+      <td mat-cell *matCellDef="let prospect">{{ prospect.id }}</td>
+    </ng-container>
+
+    <!-- Nom Column -->
+    <ng-container matColumnDef="nom">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
+      <td mat-cell *matCellDef="let prospect">{{ prospect.nom }}</td>
+    </ng-container>
+
+    <!-- Departement Column -->
+    <ng-container matColumnDef="departement">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Departement</th>
+      <td mat-cell *matCellDef="let prospect">{{ prospect.departement }}</td>
+    </ng-container>
+
+    <!-- Adresse Column -->
+    <ng-container matColumnDef="adresse">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Adresse</th>
+      <td mat-cell *matCellDef="let prospect">{{ prospect.adresse }}</td>
+    </ng-container>
+
+    <!-- Telephone Column -->
+    <ng-container matColumnDef="telephone">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Telephone</th>
+      <td mat-cell *matCellDef="let prospect">{{ prospect.telephone }}</td>
+    </ng-container>
+
+    <!-- Mail Column -->
+    <ng-container matColumnDef="mail">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Mail</th>
+      <td mat-cell *matCellDef="let prospect">{{ prospect.mail }}</td>
+    </ng-container>
+
+    <!-- SecteurActivite Column -->
+    <ng-container matColumnDef="secteurActivite">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Secteur d'activité</th>
+      <td mat-cell *matCellDef="let prospect">{{ prospect.secteurActivite }}</td>
+    </ng-container>
+
+    <!-- DateCreation Column -->
+    <ng-container matColumnDef="dateCreation">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date de création</th>
+      <td mat-cell *matCellDef="let prospect">{{ prospect.dateCreation }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/prospects', row.id]"
+      class="clickable highlight-row"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  <app-loader *ngIf="!prospects"></app-loader>
+
+  <button mat-fab color="primary" class="floating-button" routerLink="/prospects/add">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

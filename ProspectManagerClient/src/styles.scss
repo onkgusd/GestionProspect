@@ -1,9 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+    height: 100%;
+}
 
-.clickable{
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.clickable {
     cursor: pointer;
 }
 
@@ -25,4 +32,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .title {
     font-size: x-large;
     margin-bottom: 1.4rem;
+}
+
+button.floating-button {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
 }

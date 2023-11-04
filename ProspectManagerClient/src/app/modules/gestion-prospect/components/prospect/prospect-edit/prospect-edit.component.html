@@ -1,0 +1,9 @@
+<mat-tab-group *ngIf="prospect">
+    <mat-tab label="Prospect">
+        <app-prospect-form [isAddForm]="false" [prospect]="prospect"/>
+    </mat-tab>
+    <mat-tab label="Contacts ({{prospect.contacts.length}})">
+        <app-contact-list [contactList]="prospect.contacts"></app-contact-list>
+    </mat-tab>
+</mat-tab-group>
+<app-loader *ngIf="!prospect"></app-loader>

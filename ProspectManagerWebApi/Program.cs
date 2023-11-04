@@ -201,16 +201,49 @@ app.MapPut("/prospects/{idprospect:int}", [Authorize] async ([FromBody] Produit 
 
 app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, ProspectManagerDbContext db) =>
 {
+    prospect.DateCreation = DateTime.UtcNow;
     db.Prospects.Add(prospect);
     await db.SaveChangesAsync();
 
     return Results.Created($"/prospects/{prospect.Id}", prospect);
 });
+#endregion
 
-app.MapPost("/prospects/{idprospect:int}/contacts", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
+#region Gestion des contacts
+app.MapGet("/prospects/{idprospect:int}/contacts", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
     await db.Prospects.Where(p => p.Id == idprospect).Select(p => p.Contacts).ToListAsync());
 
+app.MapGet("/contacts", async (ProspectManagerDbContext db) =>
+    await db.Contacts.ToListAsync());
+
+app.MapGet("/contacts/{idcontact:int}", [Authorize] async (int idcontact, ProspectManagerDbContext db) =>
+    await db.Contacts.FirstOrDefaultAsync(c => c.Id == idcontact) is Contact contact ?
+    Results.Ok(contact) : Results.NotFound());
+
+app.MapPut("/contacts/{idcontact:int}", [Authorize] async ([FromBody] Contact updatedContact, int idcontact, ProspectManagerDbContext db) =>
+{
+    if (idcontact != updatedContact.Id)
+        return Results.BadRequest("Les identifiants de contact ne sont pas cohérents.");
+
+    var existingContact = await db.Contacts.FindAsync(idcontact);
+    if (existingContact == null)
+        return Results.NotFound();
+
+    db.Entry(existingContact).CurrentValues.SetValues(updatedContact);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(existingContact);
+});
+
+app.MapPost("/contacts/", [Authorize] async ([FromBody] Contact contact, ProspectManagerDbContext db) =>
+{
+    db.Contacts.Add(contact);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/contacts/{contact.Id}", contact);
+});
 #endregion
+
 
 app.MapGet("/evenements", [Authorize] async (ProspectManagerDbContext db) =>
     await db.Evenements.ToListAsync());
