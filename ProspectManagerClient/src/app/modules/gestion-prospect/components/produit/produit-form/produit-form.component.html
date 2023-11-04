@@ -5,15 +5,19 @@
   <mat-card-content fxLayout="column" fxLayoutAlign="center stretch">
     <form #produitForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
       <mat-form-field *ngIf="!isAddForm">
+        <mat-label>ID</mat-label>
         <input matInput placeholder="ID" [(ngModel)]="produit.id" name="id" readonly>
       </mat-form-field>
       <mat-form-field>
+        <mat-label>Référence</mat-label>
         <input matInput placeholder="Référence" [(ngModel)]="produit.reference" name="reference" required>
       </mat-form-field>
       <mat-form-field class="full-width">
+        <mat-label>Libellé</mat-label>
         <input matInput placeholder="Libellé" [(ngModel)]="produit.libelle" name="libelle" required>
       </mat-form-field>
       <mat-form-field class="full-width">
+        <mat-label>Description</mat-label>
         <textarea matInput placeholder="Description" [(ngModel)]="produit.description" name="description"
           matTextareaAutosize matAutosizeMinRows="10" matAutosizeMinCols="10"></textarea>
       </mat-form-field>

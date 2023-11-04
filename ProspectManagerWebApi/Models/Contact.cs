@@ -4,10 +4,11 @@
     {
         public int Id { get; set; }
         public string Nom { get; set; }
-        public string Fonction { get; set; }
-        public string Email { get; set; } 
-        public string Telephone { get; set; }
-        public bool Actif { get; set; }
-        public ICollection<Modification> Modifications { get; set; }
+        public string? Fonction { get; set; }
+        public string? Email { get; set; } 
+        public string? Telephone { get; set; }
+        public bool Actif { get; set; } = true;
+        public ICollection<Modification>? Modifications { get; set; }
+        public int ProspectId { get; set; }
     }
 }
