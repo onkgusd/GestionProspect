@@ -22,7 +22,7 @@ export class ProduitService {
   }
 
   getProduit(id: number): Observable<Produit> {
-    return this.http.get<Produit>(`${environment.baseUrl}/produits/${id}`).pipe(
+    return this.http.delete<Produit>(`${environment.baseUrl}/produits/${id}`).pipe(
       tap(produit => console.log(produit)),
       catchError((error) => {
         console.error(error);
@@ -60,11 +60,7 @@ export class ProduitService {
   }
 
   deleteProduit(produit: Produit) {
-    const httpOptions = {
-      headers : new HttpHeaders({"Content-Type": "application/json"})
-    }
-
-    return this.http.put<Produit>(`${environment.baseUrl}/produits/${produit.id}`, produit, httpOptions).pipe(
+    return this.http.delete<Produit>(`${environment.baseUrl}/produits/${produit.id}`).pipe(
       tap(response => console.log(response)),
       catchError((error) => {
         console.error(error);

@@ -12,12 +12,12 @@ export class ProduitEditComponent implements OnInit {
 
   produit: Produit;
 
-  constructor(private gestionProspectService: ProduitService, private route: ActivatedRoute) { }
+  constructor(private produitService: ProduitService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     const produitId: string | null = this.route.snapshot.paramMap.get("id");
     if (produitId)
-      this.gestionProspectService.getProduit(+produitId)
+      this.produitService.getProduit(+produitId)
         .subscribe(
           produit => this.produit = produit
         );

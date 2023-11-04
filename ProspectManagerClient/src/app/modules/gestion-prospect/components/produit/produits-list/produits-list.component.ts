@@ -17,10 +17,10 @@ export class ProduitsListComponent implements OnInit {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private gestionProspectService: ProduitService) { }
+  constructor(private produitService: ProduitService) { }
 
   ngOnInit(): void {
-    this.gestionProspectService.getProduits().subscribe((produits: Produit[]) => {
+    this.produitService.getProduits().subscribe((produits: Produit[]) => {
       this.produits = new MatTableDataSource(produits);
       this.produits.sort = this.sort;
       this.produits.paginator = this.paginator;

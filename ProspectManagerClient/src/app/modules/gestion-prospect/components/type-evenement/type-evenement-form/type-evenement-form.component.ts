@@ -1,0 +1,45 @@
+import { Component, Input } from '@angular/core';
+import { TypeEvenement } from '../../../models/type-evenement';
+import { TypeEvenementService } from '../../../services/type-evenement.service';
+import { Router } from '@angular/router';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+
+@Component({
+  selector: 'app-type-evenement-form',
+  templateUrl: './type-evenement-form.component.html',
+  styleUrls: ['./type-evenement-form.component.scss']
+})
+export class TypeEvenementFormComponent {
+  @Input() typeEvenement: TypeEvenement = new TypeEvenement();
+  @Input() isAddForm: boolean = false;
+
+  isSubmitting: boolean = false;
+
+  constructor(private typeEvenementService: TypeEvenementService, private router: Router, private snackbarService: SnackbarService) { }
+
+  onSubmit(){
+    this.isSubmitting = true;
+
+    if (this.isAddForm) {
+      this.typeEvenementService.addTypeEvenement(this.typeEvenement).subscribe({
+        next: typeEvenement => {
+          this.router.navigate(['types-evenement']);
+          this.snackbarService.openErrorSnackBar(`Ajout de "${typeEvenement.libelle}" réussie !`);
+        },
+        error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue l'ajout :(`),
+        complete: () => this.isSubmitting = false
+    });
+    }
+    else {
+      this.typeEvenementService.updateTypeEvenement(this.typeEvenement).subscribe({
+        next: typeEvenement => {
+          this.router.navigate(['types-evenement']);
+          this.snackbarService.openErrorSnackBar(`Mise à jour de "${typeEvenement.libelle}" réussie !`);
+        },
+        error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue lors de la sauvegarde :(`),
+        complete: () => this.isSubmitting = false
+      })
+    }
+  }
+
+}

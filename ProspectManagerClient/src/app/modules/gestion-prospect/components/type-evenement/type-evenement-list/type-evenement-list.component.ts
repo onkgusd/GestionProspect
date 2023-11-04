@@ -20,7 +20,7 @@ export class TypeEvenementListComponent {
   constructor(private typeEvenementService: TypeEvenementService) { }
 
   ngOnInit(): void {
-    this.typeEvenementService.getEvenements().subscribe((typeEvenements: TypeEvenement[]) => {
+    this.typeEvenementService.getTypesEvenement().subscribe((typeEvenements: TypeEvenement[]) => {
       this.typeEvenements = new MatTableDataSource(typeEvenements);
       this.typeEvenements.sort = this.sort;
       this.typeEvenements.paginator = this.paginator;
