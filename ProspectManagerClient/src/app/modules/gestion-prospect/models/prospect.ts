@@ -1,4 +1,5 @@
 import { Contact } from "./contact";
+import { Statut } from "./statut";
 
 export class Prospect {
     id: number;
@@ -9,7 +10,7 @@ export class Prospect {
     mail: string;
     secteurActivite: string;
     dateCreation: string;
-    // statut: Statut;
+    statut: Statut;
     // typeOrganisme: TypeOrganisme;
     contacts: Contact[];
     // utilisateurCreation: Utilisateur;

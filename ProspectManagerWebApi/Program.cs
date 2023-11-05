@@ -133,17 +133,17 @@ app.MapPost("/authentication/getToken",
 app.MapGet("/produits", [Authorize] async (ProspectManagerDbContext db) =>
     await db.Produits.ToListAsync());
 
-app.MapPost("/produits", [Authorize(Policy = "Admin")] async ([FromBody] Produit produit, ProspectManagerDbContext db) =>
-    {
-        db.Produits.Add(produit);
-        await db.SaveChangesAsync();
-
-        return Results.Created($"/produits/{produit.Id}", produit);
-    });
-
 app.MapGet("/produits/{idproduit:int}", [Authorize] async (int idProduit, ProspectManagerDbContext db) =>
     await db.Produits.FindAsync(idProduit) is Produit produit ?
     Results.Ok(produit) : Results.NotFound());
+
+app.MapPost("/produits", [Authorize(Policy = "Admin")] async ([FromBody] Produit produit, ProspectManagerDbContext db) =>
+{
+    db.Produits.Add(produit);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/produits/{produit.Id}", produit);
+});
 
 app.MapPut("/produits/{idproduit:int}", [Authorize] async ([FromBody] Produit updatedProduit, int idProduit, ProspectManagerDbContext db) =>
 {
@@ -178,34 +178,37 @@ app.MapDelete("/produits/{idproduit:int}", [Authorize(Policy = "Admin")] async (
 
 #region Gestion des prospects
 app.MapGet("/prospects", async (ProspectManagerDbContext db) =>
-    await db.Prospects.ToListAsync());
+    await db.Prospects.Include(p => p.Statut).ToListAsync());
 
 app.MapGet("/prospects/{idprospect:int}", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
-    await db.Prospects.Include(p => p.Contacts).FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
+    await db.Prospects.Include(p => p.Contacts).Include(p => p.Statut).FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
     Results.Ok(prospect) : Results.NotFound());
-
-app.MapPut("/prospects/{idprospect:int}", [Authorize] async ([FromBody] Produit updatedProspect, int idProduit, ProspectManagerDbContext db) =>
-{
-    if (idProduit != updatedProspect.Id)
-        return Results.BadRequest("Les identifiants produits ne sont pas cohérents.");
-
-    var existingProduit = await db.Produits.FindAsync(idProduit);
-    if (existingProduit == null)
-        return Results.NotFound();
-
-    db.Entry(existingProduit).CurrentValues.SetValues(updatedProspect);
-    await db.SaveChangesAsync();
-
-    return Results.Ok(existingProduit);
-});
 
 app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, ProspectManagerDbContext db) =>
 {
     prospect.DateCreation = DateTime.UtcNow;
-    db.Prospects.Add(prospect);
+    db.Prospects.Attach(prospect);
     await db.SaveChangesAsync();
 
     return Results.Created($"/prospects/{prospect.Id}", prospect);
+});
+
+app.MapPut("/prospects/{idprospect:int}", [Authorize] async ([FromBody] Prospect updatedProspect, int idProspect, ProspectManagerDbContext db) =>
+{
+    if (idProspect != updatedProspect.Id)
+        return Results.BadRequest("Les identifiants produits ne sont pas cohérents.");
+
+    var existingProspect = await db.Prospects.Include(p => p.Statut).FirstAsync(p => p.Id == idProspect);
+
+    if (existingProspect == null)
+        return Results.NotFound();
+
+    db.Entry(existingProspect).CurrentValues.SetValues(updatedProspect);
+    existingProspect.Statut = updatedProspect.Statut;
+
+    await db.SaveChangesAsync();
+
+    return Results.Ok(existingProspect);
 });
 #endregion
 
@@ -219,6 +222,14 @@ app.MapGet("/contacts", async (ProspectManagerDbContext db) =>
 app.MapGet("/contacts/{idcontact:int}", [Authorize] async (int idcontact, ProspectManagerDbContext db) =>
     await db.Contacts.FirstOrDefaultAsync(c => c.Id == idcontact) is Contact contact ?
     Results.Ok(contact) : Results.NotFound());
+
+app.MapPost("/contacts/", [Authorize] async ([FromBody] Contact contact, ProspectManagerDbContext db) =>
+{
+    db.Contacts.Add(contact);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/contacts/{contact.Id}", contact);
+});
 
 app.MapPut("/contacts/{idcontact:int}", [Authorize] async ([FromBody] Contact updatedContact, int idcontact, ProspectManagerDbContext db) =>
 {
@@ -234,23 +245,16 @@ app.MapPut("/contacts/{idcontact:int}", [Authorize] async ([FromBody] Contact up
 
     return Results.Ok(existingContact);
 });
-
-app.MapPost("/contacts/", [Authorize] async ([FromBody] Contact contact, ProspectManagerDbContext db) =>
-{
-    db.Contacts.Add(contact);
-    await db.SaveChangesAsync();
-
-    return Results.Created($"/contacts/{contact.Id}", contact);
-});
 #endregion
 
-
-app.MapGet("/evenements", [Authorize] async (ProspectManagerDbContext db) =>
-    await db.Evenements.ToListAsync());
-
 #region Gestion des type d'événement
+
 app.MapGet("/types-evenement", [Authorize] async (ProspectManagerDbContext db) =>
     await db.TypesEvenement.ToListAsync());
+
+app.MapGet("/types-evenement/{idtypeevenement:int}", [Authorize] async (int idTypeEvenement, ProspectManagerDbContext db) =>
+    await db.TypesEvenement.FindAsync(idTypeEvenement) is TypeEvenement typeEvenement ?
+    Results.Ok(typeEvenement) : Results.NotFound());
 
 app.MapPost("/types-evenement", [Authorize(Policy = "Admin")] async ([FromBody] TypeEvenement typeEvenement, ProspectManagerDbContext db) =>
 {
@@ -260,11 +264,7 @@ app.MapPost("/types-evenement", [Authorize(Policy = "Admin")] async ([FromBody] 
     return Results.Created($"/produits/{typeEvenement.Id}", typeEvenement);
 });
 
-app.MapGet("/types-evenement/{idtypeevenement:int}", [Authorize] async (int idTypeEvenement, ProspectManagerDbContext db) =>
-    await db.TypesEvenement.FindAsync(idTypeEvenement) is TypeEvenement typeEvenement ?
-    Results.Ok(typeEvenement) : Results.NotFound());
-
-app.MapPut("/types-evenement/{idtypeevenement:int}", [Authorize] async ([FromBody] TypeEvenement updatedTypeEvenement, int idTypeEvenement, ProspectManagerDbContext db) =>
+app.MapPut("/types-evenement/{idtypeevenement:int}", [Authorize(Policy = "Admin")] async ([FromBody] TypeEvenement updatedTypeEvenement, int idTypeEvenement, ProspectManagerDbContext db) =>
 {
     if (idTypeEvenement != updatedTypeEvenement.Id)
         return Results.BadRequest("Les identifiants ne sont pas cohérents.");
@@ -293,6 +293,56 @@ app.MapDelete("/type-evenement/{idtypeevenement:int}", [Authorize(Policy = "Admi
     return Results.Ok();
 });
 #endregion
+
+#region Gestion des statuts
+app.MapGet("/statuts", [Authorize] async (ProspectManagerDbContext db) =>
+    await db.Statuts.ToListAsync());
+
+app.MapPost("/statuts", [Authorize(Policy = "Admin")] async ([FromBody] Statut statut, ProspectManagerDbContext db) =>
+{
+    db.Statuts.Add(statut);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/statuts/{statut.Id}", statut);
+});
+
+app.MapGet("/statuts/{idstatut:int}", [Authorize] async (int idStatut, ProspectManagerDbContext db) =>
+    await db.Statuts.FindAsync(idStatut) is Statut statut ?
+    Results.Ok(statut) : Results.NotFound());
+
+app.MapPut("/statuts/{idstatut:int}", [Authorize] async ([FromBody] Statut updatedStatut, int idStatut, ProspectManagerDbContext db) =>
+{
+    if (idStatut != updatedStatut.Id)
+        return Results.BadRequest("Les identifiants ne sont pas cohérents.");
+
+    var existingStatut = await db.Statuts.FindAsync(idStatut);
+    if (existingStatut == null)
+        return Results.NotFound();
+
+    db.Entry(existingStatut).CurrentValues.SetValues(updatedStatut);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(existingStatut);
+});
+
+app.MapDelete("/statuts/{idstatut:int}", [Authorize(Policy = "Admin")] async (int idStatut, ProspectManagerDbContext db) =>
+{
+    var existingStatut = await db.Statuts.FindAsync(idStatut);
+    if (existingStatut == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.Statuts.Remove(existingStatut);
+    await db.SaveChangesAsync();
+
+    return Results.Ok();
+});
+#endregion
+
+
+app.MapGet("/evenements", [Authorize] async (ProspectManagerDbContext db) =>
+    await db.Evenements.ToListAsync());
 
 app.MapGet("/types-organisme", [Authorize] async (ProspectManagerDbContext db) =>
     await db.TypesOrganisme.ToListAsync());
