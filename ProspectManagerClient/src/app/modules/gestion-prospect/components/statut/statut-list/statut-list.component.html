@@ -1,0 +1,33 @@
+<div class="mat-elevation-z8" [hidden]="!statuts">
+    <table mat-table [dataSource]="statuts" matSort>
+  
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          ID
+        </th>
+        <td mat-cell *matCellDef="let statut"> {{statut.id}} </td>
+      </ng-container>
+  
+      <!-- Libelle Column -->
+      <ng-container matColumnDef="libelle">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Libelle
+        </th>
+        <td mat-cell *matCellDef="let statut"> {{statut.libelle}} </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/statuts', row.id]"
+        class="clickable highlight-row"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+  
+  <app-loader *ngIf="!statuts"></app-loader>
+  
+  <button mat-fab color="primary" class="floating-button" routerLink="/statuts/add">
+    <mat-icon>add</mat-icon>
+  </button>
+  

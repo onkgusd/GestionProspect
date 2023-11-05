@@ -3,54 +3,58 @@
     <mat-card-title>Fiche Prospect</mat-card-title>
   </mat-card-header>
   <mat-card-content fxLayout="column" fxLayoutAlign="center stretch">
-        <form #prospectForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
-          <mat-form-field *ngIf="!isAddForm">
-            <mat-label>Id</mat-label>
-            <input matInput placeholder="Id" name="Id" [ngModel]="prospect.id" readonly>
-          </mat-form-field>
-          <mat-form-field *ngIf="!isAddForm">
-            <mat-label>Date de création</mat-label>
-            <input matInput placeholder="Date de création" name="dateCreation" [ngModel]="prospect.dateCreation"
-              readonly>
-          </mat-form-field>
-          <br />
-          <mat-form-field>
-            <mat-label>Nom</mat-label>
-            <input matInput placeholder="Nom" name="nom" [(ngModel)]="prospect.nom" required>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Secteur d'activité</mat-label>
-            <input matInput placeholder="Secteur d'activité" name="secteurActivite"
-              [(ngModel)]="prospect.secteurActivite">
-          </mat-form-field>
-          <br />
-          <mat-form-field class="full-width">
-            <mat-label>Adresse</mat-label>
-            <textarea matInput placeholder="Adresse" name="adresse" [(ngModel)]="prospect.adresse" matTextareaAutosize
-              matAutosizeMinRows="10" matAutosizeMinCols="10"></textarea>
-          </mat-form-field>
-          <br />
-          <mat-form-field>
-            <mat-label>Département</mat-label>
-            <input matInput placeholder="Département" name="departement" [(ngModel)]="prospect.departement">
-          </mat-form-field>
-          <br />
-          <mat-form-field>
-            <mat-label>Téléphone</mat-label>
-            <input matInput placeholder="Téléphone" name="telephone" [(ngModel)]="prospect.telephone">
-          </mat-form-field>
-          <br />
-          <mat-form-field class="full-width">
-            <mat-label>E-mail</mat-label>
-            <input matInput placeholder="E-mail" name="mail" [(ngModel)]="prospect.mail" required>
-          </mat-form-field>
+    <form #prospectForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
+      <mat-form-field *ngIf="!isAddForm">
+        <mat-label>Id</mat-label>
+        <input matInput placeholder="Id" name="Id" [ngModel]="prospect.id" readonly>
+      </mat-form-field>
+      <mat-form-field *ngIf="!isAddForm">
+        <mat-label>Date de création</mat-label>
+        <input matInput placeholder="Date de création" name="dateCreation" [ngModel]="prospect.dateCreation" readonly>
+      </mat-form-field>
+      <br />
+      <mat-form-field>
+        <mat-label>Statut</mat-label>
+        <mat-select [(ngModel)]="prospect.statut" [ngModelOptions]="{standalone: true}" [compareWith]="compareStatuts">
+          <mat-option *ngFor="let statut of statuts" [value]="statut">{{ statut.libelle }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Nom</mat-label>
+        <input matInput placeholder="Nom" name="nom" [(ngModel)]="prospect.nom" required>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Secteur d'activité</mat-label>
+        <input matInput placeholder="Secteur d'activité" name="secteurActivite" [(ngModel)]="prospect.secteurActivite">
+      </mat-form-field>
+      <br />
+      <mat-form-field class="full-width">
+        <mat-label>Adresse</mat-label>
+        <textarea matInput placeholder="Adresse" name="adresse" [(ngModel)]="prospect.adresse" matTextareaAutosize
+          matAutosizeMinRows="10" matAutosizeMinCols="10"></textarea>
+      </mat-form-field>
+      <br />
+      <mat-form-field>
+        <mat-label>Département</mat-label>
+        <input matInput placeholder="Département" name="departement" [(ngModel)]="prospect.departement">
+      </mat-form-field>
+      <br />
+      <mat-form-field>
+        <mat-label>Téléphone</mat-label>
+        <input matInput placeholder="Téléphone" name="telephone" [(ngModel)]="prospect.telephone">
+      </mat-form-field>
+      <br />
+      <mat-form-field class="full-width">
+        <mat-label>E-mail</mat-label>
+        <input matInput placeholder="E-mail" name="mail" [(ngModel)]="prospect.mail" required>
+      </mat-form-field>
 
-          <div fxLayout="row" fxLayoutAlign="center">
-            <button mat-raised-button color="secondary" type="button" routerLink="..">Annuler</button>
-            <button mat-raised-button color="primary" type="submit" [disabled]="!prospectForm.form.valid">
-              Enregistrer
-            </button>
-          </div>
-        </form>
+      <div fxLayout="row" fxLayoutAlign="center">
+        <button mat-raised-button color="secondary" type="button" routerLink="..">Annuler</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!prospectForm.form.valid">
+          Enregistrer
+        </button>
+      </div>
+    </form>
   </mat-card-content>
 </mat-card>

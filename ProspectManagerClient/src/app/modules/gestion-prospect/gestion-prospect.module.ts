@@ -39,6 +39,10 @@ import { ContactListComponent } from './components/contact/contact-list/contact-
 import { ContactFormComponent } from './components/contact/contact-form/contact-form.component';
 import { ContactEditComponent } from './components/contact/contact-edit/contact-edit.component';
 import { ContactAddComponent } from './components/contact/contact-add/contact-add.component';
+import { StatutListComponent } from './components/statut/statut-list/statut-list.component';
+import { StatutFormComponent } from './components/statut/statut-form/statut-form.component';
+import { StatutEditComponent } from './components/statut/statut-edit/statut-edit.component';
+import { StatutAddComponent } from './components/statut/statut-add/statut-add.component';
 
 const gestionProspectRoutes: Routes = [
   // Produit
@@ -55,11 +59,15 @@ const gestionProspectRoutes: Routes = [
   // Type d'évenement
   { path: "types-evenement", component: TypeEvenementListComponent, canActivate: [AuthGuard] },
   { path: "types-evenement/add", component: TypeEvenementAddComponent, canActivate: [AuthGuard] },
-  { path: "types-evenement/:id", component: TypeEvenementEditComponent, canActivate: [AuthGuard] }
+  { path: "types-evenement/:id", component: TypeEvenementEditComponent, canActivate: [AuthGuard] },
+  // Statut
+  { path: "statuts", component: StatutListComponent, canActivate: [AuthGuard] },
+  { path: "statuts/add", component: StatutAddComponent, canActivate: [AuthGuard] },
+  { path: "statuts/:id", component: StatutEditComponent, canActivate: [AuthGuard] }
 ]
 
 @NgModule({
-  declarations: [ProduitsListComponent, ProduitAddComponent, ProduitFormComponent, ProduitEditComponent, TypeEvenementListComponent, TypeEvenementFormComponent, TypeEvenementAddComponent, TypeEvenementEditComponent, ProspectListComponent, ProspectFormComponent, ProspectAddComponent, ProspectEditComponent, ContactListComponent, ContactFormComponent, ContactEditComponent, ContactAddComponent],
+  declarations: [ProduitsListComponent, ProduitAddComponent, ProduitFormComponent, ProduitEditComponent, TypeEvenementListComponent, TypeEvenementFormComponent, TypeEvenementAddComponent, TypeEvenementEditComponent, ProspectListComponent, ProspectFormComponent, ProspectAddComponent, ProspectEditComponent, ContactListComponent, ContactFormComponent, ContactEditComponent, ContactAddComponent, StatutListComponent, StatutFormComponent, StatutEditComponent, StatutAddComponent],
   imports: [
     CommonModule,
     BrowserModule,

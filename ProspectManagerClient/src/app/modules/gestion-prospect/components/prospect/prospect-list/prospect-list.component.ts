@@ -13,7 +13,7 @@ import { MatTableDataSource } from '@angular/material/table';
 
 export class ProspectListComponent implements OnInit {
   prospects: MatTableDataSource<Prospect>;
-  displayedColumns: string[] = ['id', 'nom', 'departement', 'adresse', 'telephone', 'mail', 'secteurActivite', 'dateCreation'];
+  displayedColumns: string[] = ['id', 'nom', 'statut', 'departement', 'adresse', 'telephone', 'mail', 'secteurActivite', 'dateCreation'];
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
