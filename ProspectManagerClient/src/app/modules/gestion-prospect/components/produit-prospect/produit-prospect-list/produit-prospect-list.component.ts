@@ -42,7 +42,8 @@ export class ProduitProspectListComponent implements OnInit {
 
   openProductDialog(): void {
     const dialogRef = this.dialog.open(ProduitProspectDialogComponent, {
-      width: '500px'
+      width: '500px',
+      data: { disabledProduits: this.produitsProspectList?.map(pp => pp.produit.id) }
     });
 
     dialogRef.afterClosed().subscribe(result => {

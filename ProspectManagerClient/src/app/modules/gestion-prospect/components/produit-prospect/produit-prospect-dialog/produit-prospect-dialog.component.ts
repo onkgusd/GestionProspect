@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Produit } from '../../../models/produit';
-import { Observable } from 'rxjs';
 import { ProduitService } from '../../../services/produit-service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
@@ -14,12 +13,14 @@ export class ProduitProspectDialogComponent implements OnInit {
   selectedProduit: Produit | null = null;
   selectedRating: number = 0;
   isSubmitting: boolean = false;
+  disabledProduits: Set<number | string>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private produitService: ProduitService,
-    public dialogRef: MatDialogRef<ProduitProspectDialogComponent>
-  ) { }
+    public dialogRef: MatDialogRef<ProduitProspectDialogComponent>) {
+    this.disabledProduits = new Set(data.disabledProduits || []);
+  }
 
   ngOnInit(): void {
     this.produitService.getProduits().subscribe(
