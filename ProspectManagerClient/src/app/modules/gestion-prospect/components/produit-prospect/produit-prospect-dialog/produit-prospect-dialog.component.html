@@ -1,0 +1,27 @@
+<mat-card class="centered-card">
+    <mat-card-header class="centered title">
+        <mat-card-title>Proposer un produit</mat-card-title>
+    </mat-card-header>
+    <mat-card-content fxLayout="column" fxLayoutAlign="center stretch">
+        <form #produitProspectForm="ngForm" class="basic-form" (ngSubmit)="onSubmit()">
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Produit</mat-label>
+                <mat-select [(value)]="selectedProduit" required>
+                    <mat-option *ngFor="let produit of produits" [value]="produit">
+                        {{ produit.libelle }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <br />
+            <div fxLayout="row" fxLayoutAlign="center">
+                <span>Probabilité de succès</span>
+                <app-rating [(rating)]="selectedRating" (ratingChange)="onRatingChanged($event)" />
+            </div>
+            <div fxLayout="row" fxLayoutAlign="center">
+                <button mat-button color="secondary" type="button" (click)="onNoClick()">Annuler</button>
+                <button mat-button color="primary" type="submit"
+                    [disabled]="isSubmitting || !produitProspectForm.form.valid">Enregistrer</button>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>

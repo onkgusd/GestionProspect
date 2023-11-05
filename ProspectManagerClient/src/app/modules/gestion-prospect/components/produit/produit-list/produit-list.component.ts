@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProduitService } from '../../../services/produit-service';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -6,11 +6,11 @@ import { Produit } from '../../../models/produit';
 import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
-  selector: 'app-produits-list',
-  templateUrl: './produits-list.component.html',
-  styleUrls: ['./produits-list.component.scss']
+  selector: 'app-produit-list',
+  templateUrl: './produit-list.component.html',
+  styleUrls: ['./produit-list.component.scss']
 })
-export class ProduitsListComponent implements OnInit {
+export class ProduitListComponent implements OnInit {
   produits: MatTableDataSource<Produit>;
   displayedColumns: string[] = ['id', 'reference', 'libelle', 'description'];
 

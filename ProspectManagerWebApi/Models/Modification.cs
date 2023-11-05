@@ -1,6 +1,6 @@
 ﻿namespace ProspectManagerWebApi.Models
 {
-    internal class Modification
+    public class Modification
     {
         public int Id { get; set; }
         public DateTime DateModification { get; set; }

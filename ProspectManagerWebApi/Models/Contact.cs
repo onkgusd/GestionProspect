@@ -1,6 +1,6 @@
 ﻿namespace ProspectManagerWebApi.Models
 {
-    internal class Contact : ITableHistorique
+    public class Contact : ITableHistorique
     {
         public int Id { get; set; }
         public string Nom { get; set; }

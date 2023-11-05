@@ -1,0 +1,67 @@
+<div class="mat-elevation-z8" [hidden]="!produitsProspect">
+  <table mat-table [dataSource]="produitsProspect" matSort>
+
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        ID
+      </th>
+      <td mat-cell *matCellDef="let produitProspect"> {{produitProspect.produit.id}} </td>
+    </ng-container>
+
+    <!-- Reference Column -->
+    <ng-container matColumnDef="reference">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Reference
+      </th>
+      <td mat-cell *matCellDef="let produitProspect"> {{produitProspect.produit.reference}} </td>
+    </ng-container>
+
+    <!-- Libelle Column -->
+    <ng-container matColumnDef="libelle">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Libelle
+      </th>
+      <td mat-cell *matCellDef="let produitProspect"> {{produitProspect.produit.libelle}} </td>
+    </ng-container>
+
+    <!-- Description Column -->
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Description
+      </th>
+      <td mat-cell *matCellDef="let produitProspect"> {{produitProspect.produit.description}} </td>
+    </ng-container>
+
+    <!-- ProbabiliteSucces Column -->
+    <ng-container matColumnDef="probabiliteSucces">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Probabilité de succès
+      </th>
+      <td mat-cell *matCellDef="let produitProspect">
+        <app-rating [rating]="produitProspect.probabiliteSucces"
+          (ratingChange)="onProbabiliteSuccesChange($event, produitProspect)"></app-rating>
+      </td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let produitProspect">
+        <button mat-icon-button (click)="openDeleteConfirmationDialog(produitProspect)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>
+
+<app-loader *ngIf="!produitsProspect"></app-loader>
+
+<button mat-fab color="primary" class="floating-button" (click)="openProductDialog()">
+  <mat-icon>add</mat-icon>
+</button>

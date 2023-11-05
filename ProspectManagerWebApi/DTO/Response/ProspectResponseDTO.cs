@@ -1,12 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ProspectManagerWebApi.Models;
+using System.ComponentModel.DataAnnotations;
 
-namespace ProspectManagerWebApi.Models
+namespace ProspectManagerWebApi.DTO.Response
 {
-    public class Prospect : ITableHistorique
+    public class ProspectResponseDTO
     {
         public int Id { get; set; }
-
-        [Required]
         public string Nom { get; set; }
         public string? Departement { get; set; }
         public string? Adresse { get; set; }
@@ -19,6 +18,6 @@ namespace ProspectManagerWebApi.Models
         public ICollection<Contact>? Contacts { get; set; }
         public Utilisateur? UtilisateurCreation { get; set; }
         public ICollection<Modification>? Modifications { get; set; }
-        public ICollection<ProduitProspect>? ProduitProspects { get; set; }
+        public ICollection<ProduitProspectResponseDTO>? ProduitProspects { get; set; }
     }
 }

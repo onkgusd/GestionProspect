@@ -10,6 +10,14 @@ namespace ProspectManagerWebApi.Data
             optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ProspectManager;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ProduitProspect>()
+                .HasKey(pp => new { pp.ProduitId, pp.ProspectId });
+
+            base.OnModelCreating(modelBuilder);
+        }
+
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Evenement> Evenements { get; set; }
         public virtual DbSet<Modification> Modifications { get; set; }

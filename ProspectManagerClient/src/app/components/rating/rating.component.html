@@ -1,0 +1,5 @@
+<div class="rating">
+    <span *ngFor="let star of stars" (click)="setRating(star)">
+      <mat-icon class="star {{ star <= rating ? 'full' : '' }}">{{ star <= rating ? 'star' : 'star_border' }}</mat-icon>
+    </span>
+  </div>

@@ -30,6 +30,7 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { LoaderModule } from './modules/loader/loader.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
+import { DeleteConfirmationDialogComponent } from './components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 
 const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
@@ -41,7 +42,8 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     LoginComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    DeleteConfirmationDialogComponent
   ],
   imports: [
     HttpClientModule,
@@ -69,7 +71,7 @@ const routes: Routes = [
     GestionProspectModule,
     LoaderModule
   ],
-  providers: [SnackbarService,     {
+  providers: [SnackbarService, {
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptorService,
     multi: true

@@ -17,13 +17,15 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
+
 import { FormsModule } from '@angular/forms';
 import { LoaderModule } from '../loader/loader.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { ProduitsListComponent } from './components/produit/produits-list/produits-list.component';
+import { ProduitListComponent } from './components/produit/produit-list/produit-list.component';
 import { ProduitAddComponent } from './components/produit/produit-add/produit-add.component';
 import { ProduitFormComponent } from './components/produit/produit-form/produit-form.component';
 import { ProduitEditComponent } from './components/produit/produit-edit/produit-edit.component';
@@ -43,10 +45,13 @@ import { StatutListComponent } from './components/statut/statut-list/statut-list
 import { StatutFormComponent } from './components/statut/statut-form/statut-form.component';
 import { StatutEditComponent } from './components/statut/statut-edit/statut-edit.component';
 import { StatutAddComponent } from './components/statut/statut-add/statut-add.component';
+import { ProduitProspectListComponent } from './components/produit-prospect/produit-prospect-list/produit-prospect-list.component';
+import { RatingComponent } from 'src/app/components/rating/rating.component';
+import { ProduitProspectDialogComponent } from './components/produit-prospect/produit-prospect-dialog/produit-prospect-dialog.component';
 
 const gestionProspectRoutes: Routes = [
   // Produit
-  { path: "produits", component: ProduitsListComponent, canActivate: [AuthGuard] },
+  { path: "produits", component: ProduitListComponent, canActivate: [AuthGuard] },
   { path: "produits/add", component: ProduitAddComponent, canActivate: [AuthGuard] },
   { path: "produits/:id", component: ProduitEditComponent, canActivate: [AuthGuard] },
   // Prospect
@@ -67,7 +72,12 @@ const gestionProspectRoutes: Routes = [
 ]
 
 @NgModule({
-  declarations: [ProduitsListComponent, ProduitAddComponent, ProduitFormComponent, ProduitEditComponent, TypeEvenementListComponent, TypeEvenementFormComponent, TypeEvenementAddComponent, TypeEvenementEditComponent, ProspectListComponent, ProspectFormComponent, ProspectAddComponent, ProspectEditComponent, ContactListComponent, ContactFormComponent, ContactEditComponent, ContactAddComponent, StatutListComponent, StatutFormComponent, StatutEditComponent, StatutAddComponent],
+  declarations: [ProduitListComponent, ProduitAddComponent, ProduitFormComponent, ProduitEditComponent,
+    TypeEvenementListComponent, TypeEvenementFormComponent, TypeEvenementAddComponent, TypeEvenementEditComponent,
+    ProspectListComponent, ProspectFormComponent, ProspectAddComponent, ProspectEditComponent,
+    ContactListComponent, ContactFormComponent, ContactEditComponent, ContactAddComponent,
+    StatutListComponent, StatutFormComponent, StatutEditComponent, StatutAddComponent,
+    ProduitProspectListComponent, RatingComponent, ProduitProspectDialogComponent],
   imports: [
     CommonModule,
     BrowserModule,
@@ -89,6 +99,7 @@ const gestionProspectRoutes: Routes = [
     MatIconModule,
     MatTabsModule,
     MatCheckboxModule,
+    MatDialogModule,
     RouterModule.forChild(gestionProspectRoutes),
     FlexLayoutModule,
     LoaderModule

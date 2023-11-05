@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +13,7 @@ using ProspectManagerWebApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +28,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => {
+builder.Services.AddSwaggerGen(c =>
+{
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
         Name = "Authorization",
@@ -79,7 +83,20 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Admin",
          policy => policy.RequireRole("Admin"));
-}); ;
+});
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+});
+
+var mapperConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile()); // Votre classe de profil de mappage
+});
+
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
 
@@ -181,8 +198,13 @@ app.MapGet("/prospects", async (ProspectManagerDbContext db) =>
     await db.Prospects.Include(p => p.Statut).ToListAsync());
 
 app.MapGet("/prospects/{idprospect:int}", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
-    await db.Prospects.Include(p => p.Contacts).Include(p => p.Statut).FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
-    Results.Ok(prospect) : Results.NotFound());
+await db.Prospects
+    .Include(p => p.Contacts)
+    .Include(p => p.Statut)
+    .Include(p => p.ProduitProspects)
+        .ThenInclude(pp => pp.Produit)
+    .FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
+Results.Ok(mapper.Map<ProspectResponseDTO>(prospect)) : Results.NotFound());
 
 app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, ProspectManagerDbContext db) =>
 {
@@ -209,6 +231,65 @@ app.MapPut("/prospects/{idprospect:int}", [Authorize] async ([FromBody] Prospect
     await db.SaveChangesAsync();
 
     return Results.Ok(existingProspect);
+});
+
+app.MapGet("/prospects/{idprospect:int}/produits", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
+    await db.ProduitProspect
+        .Where(pp => pp.ProspectId == idprospect)
+        .Include(pp => pp.Produit)
+        .ToArrayAsync() is ProduitProspect[] produitProspects ?
+    Results.Ok(produitProspects) : Results.NotFound());
+
+app.MapPost("/prospects/{idprospect:int}/produits/{idproduit:int}", [Authorize] async ([FromBody] ProduitProspectRequestDTO produitProspect, [FromRoute] int idProspect, [FromRoute] int idProduit, ProspectManagerDbContext db) =>
+{
+    db.ProduitProspect.Add(new ProduitProspect()
+    {
+        ProduitId = idProduit,
+        ProspectId = idProspect,
+        ProbabiliteSucces = produitProspect.ProbabiliteSucces
+    });
+
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/prospects/{idProspect}/produits/{idProduit}", produitProspect);
+});
+
+app.MapPut("/prospects/{idprospect:int}/produits/{idproduit:int}",
+    [Authorize] async ([FromBody] ProduitProspectRequestDTO produitProspect,
+    [FromRoute] int idProspect,
+    [FromRoute] int idProduit,
+    ProspectManagerDbContext db) =>
+{
+    var existingProduitProspect = await db.ProduitProspect.FirstAsync(p => p.ProspectId == idProspect
+                                                                            && p.ProduitId == idProduit);
+
+    if (existingProduitProspect == null)
+        return Results.NotFound();
+
+    existingProduitProspect.ProbabiliteSucces = produitProspect.ProbabiliteSucces;
+
+    await db.SaveChangesAsync();
+
+    return Results.Ok(existingProduitProspect);
+});
+
+app.MapDelete("/prospects/{idprospect:int}/produits/{idproduit:int}",
+    [Authorize] async (
+    [FromRoute] int idProspect,
+    [FromRoute] int idProduit,
+    ProspectManagerDbContext db) =>
+{
+    var existingProduitProspect = await db.ProduitProspect.Where(pp => pp.ProduitId == idProduit
+                                                                    && pp.ProspectId == idProspect).FirstOrDefaultAsync();
+    if (existingProduitProspect == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.ProduitProspect.Remove(existingProduitProspect);
+    await db.SaveChangesAsync();
+
+    return Results.Ok();
 });
 #endregion
 

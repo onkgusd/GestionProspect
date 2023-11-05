@@ -1,6 +1,6 @@
 ﻿namespace ProspectManagerWebApi.Models
 {
-    internal class Utilisateur
+    public class Utilisateur
     {
         public int Id { get; set; }
         public string Login { get; set; }

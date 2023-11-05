@@ -1,4 +1,4 @@
-﻿namespace ProspectManagerWebApi.DTO.Response
+﻿namespace ProspectManagerWebApi.DTO.Request
 {
     public class LoginRequestDTO
     {

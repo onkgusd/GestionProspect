@@ -1,6 +1,6 @@
 ﻿namespace ProspectManagerWebApi.Models
 {
-    internal interface ITableHistorique
+    public interface ITableHistorique
     {
         public ICollection<Modification> Modifications { get; set; }
     }

@@ -1,0 +1,23 @@
+.rating {
+    unicode-bidi: bidi-override;
+    color: #c5c5c5;
+    font-size: 24px;
+    height: 24px;
+    width: 120px;
+    position: relative;
+    margin: 0 auto;
+
+    .star {
+        cursor: pointer;
+        display: inline-block;
+        position: relative;
+
+        &.full {
+            color: goldenrod;
+        }
+
+        &:hover {
+            color: goldenrod;
+        }
+    }
+}

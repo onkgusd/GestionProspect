@@ -1,11 +1,20 @@
-﻿namespace ProspectManagerWebApi.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+namespace ProspectManagerWebApi.Models
 {
-    internal class ProduitProspect : ITableHistorique
+    public class ProduitProspect : ITableHistorique
     {
-        public int Id { get; set; }
-        public Produit Produit { get; set; }
-        public Prospect Prospect { get; set; }
+        [Required]
+        public int ProduitId { get; set; }
+
+        public Produit? Produit { get; set; }
+
+        [Required]
+        public int ProspectId { get; set; }
+
+        public Prospect? Prospect { get; set; }
         public int ProbabiliteSucces { get; set; }
-        public ICollection<Modification> Modifications { get; set; }
+        public ICollection<Modification>? Modifications { get; set; }
     }
 }

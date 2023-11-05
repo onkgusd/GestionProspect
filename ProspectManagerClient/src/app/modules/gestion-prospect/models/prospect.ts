@@ -1,4 +1,5 @@
 import { Contact } from "./contact";
+import { ProduitProspect } from "./produitprospect";
 import { Statut } from "./statut";
 
 export class Prospect {
@@ -15,5 +16,5 @@ export class Prospect {
     contacts: Contact[];
     // utilisateurCreation: Utilisateur;
     // modifications: Modification[];
-    // produitProspects: ProduitProspect[];
+    produitProspects: ProduitProspect[];
 }
