@@ -1,4 +1,5 @@
 import { Contact } from "./contact";
+import { Evenement } from "./evenement";
 import { ProduitProspect } from "./produitprospect";
 import { Statut } from "./statut";
 
@@ -17,4 +18,5 @@ export class Prospect {
     // utilisateurCreation: Utilisateur;
     // modifications: Modification[];
     produitProspects: ProduitProspect[];
+    evenements: Evenement[];
 }

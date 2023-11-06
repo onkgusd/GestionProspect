@@ -16,9 +16,10 @@ namespace ProspectManagerWebApi.Models
         public DateTime DateCreation { get; set; }
         public Statut? Statut { get; set; }
         public TypeOrganisme? TypeOrganisme { get; set; }
-        public ICollection<Contact>? Contacts { get; set; }
+        public ICollection<Contact> Contacts { get; set; }
         public Utilisateur? UtilisateurCreation { get; set; }
         public ICollection<Modification>? Modifications { get; set; }
         public ICollection<ProduitProspect>? ProduitProspects { get; set; }
+        public ICollection<Evenement>? Evenements { get; set; }
     }
 }

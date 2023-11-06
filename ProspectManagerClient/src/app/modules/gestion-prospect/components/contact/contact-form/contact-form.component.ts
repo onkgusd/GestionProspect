@@ -23,8 +23,7 @@ export class ContactFormComponent {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.contact.prospectId = this.prospectId;
-      this.contactService.addContact(this.contact).subscribe({
+      this.contactService.addContact(this.contact, this.prospectId).subscribe({
         next: contact => {
           this.previousPage();
           this.snackbarService.openErrorSnackBar(`Ajout de "${contact.nom}" réussi !`);

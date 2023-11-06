@@ -48,6 +48,7 @@ import { StatutAddComponent } from './components/statut/statut-add/statut-add.co
 import { ProduitProspectListComponent } from './components/produit-prospect/produit-prospect-list/produit-prospect-list.component';
 import { RatingComponent } from 'src/app/components/rating/rating.component';
 import { ProduitProspectDialogComponent } from './components/produit-prospect/produit-prospect-dialog/produit-prospect-dialog.component';
+import { EvenementListComponent } from './components/evenement/evenement-list/evenement-list.component';
 
 const gestionProspectRoutes: Routes = [
   // Produit
@@ -77,7 +78,7 @@ const gestionProspectRoutes: Routes = [
     ProspectListComponent, ProspectFormComponent, ProspectAddComponent, ProspectEditComponent,
     ContactListComponent, ContactFormComponent, ContactEditComponent, ContactAddComponent,
     StatutListComponent, StatutFormComponent, StatutEditComponent, StatutAddComponent,
-    ProduitProspectListComponent, RatingComponent, ProduitProspectDialogComponent],
+    ProduitProspectListComponent, RatingComponent, ProduitProspectDialogComponent, EvenementListComponent],
   imports: [
     CommonModule,
     BrowserModule,

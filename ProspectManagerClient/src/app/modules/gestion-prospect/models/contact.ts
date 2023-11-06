@@ -5,5 +5,4 @@ export class Contact {
     email: string;
     telephone: string;
     actif: boolean = true;
-    prospectId: number;
 }

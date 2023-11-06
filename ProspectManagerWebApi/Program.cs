@@ -203,6 +203,7 @@ await db.Prospects
     .Include(p => p.Statut)
     .Include(p => p.ProduitProspects)
         .ThenInclude(pp => pp.Produit)
+    .Include(p => p.Evenements)
     .FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
 Results.Ok(mapper.Map<ProspectResponseDTO>(prospect)) : Results.NotFound());
 
@@ -235,7 +236,7 @@ app.MapPut("/prospects/{idprospect:int}", [Authorize] async ([FromBody] Prospect
 
 app.MapGet("/prospects/{idprospect:int}/produits", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
     await db.ProduitProspect
-        .Where(pp => pp.ProspectId == idprospect)
+        .Where(pp => pp.Prospect.Id == idprospect)
         .Include(pp => pp.Produit)
         .ToArrayAsync() is ProduitProspect[] produitProspects ?
     Results.Ok(produitProspects) : Results.NotFound());
@@ -244,8 +245,8 @@ app.MapPost("/prospects/{idprospect:int}/produits/{idproduit:int}", [Authorize] 
 {
     db.ProduitProspect.Add(new ProduitProspect()
     {
-        ProduitId = idProduit,
-        ProspectId = idProspect,
+        Produit = db.Produits.Find(idProduit),
+        Prospect = db.Prospects.Find(idProspect),
         ProbabiliteSucces = produitProspect.ProbabiliteSucces
     });
 
@@ -260,8 +261,8 @@ app.MapPut("/prospects/{idprospect:int}/produits/{idproduit:int}",
     [FromRoute] int idProduit,
     ProspectManagerDbContext db) =>
 {
-    var existingProduitProspect = await db.ProduitProspect.FirstAsync(p => p.ProspectId == idProspect
-                                                                            && p.ProduitId == idProduit);
+    var existingProduitProspect = await db.ProduitProspect.FirstAsync(p => p.Prospect.Id == idProspect
+                                                                            && p.Produit.Id == idProduit);
 
     if (existingProduitProspect == null)
         return Results.NotFound();
@@ -279,8 +280,8 @@ app.MapDelete("/prospects/{idprospect:int}/produits/{idproduit:int}",
     [FromRoute] int idProduit,
     ProspectManagerDbContext db) =>
 {
-    var existingProduitProspect = await db.ProduitProspect.Where(pp => pp.ProduitId == idProduit
-                                                                    && pp.ProspectId == idProspect).FirstOrDefaultAsync();
+    var existingProduitProspect = await db.ProduitProspect.Where(pp => pp.Produit.Id == idProduit
+                                                                    && pp.Prospect.Id == idProspect).FirstOrDefaultAsync();
     if (existingProduitProspect == null)
     {
         return Results.NotFound();
@@ -294,22 +295,26 @@ app.MapDelete("/prospects/{idprospect:int}/produits/{idproduit:int}",
 #endregion
 
 #region Gestion des contacts
-app.MapGet("/prospects/{idprospect:int}/contacts", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
-    await db.Prospects.Where(p => p.Id == idprospect).Select(p => p.Contacts).ToListAsync());
-
 app.MapGet("/contacts", async (ProspectManagerDbContext db) =>
     await db.Contacts.ToListAsync());
 
-app.MapGet("/contacts/{idcontact:int}", [Authorize] async (int idcontact, ProspectManagerDbContext db) =>
+app.MapGet("/prospects/{idprospect:int}/contacts", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
+    await db.Prospects.Where(p => p.Id == idprospect).Select(p => p.Contacts).ToListAsync());
+
+app.MapGet("/prospects/{idprospect:int}/contacts/{idcontact:int}", [Authorize] async (int idcontact, ProspectManagerDbContext db) =>
     await db.Contacts.FirstOrDefaultAsync(c => c.Id == idcontact) is Contact contact ?
     Results.Ok(contact) : Results.NotFound());
 
-app.MapPost("/contacts/", [Authorize] async ([FromBody] Contact contact, ProspectManagerDbContext db) =>
+app.MapPost("/prospects/{idprospect:int}/contacts/", [Authorize] async ([FromBody] Contact contact, [FromRoute] int idProspect, ProspectManagerDbContext db) =>
 {
-    db.Contacts.Add(contact);
-    await db.SaveChangesAsync();
+    var prospect = await db.Prospects.Include(p => p.Contacts).FirstOrDefaultAsync(p => p.Id == idProspect);
+    if (prospect == null)
+        return Results.NotFound($"Aucun prospect trouvé avec l'ID {idProspect}.");
 
-    return Results.Created($"/contacts/{contact.Id}", contact);
+    prospect.Contacts.Add(contact);
+
+    await db.SaveChangesAsync();
+    return Results.Created($"/prospects/{idProspect}/contacts/{contact.Id}", contact);
 });
 
 app.MapPut("/contacts/{idcontact:int}", [Authorize] async ([FromBody] Contact updatedContact, int idcontact, ProspectManagerDbContext db) =>
@@ -326,7 +331,76 @@ app.MapPut("/contacts/{idcontact:int}", [Authorize] async ([FromBody] Contact up
 
     return Results.Ok(existingContact);
 });
+
+app.MapDelete("/contacts/{idContact:int}", [Authorize] async (int idContact, ProspectManagerDbContext db) =>
+{
+    var existingContact = await db.Contacts.FindAsync(idContact);
+    if (existingContact == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.Contacts.Remove(existingContact);
+    await db.SaveChangesAsync();
+
+    return Results.Ok();
+});
 #endregion
+
+#region Gestion des événements
+app.MapGet("/evenements", async (ProspectManagerDbContext db) =>
+    await db.Evenements.ToListAsync());
+
+app.MapGet("/prospects/{idprospect:int}/evenements", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
+    await db.Prospects.Where(p => p.Id == idprospect).Select(p => p.Evenements).ToListAsync());
+
+app.MapGet("/evenements/{idEvenement:int}", [Authorize] async (int idEvenement, ProspectManagerDbContext db) =>
+    await db.Evenements.FirstOrDefaultAsync(e => e.Id == idEvenement) is Evenement evenement ?
+    Results.Ok(evenement) : Results.NotFound());
+
+app.MapPost("/prospects/{idProspect:int}/evenements", [Authorize] async ([FromBody] Evenement evenement, int idProspect, ProspectManagerDbContext db) =>
+{
+    var prospect = await db.Prospects.Include(p => p.Evenements).FirstOrDefaultAsync(p => p.Id == idProspect);
+    if (prospect == null)
+        return Results.NotFound($"Aucun prospect trouvé avec l'ID {idProspect}.");
+    
+    db.Evenements.Add(evenement);
+
+    await db.SaveChangesAsync();
+    return Results.Created($"/prospects/{idProspect}/evenements/{evenement.Id}", evenement);
+});
+
+
+app.MapPut("/evenements/{idEvenement:int}", [Authorize] async ([FromBody] Evenement updatedEvenement, int idEvenement, ProspectManagerDbContext db) =>
+{
+    if (idEvenement != updatedEvenement.Id)
+        return Results.BadRequest("Les identifiants d'événement ne sont pas cohérents.");
+
+    var existingEvenement = await db.Evenements.FindAsync(idEvenement);
+    if (existingEvenement == null)
+        return Results.NotFound();
+
+    db.Entry(existingEvenement).CurrentValues.SetValues(updatedEvenement);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(existingEvenement);
+});
+
+app.MapDelete("/evenements/{idEvenement:int}", [Authorize] async (int idEvenement, ProspectManagerDbContext db) =>
+{
+    var existingEvenement = await db.Evenements.FindAsync(idEvenement);
+    if (existingEvenement == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.Evenements.Remove(existingEvenement);
+    await db.SaveChangesAsync();
+
+    return Results.Ok();
+});
+#endregion
+
 
 #region Gestion des type d'événement
 
@@ -420,10 +494,6 @@ app.MapDelete("/statuts/{idstatut:int}", [Authorize(Policy = "Admin")] async (in
     return Results.Ok();
 });
 #endregion
-
-
-app.MapGet("/evenements", [Authorize] async (ProspectManagerDbContext db) =>
-    await db.Evenements.ToListAsync());
 
 app.MapGet("/types-organisme", [Authorize] async (ProspectManagerDbContext db) =>
     await db.TypesOrganisme.ToListAsync());

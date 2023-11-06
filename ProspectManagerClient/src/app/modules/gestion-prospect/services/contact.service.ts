@@ -31,12 +31,12 @@ export class ContactService {
     );
   }
 
-  addContact(contact: Contact): Observable<Contact> {
+  addContact(contact: Contact, idProspect: number): Observable<Contact> {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.post<Contact>(`${environment.baseUrl}/contacts`, contact, httpOptions).pipe(
+    return this.http.post<Contact>(`${environment.baseUrl}/prospects/${idProspect}/contacts`, contact, httpOptions).pipe(
       tap(contact => console.log(contact)),
       catchError((error) => {
         console.error(error);
@@ -60,7 +60,7 @@ export class ContactService {
   }
 
   deleteContact(contact: Contact) {
-    return this.http.delete<Contact>(`${environment.baseUrl}/contacts/${contact.id}`).pipe(
+    return this.http.delete(`${environment.baseUrl}/contacts/${contact.id}`).pipe(
       tap(response => console.log(response)),
       catchError((error) => {
         console.error(error);

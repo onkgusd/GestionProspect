@@ -9,6 +9,5 @@
         public string? Telephone { get; set; }
         public bool Actif { get; set; } = true;
         public ICollection<Modification>? Modifications { get; set; }
-        public int ProspectId { get; set; }
     }
 }
