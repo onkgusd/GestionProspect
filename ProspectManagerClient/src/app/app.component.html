@@ -18,14 +18,15 @@
         <mat-sidenav [opened]="isSidenavOpened" mode="side" *ngIf="isLoggedIn" class="sidebar-background"
             position="start" style="height: 100%;">
             <mat-nav-list>
-                <a mat-list-item routerLink="produits">
-                    <mat-icon matListIcon>shopping_cart</mat-icon>
-                    <span>Produits</span>
-                </a>
                 <a mat-list-item routerLink="prospects">
                     <mat-icon matListIcon>person_search</mat-icon>
                     Prospects
                 </a>
+                <a mat-list-item routerLink="produits">
+                    <mat-icon matListIcon>shopping_cart</mat-icon>
+                    <span>Catalogue de produits</span>
+                </a>
+                <mat-divider></mat-divider>
                 <a mat-list-item [routerLink]="isAdmin ? 'utilisateurs' : null" [disabled]="!isAdmin">
                     <mat-icon matListIcon>manage_accounts</mat-icon>
                     Utilisateurs

@@ -7,6 +7,7 @@ import { EvenementService } from '../../../services/evenement.service';
 import { Produit } from '../../../models/produit';
 import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-evenement-list',
@@ -15,14 +16,14 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class EvenementListComponent implements OnInit {
   evenements: MatTableDataSource<Evenement>;
-  displayedColumns: string[] = ['id', 'typeEvenement', 'dateEvenement', 'resultat', 'contact', 'produit'];
+  displayedColumns: string[] = ['id', 'typeEvenement', 'dateEvenement', 'resultat', 'contact', 'produit', 'actions'];
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Input() idProspect: number;
   @Input() evenementList: Evenement[];
 
-  constructor(public dialog: MatDialog, private evenementService: EvenementService) { }
+  constructor(public dialog: MatDialog, private evenementService: EvenementService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
     if (this.evenementList) {
@@ -36,5 +37,36 @@ export class EvenementListComponent implements OnInit {
 
     this.evenements.sort = this.sort;
     this.evenements.paginator = this.paginator;
+  }
+
+  openDeleteConfirmationDialog(evenement: Evenement): void {
+    const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+      data: { message: 'Voulez-vous vraiment supprimer cet évènement ?' }
+    });
+  
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteEvenement(evenement);
+      }
+    });
+  }
+
+  private deleteEvenement(evenement: Evenement): void {
+    this.evenementService.deleteEvenement(evenement.id).subscribe(
+      {
+        next: () => {
+          const index = this.evenementList.findIndex((p) => p.id === evenement.id);
+          if (index !== -1) {
+            this.evenementList.splice(index, 1);
+          }
+
+          this.evenements.data = this.evenementList;
+          this.evenements._updateChangeSubscription();
+
+          this.snackbarService.openSuccessSnackBar("Suppression réussie.");
+        },
+        error: () => this.snackbarService.openSuccessSnackBar("Erreur lors de la mise à jour :(")
+      }
+    );
   }
 }

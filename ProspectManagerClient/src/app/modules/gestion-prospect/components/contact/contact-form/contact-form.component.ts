@@ -13,17 +13,17 @@ import { Location } from '@angular/common';
 export class ContactFormComponent {
   @Input() contact: Contact = new Contact();
   @Input() isAddForm: boolean = false;
-  @Input() prospectId: number;
+  @Input() idProspect: number;
 
   isSubmitting: boolean = false;
 
-  constructor(private contactService: ContactService, private router: Router, private snackbarService: SnackbarService, private location: Location) { }
+  constructor(private contactService: ContactService, private snackbarService: SnackbarService, private location: Location) { }
 
   onSubmit() {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.contactService.addContact(this.contact, this.prospectId).subscribe({
+      this.contactService.addContact(this.contact, this.idProspect).subscribe({
         next: contact => {
           this.previousPage();
           this.snackbarService.openErrorSnackBar(`Ajout de "${contact.nom}" réussi !`);

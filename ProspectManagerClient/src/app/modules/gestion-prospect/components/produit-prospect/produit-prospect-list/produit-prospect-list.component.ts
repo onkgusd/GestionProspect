@@ -85,7 +85,7 @@ export class ProduitProspectListComponent implements OnInit {
 
   openDeleteConfirmationDialog(produitProspect: ProduitProspect): void {
     const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
-      data: { message: 'Voulez-vous vraiment supprimer ce produit prospect ?' }
+      data: { message: 'Voulez-vous vraiment supprimer ce produit du prospect ?' }
     });
   
     dialogRef.afterClosed().subscribe((result) => {

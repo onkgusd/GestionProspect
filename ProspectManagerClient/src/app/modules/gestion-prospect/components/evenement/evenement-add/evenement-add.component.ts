@@ -1,12 +1,12 @@
-import { Component,  OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-contact-add',
-  templateUrl: './contact-add.component.html',
-  styleUrls: ['./contact-add.component.scss']
+  selector: 'app-evenement-add',
+  templateUrl: './evenement-add.component.html',
+  styleUrls: ['./evenement-add.component.scss']
 })
-export class ContactAddComponent implements OnInit {
+export class EvenementAddComponent {
   idProspect: string | null;
 
   constructor(private route: ActivatedRoute) {}

@@ -204,6 +204,11 @@ await db.Prospects
     .Include(p => p.ProduitProspects)
         .ThenInclude(pp => pp.Produit)
     .Include(p => p.Evenements)
+        .ThenInclude(e => e.TypeEvenement)
+    .Include(p => p.Evenements)
+        .ThenInclude(e => e.Contact)
+    .Include(p => p.Evenements)
+        .ThenInclude(e => e.Produits)
     .FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
 Results.Ok(mapper.Map<ProspectResponseDTO>(prospect)) : Results.NotFound());
 
@@ -299,9 +304,12 @@ app.MapGet("/contacts", async (ProspectManagerDbContext db) =>
     await db.Contacts.ToListAsync());
 
 app.MapGet("/prospects/{idprospect:int}/contacts", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
-    await db.Prospects.Where(p => p.Id == idprospect).Select(p => p.Contacts).ToListAsync());
+{
+    var prospect = await db.Prospects.Include(p => p.Contacts).FirstOrDefaultAsync(p => p.Id == idprospect);
+    return prospect?.Contacts;
+});
 
-app.MapGet("/prospects/{idprospect:int}/contacts/{idcontact:int}", [Authorize] async (int idcontact, ProspectManagerDbContext db) =>
+app.MapGet("/contacts/{idcontact:int}", [Authorize] async (int idcontact, ProspectManagerDbContext db) =>
     await db.Contacts.FirstOrDefaultAsync(c => c.Id == idcontact) is Contact contact ?
     Results.Ok(contact) : Results.NotFound());
 
@@ -355,7 +363,10 @@ app.MapGet("/prospects/{idprospect:int}/evenements", [Authorize] async (int idpr
     await db.Prospects.Where(p => p.Id == idprospect).Select(p => p.Evenements).ToListAsync());
 
 app.MapGet("/evenements/{idEvenement:int}", [Authorize] async (int idEvenement, ProspectManagerDbContext db) =>
-    await db.Evenements.FirstOrDefaultAsync(e => e.Id == idEvenement) is Evenement evenement ?
+    await db.Evenements
+        .Include(e => e.TypeEvenement)
+        .Include(e => e.Contact)
+        .FirstOrDefaultAsync(e => e.Id == idEvenement) is Evenement evenement ?
     Results.Ok(evenement) : Results.NotFound());
 
 app.MapPost("/prospects/{idProspect:int}/evenements", [Authorize] async ([FromBody] Evenement evenement, int idProspect, ProspectManagerDbContext db) =>
@@ -363,8 +374,8 @@ app.MapPost("/prospects/{idProspect:int}/evenements", [Authorize] async ([FromBo
     var prospect = await db.Prospects.Include(p => p.Evenements).FirstOrDefaultAsync(p => p.Id == idProspect);
     if (prospect == null)
         return Results.NotFound($"Aucun prospect trouvé avec l'ID {idProspect}.");
-    
-    db.Evenements.Add(evenement);
+
+    prospect.Evenements?.Add(evenement);
 
     await db.SaveChangesAsync();
     return Results.Created($"/prospects/{idProspect}/evenements/{evenement.Id}", evenement);

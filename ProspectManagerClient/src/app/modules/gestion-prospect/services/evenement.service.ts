@@ -32,12 +32,12 @@ export class EvenementService {
     );
   }
 
-  addEvenement(evenement: Evenement): Observable<Evenement> {
+  addEvenement(idProspect: number, evenement: Evenement): Observable<Evenement> {
     const httpOptions = {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
 
-    return this.http.post<Evenement>(`${environment.baseUrl}/evenements`, evenement, httpOptions).pipe(
+    return this.http.post<Evenement>(`${environment.baseUrl}/prospects/${idProspect}/evenements`, evenement, httpOptions).pipe(
       tap(newEvenement => console.log(newEvenement)),
       catchError((error) => {
         console.error(error);
@@ -62,7 +62,6 @@ export class EvenementService {
 
   deleteEvenement(id: number): Observable<Evenement> {
     return this.http.delete<Evenement>(`${environment.baseUrl}/evenements/${id}`).pipe(
-      tap(_ => console.log(`Deleted evenement with id=${id}`)),
       catchError((error) => {
         console.error(error);
         throw error;

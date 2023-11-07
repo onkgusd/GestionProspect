@@ -14,7 +14,7 @@
             <!-- Type Evenement Column -->
             <ng-container matColumnDef="typeEvenement">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Type d'Événement</th>
-                <td mat-cell *matCellDef="let evenement">{{ evenement.typeEvenement.nom }}</td>
+                <td mat-cell *matCellDef="let evenement">{{ evenement.typeEvenement.libelle }}</td>
             </ng-container>
 
             <!-- Date Evenement Column -->
@@ -43,13 +43,23 @@
                 </td>
             </ng-container>
 
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let evenement">
+                    <button mat-icon-button (click)="$event.stopPropagation(); openDeleteConfirmationDialog(evenement)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['evenements', row.id]"
+                class="clickable"></tr>
         </table>
         <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
     </mat-card-content>
 </mat-card>
 
-<button mat-fab color="primary" class="floating-button" routerLink="/evenements/add">
+<button mat-fab color="primary" class="floating-button" [routerLink]="['evenements', 'add']">
     <mat-icon>add</mat-icon>
 </button>

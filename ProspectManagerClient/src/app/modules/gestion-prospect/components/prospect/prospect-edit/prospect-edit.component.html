@@ -2,10 +2,10 @@
     <mat-tab label="Prospect">
         <app-prospect-form [isAddForm]="false" [prospect]="prospect"/>
     </mat-tab>
-    <mat-tab label="Produits ({{prospect.produitProspects.length}})">
+    <mat-tab label="Produits proposés ({{prospect.produitProspects.length}})">
         <app-produit-prospect-list [prospect]="prospect"></app-produit-prospect-list>
     </mat-tab>
-    <mat-tab label="Evénement ({{prospect.evenements.length}})">
+    <mat-tab label="Evénements ({{prospect.evenements.length}})">
         <app-evenement-list [evenementList]="prospect.evenements"></app-evenement-list>
     </mat-tab>
     <mat-tab label="Contacts ({{prospect.contacts.length}})">

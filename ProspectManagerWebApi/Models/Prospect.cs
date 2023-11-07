@@ -20,6 +20,6 @@ namespace ProspectManagerWebApi.Models
         public Utilisateur? UtilisateurCreation { get; set; }
         public ICollection<Modification>? Modifications { get; set; }
         public ICollection<ProduitProspect>? ProduitProspects { get; set; }
-        public ICollection<Evenement>? Evenements { get; set; }
+        public virtual ICollection<Evenement>? Evenements { get; set; }
     }
 }

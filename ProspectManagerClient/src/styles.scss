@@ -10,6 +10,10 @@ body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+tr.clickable:hover {
+    background-color: lighten(grey, 40%);
+}
+
 .clickable {
     cursor: pointer;
 }

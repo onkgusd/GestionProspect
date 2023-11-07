@@ -18,6 +18,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 import { FormsModule } from '@angular/forms';
 import { LoaderModule } from '../loader/loader.module';
@@ -49,6 +51,9 @@ import { ProduitProspectListComponent } from './components/produit-prospect/prod
 import { RatingComponent } from 'src/app/components/rating/rating.component';
 import { ProduitProspectDialogComponent } from './components/produit-prospect/produit-prospect-dialog/produit-prospect-dialog.component';
 import { EvenementListComponent } from './components/evenement/evenement-list/evenement-list.component';
+import { EvenementFormComponent } from './components/evenement/evenement-form/evenement-form.component';
+import { EvenementEditComponent } from './components/evenement/evenement-edit/evenement-edit.component';
+import { EvenementAddComponent } from './components/evenement/evenement-add/evenement-add.component';
 
 const gestionProspectRoutes: Routes = [
   // Produit
@@ -61,7 +66,10 @@ const gestionProspectRoutes: Routes = [
   { path: "prospects/:id", component: ProspectEditComponent, canActivate: [AuthGuard] },
   // Contact
   { path: "prospects/:id/contacts/add", component: ContactAddComponent, canActivate: [AuthGuard] },
-  { path: "prospects/:id/contacts/:id", component: ContactEditComponent, canActivate: [AuthGuard] },
+  { path: "prospects/:id/contacts/:idContact", component: ContactEditComponent, canActivate: [AuthGuard] },
+  // Evenement
+  { path: "prospects/:id/evenements/add", component: EvenementAddComponent, canActivate: [AuthGuard] },
+  { path: "prospects/:id/evenements/:idEvenement", component: EvenementEditComponent, canActivate: [AuthGuard] },
   // Type d'évenement
   { path: "types-evenement", component: TypeEvenementListComponent, canActivate: [AuthGuard] },
   { path: "types-evenement/add", component: TypeEvenementAddComponent, canActivate: [AuthGuard] },
@@ -78,7 +86,8 @@ const gestionProspectRoutes: Routes = [
     ProspectListComponent, ProspectFormComponent, ProspectAddComponent, ProspectEditComponent,
     ContactListComponent, ContactFormComponent, ContactEditComponent, ContactAddComponent,
     StatutListComponent, StatutFormComponent, StatutEditComponent, StatutAddComponent,
-    ProduitProspectListComponent, RatingComponent, ProduitProspectDialogComponent, EvenementListComponent],
+    ProduitProspectListComponent, RatingComponent, ProduitProspectDialogComponent,
+    EvenementListComponent, EvenementFormComponent, EvenementEditComponent, EvenementAddComponent],
   imports: [
     CommonModule,
     BrowserModule,
@@ -101,6 +110,8 @@ const gestionProspectRoutes: Routes = [
     MatTabsModule,
     MatCheckboxModule,
     MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     RouterModule.forChild(gestionProspectRoutes),
     FlexLayoutModule,
     LoaderModule
