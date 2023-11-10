@@ -9,5 +9,6 @@ public class MappingProfile : Profile
         CreateMap<Prospect, ProspectResponseDTO>();
         CreateMap<Produit, ProduitResponseDTO>();
         CreateMap<ProduitProspect, ProduitProspectResponseDTO>();
+        CreateMap<Evenement, EvenementResponseDTO>();
     }
 }

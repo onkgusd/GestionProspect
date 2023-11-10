@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { Evenement } from '../../../models/evenement';
-import { Router } from '@angular/router';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { EvenementService } from '../../../services/evenement.service';
 import { Location } from '@angular/common';
@@ -8,6 +8,12 @@ import { Contact } from '../../../models/contact';
 import { ContactService } from '../../../services/contact.service';
 import { TypeEvenementService } from '../../../services/type-evenement.service';
 import { TypeEvenement } from '../../../models/type-evenement';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { FormControl } from '@angular/forms';
+import { Produit } from '../../../models/produit';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { ProduitService } from '../../../services/produit-service';
+import { Observable, map, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-evenement-form',
@@ -19,16 +25,24 @@ export class EvenementFormComponent implements OnInit {
   @Input() isAddForm: boolean = false;
   @Input() idProspect: number;
 
+  @ViewChild('produitsInput') produitsInput: ElementRef<HTMLInputElement>;
 
   isSubmitting: boolean = false;
   contacts: Contact[];
   typeEvenements: TypeEvenement[];
 
+  produitsCtrl = new FormControl('');
+  produits: Produit[];
+  filteredProduits: Observable<Produit[]>;
+
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+
   constructor(
     private evenementService: EvenementService,
     private contactService: ContactService,
     private snackbarService: SnackbarService,
-    private tyepEvenementService: TypeEvenementService,
+    private typeEvenementService: TypeEvenementService,
+    private produitService: ProduitService,
     private location: Location
   ) { }
 
@@ -39,11 +53,30 @@ export class EvenementFormComponent implements OnInit {
         error: () => this.snackbarService.openErrorSnackBar("Impossible de lister les contacts...")
       });
 
-    this.tyepEvenementService.getTypesEvenement().subscribe(
+    this.typeEvenementService.getTypesEvenement().subscribe(
       {
         next: typeEvenements => this.typeEvenements = typeEvenements,
         error: () => this.snackbarService.openErrorSnackBar("Impossible de lister les types d'évenement...")
       });
+
+    this.produitService.getProduits().subscribe({
+      next: (produits) => {
+        this.produits = produits;
+        this.filteredProduits = this.produitsCtrl.valueChanges.pipe(
+          startWith(null),
+          map((produitLibelle: string | null) => this._filter(produitLibelle ?? "")
+          )
+        );
+        if (this.evenement.produits && this.evenement.produits.length > 0) {
+          const produitsNoms = this.evenement.produits.map(produit => produit.libelle).join(', ');
+          this.produitsCtrl.setValue(produitsNoms);
+        }
+        else {
+          this.produitsCtrl.setValue(null);
+        }
+      },
+      error: () => this.snackbarService.openErrorSnackBar("Impossible de lister les produits...")
+    });
   }
 
   onSubmit() {
@@ -84,5 +117,45 @@ export class EvenementFormComponent implements OnInit {
 
   compareTypeEvenement(typeEvenement1: Evenement, typeEvenement: Evenement): boolean {
     return typeEvenement1 && typeEvenement ? typeEvenement1.id === typeEvenement.id : typeEvenement1 === typeEvenement;
+  }
+
+  add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (!value) {
+      return;
+    }
+
+    const existingProduit = this.produits.find(p => p.libelle === value);
+    if (existingProduit) {
+      this.evenement.produits.push(existingProduit);
+    }
+
+    event.chipInput!.clear();
+    this.produitsCtrl.setValue(null);
+  }
+
+  remove(produit: Produit): void {
+    this.evenement.produits = this.evenement.produits.filter(p => p.id !== produit.id);
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    const selectedProduit = this.produits.find(p => p.libelle === event.option.viewValue);
+
+    if (selectedProduit) {
+      this.evenement.produits.push(selectedProduit);
+    }
+
+    this.produitsInput.nativeElement.value = '';
+    this.produitsCtrl.setValue(null);
+  }
+
+  private _filter(value: string): Produit[] {
+    const filterValue = value.toLowerCase();
+
+    return this.produits.filter(produit =>
+      produit.libelle.toLowerCase().includes(filterValue) &&
+      !this.evenement.produits.some(selectedProduit => selectedProduit.id === produit.id)
+    );
   }
 }

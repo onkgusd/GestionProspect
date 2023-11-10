@@ -20,8 +20,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatChipsModule } from '@angular/material/chips'; 
+import { MatAutocompleteModule} from '@angular/material/autocomplete';
 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoaderModule } from '../loader/loader.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserModule } from '@angular/platform-browser';
@@ -112,6 +114,9 @@ const gestionProspectRoutes: Routes = [
     MatDialogModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatChipsModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
     RouterModule.forChild(gestionProspectRoutes),
     FlexLayoutModule,
     LoaderModule

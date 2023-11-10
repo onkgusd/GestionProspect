@@ -7,8 +7,8 @@ export class Evenement {
     typeEvenement: TypeEvenement;
     dateEvenement: Date;
     resultat: string;
-    contact?: Contact;
-    produit?: Produit[];
+    contact: Contact;
+    produits: Produit[] = [];
     // utilisateur: Utilisateur;
     // modifications: Modification[];
 }

@@ -366,8 +366,9 @@ app.MapGet("/evenements/{idEvenement:int}", [Authorize] async (int idEvenement, 
     await db.Evenements
         .Include(e => e.TypeEvenement)
         .Include(e => e.Contact)
+        .Include(e => e.Produits)
         .FirstOrDefaultAsync(e => e.Id == idEvenement) is Evenement evenement ?
-    Results.Ok(evenement) : Results.NotFound());
+    Results.Ok(mapper.Map<EvenementResponseDTO>(evenement)) : Results.NotFound());
 
 app.MapPost("/prospects/{idProspect:int}/evenements", [Authorize] async ([FromBody] Evenement evenement, int idProspect, ProspectManagerDbContext db) =>
 {
@@ -378,23 +379,26 @@ app.MapPost("/prospects/{idProspect:int}/evenements", [Authorize] async ([FromBo
     prospect.Evenements?.Add(evenement);
 
     await db.SaveChangesAsync();
-    return Results.Created($"/prospects/{idProspect}/evenements/{evenement.Id}", evenement);
+    return Results.Created($"/prospects/{idProspect}/evenements/{evenement.Id}", mapper.Map<EvenementResponseDTO>(evenement));
 });
-
 
 app.MapPut("/evenements/{idEvenement:int}", [Authorize] async ([FromBody] Evenement updatedEvenement, int idEvenement, ProspectManagerDbContext db) =>
 {
     if (idEvenement != updatedEvenement.Id)
         return Results.BadRequest("Les identifiants d'événement ne sont pas cohérents.");
 
-    var existingEvenement = await db.Evenements.FindAsync(idEvenement);
+    var existingEvenement = await db.Evenements.Include(e => e.Produits).FirstAsync(e => e.Id == idEvenement);
     if (existingEvenement == null)
         return Results.NotFound();
 
     db.Entry(existingEvenement).CurrentValues.SetValues(updatedEvenement);
+    existingEvenement.Produits = updatedEvenement.Produits?
+    .Select(p => db.Produits.FirstOrDefault(existing => existing.Id == p.Id) ?? p)
+    .ToList();
+
     await db.SaveChangesAsync();
 
-    return Results.Ok(existingEvenement);
+    return Results.Ok(mapper.Map<EvenementResponseDTO>(existingEvenement));
 });
 
 app.MapDelete("/evenements/{idEvenement:int}", [Authorize] async (int idEvenement, ProspectManagerDbContext db) =>
