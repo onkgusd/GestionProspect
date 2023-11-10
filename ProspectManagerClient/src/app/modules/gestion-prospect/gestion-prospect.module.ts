@@ -56,6 +56,7 @@ import { EvenementListComponent } from './components/evenement/evenement-list/ev
 import { EvenementFormComponent } from './components/evenement/evenement-form/evenement-form.component';
 import { EvenementEditComponent } from './components/evenement/evenement-edit/evenement-edit.component';
 import { EvenementAddComponent } from './components/evenement/evenement-add/evenement-add.component';
+import { AdminGuard } from 'src/app/admin.guard';
 
 const gestionProspectRoutes: Routes = [
   // Produit
@@ -73,13 +74,13 @@ const gestionProspectRoutes: Routes = [
   { path: "prospects/:id/evenements/add", component: EvenementAddComponent, canActivate: [AuthGuard] },
   { path: "prospects/:id/evenements/:idEvenement", component: EvenementEditComponent, canActivate: [AuthGuard] },
   // Type d'évenement
-  { path: "types-evenement", component: TypeEvenementListComponent, canActivate: [AuthGuard] },
-  { path: "types-evenement/add", component: TypeEvenementAddComponent, canActivate: [AuthGuard] },
-  { path: "types-evenement/:id", component: TypeEvenementEditComponent, canActivate: [AuthGuard] },
+  { path: "types-evenement", component: TypeEvenementListComponent, canActivate: [AdminGuard] },
+  { path: "types-evenement/add", component: TypeEvenementAddComponent, canActivate: [AdminGuard] },
+  { path: "types-evenement/:id", component: TypeEvenementEditComponent, canActivate: [AdminGuard] },
   // Statut
-  { path: "statuts", component: StatutListComponent, canActivate: [AuthGuard] },
-  { path: "statuts/add", component: StatutAddComponent, canActivate: [AuthGuard] },
-  { path: "statuts/:id", component: StatutEditComponent, canActivate: [AuthGuard] }
+  { path: "statuts", component: StatutListComponent, canActivate: [AdminGuard] },
+  { path: "statuts/add", component: StatutAddComponent, canActivate: [AdminGuard] },
+  { path: "statuts/:id", component: StatutEditComponent, canActivate: [AdminGuard] }
 ]
 
 @NgModule({

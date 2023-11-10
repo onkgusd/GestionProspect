@@ -31,10 +31,12 @@ import { LoaderModule } from './modules/loader/loader.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { DeleteConfirmationDialogComponent } from './components/delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 
 const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
   { path: "login", component: LoginComponent },
+  { path: "forbidden", component: ForbiddenComponent },
   { path: "**", component: PageNotFoundComponent }
 ];
 
@@ -43,7 +45,8 @@ const routes: Routes = [
     AppComponent,
     LoginComponent,
     PageNotFoundComponent,
-    DeleteConfirmationDialogComponent
+    DeleteConfirmationDialogComponent,
+    ForbiddenComponent
   ],
   imports: [
     HttpClientModule,
