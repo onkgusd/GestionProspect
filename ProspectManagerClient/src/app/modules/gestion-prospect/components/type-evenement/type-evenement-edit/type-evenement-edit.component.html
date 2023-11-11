@@ -1,1 +1,3 @@
-<app-type-evenement-form [isAddForm]="false" [typeEvenement]="typeEvenement" />
+<app-type-evenement-form [isAddForm]="false" [typeEvenement]="typeEvenement" [hidden]="isLoading" />
+
+<app-loader *ngIf="isLoading"></app-loader>

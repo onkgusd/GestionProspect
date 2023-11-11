@@ -1,2 +1,2 @@
-<app-produit-form [produit]="produit" *ngIf="produit" />
-<app-loader *ngIf="!produit"></app-loader>
+<app-produit-form [produit]="produit" *ngIf="!isLoading" />
+<app-loader *ngIf="isLoading"></app-loader>

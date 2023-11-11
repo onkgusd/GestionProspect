@@ -112,37 +112,35 @@ if (app.Environment.IsDevelopment())
 
 #region Authentification
 app.MapPost("/authentication/getToken",
-[AllowAnonymous] (LoginRequestDTO user) =>
+[AllowAnonymous] async (LoginRequestDTO user, ProspectManagerDbContext db) =>
 {
-    if (user.Login == "User" || user.Login == "Admin")
-    {
-        var issuer = builder.Configuration["Jwt:Issuer"];
-        var audience = builder.Configuration["Jwt:Audience"];
-        var securityKey = new SymmetricSecurityKey
-    (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new Exception("Jwt key is not set.")));
-        var credentials = new SigningCredentials(securityKey,
-    SecurityAlgorithms.HmacSha512);
+    var utilisateur = db.Utilisateurs.First(u => u.Login == user.Login);
 
-        var expirationDate = DateTime.UtcNow.AddHours(24);
-        var token = new JwtSecurityToken(issuer: issuer,
-            audience: audience,
-            signingCredentials: credentials,
-            claims: new[]
-                {
-            new Claim(ClaimTypes.Name, user.Login),
-            new Claim(ClaimTypes.Role, user.Login)
-            },
-            expires: expirationDate);
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var stringToken = tokenHandler.WriteToken(token);
-
-        return Results.Ok(new LoginResponseDTO() { Token = stringToken, ExpirationDate = expirationDate });
-    }
-    else
-    {
+    if (utilisateur == null)
         return Results.Unauthorized();
-    }
+
+    var issuer = builder.Configuration["Jwt:Issuer"];
+    var audience = builder.Configuration["Jwt:Audience"];
+    var securityKey = new SymmetricSecurityKey
+(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new Exception("Jwt key is not set.")));
+    var credentials = new SigningCredentials(securityKey,
+SecurityAlgorithms.HmacSha512);
+
+    var expirationDate = DateTime.UtcNow.AddHours(24);
+    var token = new JwtSecurityToken(issuer: issuer,
+        audience: audience,
+        signingCredentials: credentials,
+        claims: new[]
+            {
+            new Claim(ClaimTypes.Name, utilisateur.Login),
+            new Claim(ClaimTypes.Role, utilisateur.Role)
+        },
+        expires: expirationDate);
+
+    var tokenHandler = new JwtSecurityTokenHandler();
+    var stringToken = tokenHandler.WriteToken(token);
+
+    return Results.Ok(new LoginResponseDTO() { Token = stringToken, ExpirationDate = expirationDate });
 });
 #endregion
 
@@ -416,9 +414,7 @@ app.MapDelete("/evenements/{idEvenement:int}", [Authorize] async (int idEvenemen
 });
 #endregion
 
-
 #region Gestion des type d'événement
-
 app.MapGet("/types-evenement", [Authorize] async (ProspectManagerDbContext db) =>
     await db.TypesEvenement.ToListAsync());
 
@@ -510,11 +506,54 @@ app.MapDelete("/statuts/{idstatut:int}", [Authorize(Policy = "Admin")] async (in
 });
 #endregion
 
-app.MapGet("/types-organisme", [Authorize] async (ProspectManagerDbContext db) =>
-    await db.TypesOrganisme.ToListAsync());
-
+#region Gestion des Utilisateurs
 app.MapGet("/utilisateurs", [Authorize(Policy = "Admin")] async (ProspectManagerDbContext db) =>
     await db.Utilisateurs.ToListAsync());
+
+app.MapGet("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] async (int idUtilisateur, ProspectManagerDbContext db) =>
+    await db.Utilisateurs.FindAsync(idUtilisateur) is Utilisateur utilisateur ?
+    Results.Ok(utilisateur) : Results.NotFound());
+
+app.MapPost("/utilisateurs", [Authorize(Policy = "Admin")] async ([FromBody] Utilisateur utilisateur, ProspectManagerDbContext db) =>
+{
+    db.Utilisateurs.Add(utilisateur);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/utilisateurs/{utilisateur.Id}", utilisateur);
+});
+
+app.MapPut("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] async ([FromBody] Utilisateur updatedUtilisateur, int idUtilisateur, ProspectManagerDbContext db) =>
+{
+    if (idUtilisateur != updatedUtilisateur.Id)
+        return Results.BadRequest("Les identifiants ne sont pas cohérents.");
+
+    var existingUtilisateur = await db.Utilisateurs.FindAsync(idUtilisateur);
+    if (existingUtilisateur == null)
+        return Results.NotFound();
+
+    db.Entry(existingUtilisateur).CurrentValues.SetValues(updatedUtilisateur);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(existingUtilisateur);
+});
+
+app.MapDelete("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] async (int idUtilisateur, ProspectManagerDbContext db) =>
+{
+    var existingUtilisateur = await db.Utilisateurs.FindAsync(idUtilisateur);
+    if (existingUtilisateur == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.Utilisateurs.Remove(existingUtilisateur);
+    await db.SaveChangesAsync();
+
+    return Results.Ok();
+});
+#endregion
+
+app.MapGet("/types-organisme", [Authorize] async (ProspectManagerDbContext db) =>
+    await db.TypesOrganisme.ToListAsync());
 
 app.Run();
 

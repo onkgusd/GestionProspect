@@ -13,6 +13,7 @@ import { TypeEvenementService } from '../../../services/type-evenement.service';
 export class TypeEvenementListComponent {
   typeEvenements: MatTableDataSource<TypeEvenement>;
   displayedColumns: string[] = ['id', 'libelle'];
+  isLoading: boolean = true;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -24,6 +25,7 @@ export class TypeEvenementListComponent {
       this.typeEvenements = new MatTableDataSource(typeEvenements);
       this.typeEvenements.sort = this.sort;
       this.typeEvenements.paginator = this.paginator;
+      this.isLoading = false;
     });
   }
 }

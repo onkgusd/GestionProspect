@@ -11,6 +11,7 @@ import { ContactService } from '../../../services/contact.service';
 export class ContactEditComponent implements OnInit {
 
   contact: Contact;
+  isLoading: boolean = true;
 
   constructor(private contactService: ContactService, private route: ActivatedRoute) { }
 
@@ -19,7 +20,9 @@ export class ContactEditComponent implements OnInit {
     if (idContact)
       this.contactService.getContact(+idContact)
         .subscribe(
-          contact => this.contact = contact
-        );
+          contact => {
+            this.contact = contact;
+            this.isLoading = false;
+          });
   }
 }

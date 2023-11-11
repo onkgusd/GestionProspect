@@ -13,6 +13,7 @@ import { StatutService } from '../../../services/statut.service';
 export class StatutListComponent {
   statuts: MatTableDataSource<Statut>;
   displayedColumns: string[] = ['id', 'libelle'];
+  isLoading: boolean = true;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -24,6 +25,7 @@ export class StatutListComponent {
       this.statuts = new MatTableDataSource(statuts);
       this.statuts.sort = this.sort;
       this.statuts.paginator = this.paginator;
+      this.isLoading = false;
     });
   }
 }

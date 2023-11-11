@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProspectManagerWebApi.Data;
 
@@ -11,9 +12,11 @@ using ProspectManagerWebApi.Data;
 namespace ProspectManagerWebApi.Migrations
 {
     [DbContext(typeof(ProspectManagerDbContext))]
-    partial class ProspectManagerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231110231450_AddRoleToUtilisateur")]
+    partial class AddRoleToUtilisateur
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -324,22 +327,22 @@ namespace ProspectManagerWebApi.Migrations
                     b.Property<bool>("Actif")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("DateConnexion")
+                    b.Property<DateTime>("DateConnexion")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateModificationMotDePasse")
+                    b.Property<DateTime>("DateModificationMotDePasse")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Empreinte")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

@@ -10,15 +10,21 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class StatutEditComponent {
   statut: Statut;
+  isLoading: boolean;
 
   constructor(private statutService: StatutService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    this.isLoading = true;
+
     const statutId: string | null = this.route.snapshot.paramMap.get("id");
     if (statutId)
       this.statutService.getStatut(+statutId)
         .subscribe(
-          statut => this.statut = statut
+          statut => {
+            this.statut = statut;
+            this.isLoading = false;
+          }
         );
   }
 }

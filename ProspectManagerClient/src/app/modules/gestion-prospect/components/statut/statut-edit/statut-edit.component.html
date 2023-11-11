@@ -1,1 +1,3 @@
-<app-statut-form [isAddForm]="false" [statut]="statut" />
+<app-statut-form [isAddForm]="false" [statut]="statut" [hidden]="isLoading" />
+
+<app-loader *ngIf="isLoading"></app-loader>

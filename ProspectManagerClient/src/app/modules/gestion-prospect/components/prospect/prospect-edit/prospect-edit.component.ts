@@ -11,6 +11,7 @@ import { ProspectService } from '../../../services/prospect.service';
 export class ProspectEditComponent implements OnInit {
 
   prospect: Prospect;
+  isLoading: boolean = true;
 
   constructor(private prospectService: ProspectService, private route: ActivatedRoute) { }
 
@@ -19,7 +20,10 @@ export class ProspectEditComponent implements OnInit {
     if (prospectId)
       this.prospectService.getProspect(+prospectId)
         .subscribe(
-          prospect => this.prospect = prospect
+          prospect => {
+            this.prospect = prospect;
+            this.isLoading = false;
+          }
         );
   }
 }

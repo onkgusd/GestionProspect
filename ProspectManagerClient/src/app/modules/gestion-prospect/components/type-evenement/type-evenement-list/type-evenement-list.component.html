@@ -1,4 +1,4 @@
-<div class="mat-elevation-z8" [hidden]="!typeEvenements">
+<div class="mat-elevation-z8" [hidden]="isLoading">
   <table mat-table [dataSource]="typeEvenements" matSort>
 
     <!-- ID Column -->
@@ -25,7 +25,7 @@
   </mat-paginator>
 </div>
 
-<app-loader *ngIf="!typeEvenements"></app-loader>
+<app-loader *ngIf="isLoading"></app-loader>
 
 <button mat-fab color="primary" class="floating-button" routerLink="/types-evenement/add">
   <mat-icon>add</mat-icon>

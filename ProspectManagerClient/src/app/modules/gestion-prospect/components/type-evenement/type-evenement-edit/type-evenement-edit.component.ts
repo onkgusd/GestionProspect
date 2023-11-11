@@ -10,6 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class TypeEvenementEditComponent {
   typeEvenement: TypeEvenement;
+  isLoading: boolean = true;
 
   constructor(private typeEvenementService: TypeEvenementService, private route: ActivatedRoute) { }
 
@@ -18,7 +19,9 @@ export class TypeEvenementEditComponent {
     if (typeEvenementId)
       this.typeEvenementService.getTypeEvenement(+typeEvenementId)
         .subscribe(
-          typeEvenement => this.typeEvenement = typeEvenement
-        );
+          typeEvenement => {
+            this.typeEvenement = typeEvenement;
+            this.isLoading = false;
+          });
   }
 }

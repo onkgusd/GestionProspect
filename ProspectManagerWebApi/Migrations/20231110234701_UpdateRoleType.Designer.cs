@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProspectManagerWebApi.Data;
 
@@ -11,9 +12,11 @@ using ProspectManagerWebApi.Data;
 namespace ProspectManagerWebApi.Migrations
 {
     [DbContext(typeof(ProspectManagerDbContext))]
-    partial class ProspectManagerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231110234701_UpdateRoleType")]
+    partial class UpdateRoleType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,6 +38,23 @@ namespace ProspectManagerWebApi.Migrations
                     b.HasIndex("ProduitsId");
 
                     b.ToTable("EvenementProduit");
+                });
+
+            modelBuilder.Entity("ProspectManagerWebApi.Enum.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Role");
                 });
 
             modelBuilder.Entity("ProspectManagerWebApi.Models.Contact", b =>
@@ -324,24 +344,26 @@ namespace ProspectManagerWebApi.Migrations
                     b.Property<bool>("Actif")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("DateConnexion")
+                    b.Property<DateTime>("DateConnexion")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateModificationMotDePasse")
+                    b.Property<DateTime>("DateModificationMotDePasse")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Empreinte")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Utilisateurs");
                 });
@@ -460,6 +482,17 @@ namespace ProspectManagerWebApi.Migrations
                     b.Navigation("TypeOrganisme");
 
                     b.Navigation("UtilisateurCreation");
+                });
+
+            modelBuilder.Entity("ProspectManagerWebApi.Models.Utilisateur", b =>
+                {
+                    b.HasOne("ProspectManagerWebApi.Enum.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("ProspectManagerWebApi.Models.Contact", b =>

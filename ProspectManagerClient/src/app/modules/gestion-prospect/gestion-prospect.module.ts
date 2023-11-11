@@ -20,8 +20,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatChipsModule } from '@angular/material/chips'; 
-import { MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoaderModule } from '../loader/loader.module';
@@ -57,6 +57,10 @@ import { EvenementFormComponent } from './components/evenement/evenement-form/ev
 import { EvenementEditComponent } from './components/evenement/evenement-edit/evenement-edit.component';
 import { EvenementAddComponent } from './components/evenement/evenement-add/evenement-add.component';
 import { AdminGuard } from 'src/app/admin.guard';
+import { UtilisateurListComponent } from './components/utilisateur/utilisateur-list/utilisateur-list.component';
+import { UtilisateurFormComponent } from './components/utilisateur/utilisateur-form/utilisateur-form.component';
+import { UtilisateurEditComponent } from './components/utilisateur/utilisateur-edit/utilisateur-edit.component';
+import { UtilisateurAddComponent } from './components/utilisateur/utilisateur-add/utilisateur-add.component';
 
 const gestionProspectRoutes: Routes = [
   // Produit
@@ -80,7 +84,11 @@ const gestionProspectRoutes: Routes = [
   // Statut
   { path: "statuts", component: StatutListComponent, canActivate: [AdminGuard] },
   { path: "statuts/add", component: StatutAddComponent, canActivate: [AdminGuard] },
-  { path: "statuts/:id", component: StatutEditComponent, canActivate: [AdminGuard] }
+  { path: "statuts/:id", component: StatutEditComponent, canActivate: [AdminGuard] },
+  // Utilisateur
+  { path: "utilisateurs", component: UtilisateurListComponent, canActivate: [AdminGuard] },
+  { path: "utilisateurs/add", component: UtilisateurAddComponent, canActivate: [AdminGuard] },
+  { path: "utilisateurs/:id", component: UtilisateurEditComponent, canActivate: [AdminGuard] }
 ]
 
 @NgModule({
@@ -90,7 +98,7 @@ const gestionProspectRoutes: Routes = [
     ContactListComponent, ContactFormComponent, ContactEditComponent, ContactAddComponent,
     StatutListComponent, StatutFormComponent, StatutEditComponent, StatutAddComponent,
     ProduitProspectListComponent, RatingComponent, ProduitProspectDialogComponent,
-    EvenementListComponent, EvenementFormComponent, EvenementEditComponent, EvenementAddComponent],
+    EvenementListComponent, EvenementFormComponent, EvenementEditComponent, EvenementAddComponent, UtilisateurListComponent, UtilisateurFormComponent, UtilisateurEditComponent, UtilisateurAddComponent],
   imports: [
     CommonModule,
     BrowserModule,

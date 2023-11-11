@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 export class ProduitEditComponent implements OnInit {
 
   produit: Produit;
+  isLoading: boolean = true;
 
   constructor(private produitService: ProduitService, private route: ActivatedRoute) { }
 
@@ -19,7 +20,9 @@ export class ProduitEditComponent implements OnInit {
     if (produitId)
       this.produitService.getProduit(+produitId)
         .subscribe(
-          produit => this.produit = produit
-        );
+          produit => {
+            this.produit = produit;
+            this.isLoading = false;
+          });
   }
 }

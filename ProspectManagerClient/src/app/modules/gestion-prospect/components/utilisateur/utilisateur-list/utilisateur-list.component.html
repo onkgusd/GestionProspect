@@ -1,0 +1,53 @@
+<mat-card [hidden]="isLoading">
+    <mat-card-content fxLayout="column" fxLayoutAlign="center stretch">
+        <table mat-table [dataSource]="utilisateurs" matSort>
+
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.id }}</td>
+            </ng-container>
+
+            <!-- Login Column -->
+            <ng-container matColumnDef="login">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Login</th>
+                <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.login }}</td>
+            </ng-container>
+
+            <!-- Date de Connexion Column -->
+            <ng-container matColumnDef="dateConnexion">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Date de Connexion</th>
+                <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.dateConnexion | date }}</td>
+            </ng-container>
+
+            <!-- Date de Modification du Mot de Passe Column -->
+            <ng-container matColumnDef="dateModificationMotDePasse">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Date de Modification du MDP</th>
+                <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.dateModificationMotDePasse | date }}</td>
+            </ng-container>
+
+            <!-- Rôle Column -->
+            <ng-container matColumnDef="role">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Rôle</th>
+                <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.role }}</td>
+            </ng-container>
+
+            <!-- Actif Column -->
+            <ng-container matColumnDef="actif">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Actif</th>
+                <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.actif ? 'Oui' : 'Non' }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"[routerLink]="[row.id]"
+            class="clickable"></tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </mat-card-content>
+</mat-card>
+
+<app-loader *ngIf="isLoading"></app-loader>
+
+<button mat-fab color="primary" class="floating-button" [routerLink]="['/utilisateurs/add']">
+    <mat-icon>add</mat-icon>
+</button>

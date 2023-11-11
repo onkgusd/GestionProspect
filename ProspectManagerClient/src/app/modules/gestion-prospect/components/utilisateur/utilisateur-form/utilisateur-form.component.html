@@ -1,0 +1,41 @@
+<mat-card class="centered-card">
+  <mat-card-header class="centered title">
+    <mat-card-title>Fiche Utilisateur</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form #utilisateurForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
+      <mat-form-field class="full-width" *ngIf="!isAddForm">
+        <mat-label>ID</mat-label>
+        <input matInput placeholder="ID" name="id" [(ngModel)]="utilisateur.id" readonly>
+      </mat-form-field>
+      <br />
+      <mat-form-field class="full-width">
+        <mat-label>Login</mat-label>
+        <input matInput placeholder="Login" name="login" [(ngModel)]="utilisateur.login" required>
+      </mat-form-field>
+      <br />
+      <mat-form-field class="full-width">
+        <mat-label>Role</mat-label>
+        <input matInput placeholder="Rôle" name="role" [(ngModel)]="utilisateur.role" required>
+      </mat-form-field>
+      <br />
+      <mat-checkbox name="actif" [(ngModel)]="utilisateur.actif">Actif</mat-checkbox>
+      <br />
+      <mat-form-field class="full-width">
+        <mat-label>Dernière connexion</mat-label>
+        <input matInput name="dateConnexion" [(ngModel)]="utilisateur.dateConnexion" readonly>
+      </mat-form-field>
+      <br />
+      <mat-form-field class="full-width">
+        <mat-label>Dernière modification du mot de passe</mat-label>
+        <input matInput name="dateModificationMotDePasse" [(ngModel)]="utilisateur.dateModificationMotDePasse" readonly>
+      </mat-form-field>
+      <br />
+      <div fxLayout="row" fxLayoutAlign="center">
+        <button mat-raised-button color="secondary" type="button" (click)="previousPage()">Annuler</button>
+        <button mat-raised-button color="primary" type="submit"
+          [disabled]="isSubmitting || !utilisateurForm.form.valid">Enregistrer</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

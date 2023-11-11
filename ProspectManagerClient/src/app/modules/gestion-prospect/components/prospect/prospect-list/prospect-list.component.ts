@@ -14,6 +14,7 @@ import { MatTableDataSource } from '@angular/material/table';
 export class ProspectListComponent implements OnInit {
   prospects: MatTableDataSource<Prospect>;
   displayedColumns: string[] = ['id', 'nom', 'statut', 'departement', 'adresse', 'telephone', 'mail', 'secteurActivite', 'dateCreation'];
+  isLoading: boolean = true;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -25,6 +26,7 @@ export class ProspectListComponent implements OnInit {
       this.prospects = new MatTableDataSource(prospects);
       this.prospects.sort = this.sort;
       this.prospects.paginator = this.paginator;
+      this.isLoading = false;
     });
   }
 }
