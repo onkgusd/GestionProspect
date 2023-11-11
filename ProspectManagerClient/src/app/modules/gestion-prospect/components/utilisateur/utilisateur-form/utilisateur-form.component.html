@@ -15,18 +15,32 @@
       </mat-form-field>
       <br />
       <mat-form-field class="full-width">
-        <mat-label>Role</mat-label>
-        <input matInput placeholder="Rôle" name="role" [(ngModel)]="utilisateur.role" required>
+        <mat-label>Mot de passe</mat-label>
+        <input matInput placeholder="Mot de passe" #passwordInput name="motdepasse" [(ngModel)]="utilisateur.motdepasse"
+          [required]="isAddForm" [type]="showPassword ? 'text' : 'password'" (input)="setPasswordHasBeenChanged()">
+        <mat-icon matSuffix *ngIf="passwordHasBeenChanged" (click)="showPassword = !showPassword">{{showPassword ?
+          'visibility' : 'visibility_off'}}</mat-icon>
+        <mat-icon matSuffix (click)="generatePassword()">refresh</mat-icon>
+      </mat-form-field>
+      <br />
+      <mat-form-field class="full-width">
+        <mat-label>Rôle</mat-label>
+        <mat-select [(ngModel)]="utilisateur.role" [(ngModel)]="utilisateur.role" required
+          [ngModelOptions]="{standalone: true}">
+          <mat-option *ngFor="let role of roles" [value]="role">
+            {{ role }}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
       <br />
       <mat-checkbox name="actif" [(ngModel)]="utilisateur.actif">Actif</mat-checkbox>
       <br />
-      <mat-form-field class="full-width">
+      <mat-form-field class="full-width" *ngIf="!isAddForm">
         <mat-label>Dernière connexion</mat-label>
         <input matInput name="dateConnexion" [(ngModel)]="utilisateur.dateConnexion" readonly>
       </mat-form-field>
       <br />
-      <mat-form-field class="full-width">
+      <mat-form-field class="full-width" *ngIf="!isAddForm">
         <mat-label>Dernière modification du mot de passe</mat-label>
         <input matInput name="dateModificationMotDePasse" [(ngModel)]="utilisateur.dateModificationMotDePasse" readonly>
       </mat-form-field>

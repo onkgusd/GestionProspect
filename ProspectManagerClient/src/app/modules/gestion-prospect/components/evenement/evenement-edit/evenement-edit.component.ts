@@ -12,7 +12,8 @@ export class EvenementEditComponent implements OnInit {
 
   evenement: Evenement;
   idProspect: string | null;
-  
+  isLoading: boolean = true;
+
   constructor(private evenementService: EvenementService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -20,9 +21,13 @@ export class EvenementEditComponent implements OnInit {
     if (idEvenement)
       this.evenementService.getEvenement(+idEvenement)
         .subscribe(
-          evenement => this.evenement = evenement
-        );
-        
+          {
+            next: evenement => {
+              this.evenement = evenement
+              this.isLoading = false;
+            }
+          });
+
     const idProspect: string | null = this.route.snapshot.paramMap.get("id");
     if (idProspect) {
       this.idProspect = this.route.snapshot.paramMap.get('id');

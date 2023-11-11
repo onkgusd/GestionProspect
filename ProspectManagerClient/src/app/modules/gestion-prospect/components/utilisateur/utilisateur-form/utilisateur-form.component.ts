@@ -3,6 +3,7 @@ import { Utilisateur } from '../../../models/utilisateur';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { UtilisateurService } from '../../../services/utilisateur.service';
 import { Location } from '@angular/common';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-utilisateur-form',
@@ -11,17 +12,23 @@ import { Location } from '@angular/common';
 })
 export class UtilisateurFormComponent implements OnInit {
   @Input() utilisateur: Utilisateur = new Utilisateur();
-  @Input() isAddForm: boolean = false;
+  @Input() isAddForm: boolean;
 
-  isSubmitting: boolean = false;
-
+  isSubmitting: boolean;
+  passwordPlaceholder: string = environment.defaultPasswordInputValue;
+  showPassword: boolean;
+  passwordHasBeenChanged: boolean;
+  roles: string[] = ['Admin', 'Utilisateur'];
+  
   constructor(
     private utilisateurService: UtilisateurService,
     private snackbarService: SnackbarService,
     private location: Location
   ) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.passwordHasBeenChanged = false;
+   }
 
   onSubmit() {
     this.isSubmitting = true;
@@ -53,5 +60,23 @@ export class UtilisateurFormComponent implements OnInit {
 
   previousPage() {
     this.location.back();
+  }
+
+  generatePassword() {
+    const length = environment.passwordLength;
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+<>?";
+    let password = "";
+  
+    for (let i = 0, n = charset.length; i < length; ++i) {
+      password += charset.charAt(Math.floor(Math.random() * n));
+    }
+
+    this.utilisateur.motdepasse = password;
+    this.showPassword = true;
+    this.setPasswordHasBeenChanged();
+  }
+
+  setPasswordHasBeenChanged(){
+    this.passwordHasBeenChanged = true;
   }
 }

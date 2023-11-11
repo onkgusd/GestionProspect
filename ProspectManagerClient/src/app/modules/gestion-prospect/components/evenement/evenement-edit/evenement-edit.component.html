@@ -1,1 +1,2 @@
-<app-evenement-form [isAddForm]="false" [evenement]="evenement" [idProspect]="+(idProspect ?? 0)"/>
+<app-evenement-form [isAddForm]="false" [evenement]="evenement" [idProspect]="+(idProspect ?? 0)" *ngIf="!isLoading"/>
+<app-loader *ngIf="isLoading"></app-loader>

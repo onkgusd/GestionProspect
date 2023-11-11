@@ -1,7 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -9,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using ProspectManagerWebApi.Data;
 using ProspectManagerWebApi.DTO.Request;
 using ProspectManagerWebApi.DTO.Response;
+using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -114,10 +114,13 @@ if (app.Environment.IsDevelopment())
 app.MapPost("/authentication/getToken",
 [AllowAnonymous] async (LoginRequestDTO user, ProspectManagerDbContext db) =>
 {
-    var utilisateur = db.Utilisateurs.First(u => u.Login == user.Login);
+    var utilisateur = await db.Utilisateurs.FirstAsync(u => u.Login == user.Login && u.Actif);
 
-    if (utilisateur == null)
+    if (utilisateur == null || !PasswordHelper.VerifyPassword(user.Password, utilisateur.Empreinte))
         return Results.Unauthorized();
+
+    utilisateur.DateConnexion = DateTime.Now;
+    await db.SaveChangesAsync();
 
     var issuer = builder.Configuration["Jwt:Issuer"];
     var audience = builder.Configuration["Jwt:Audience"];
@@ -508,21 +511,28 @@ app.MapDelete("/statuts/{idstatut:int}", [Authorize(Policy = "Admin")] async (in
 
 #region Gestion des Utilisateurs
 app.MapGet("/utilisateurs", [Authorize(Policy = "Admin")] async (ProspectManagerDbContext db) =>
-    await db.Utilisateurs.ToListAsync());
+    await db.Utilisateurs.Select(u => mapper.Map<UtilisateurResponseDTO>(u)).ToListAsync());
 
 app.MapGet("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] async (int idUtilisateur, ProspectManagerDbContext db) =>
     await db.Utilisateurs.FindAsync(idUtilisateur) is Utilisateur utilisateur ?
-    Results.Ok(utilisateur) : Results.NotFound());
+    Results.Ok(mapper.Map<UtilisateurResponseDTO>(utilisateur)) : Results.NotFound());
 
-app.MapPost("/utilisateurs", [Authorize(Policy = "Admin")] async ([FromBody] Utilisateur utilisateur, ProspectManagerDbContext db) =>
+app.MapPost("/utilisateurs", [Authorize(Policy = "Admin")] async ([FromBody] UtilisateurRequestDTO utilisateur, ProspectManagerDbContext db) =>
 {
-    db.Utilisateurs.Add(utilisateur);
+    if (string.IsNullOrEmpty(utilisateur.MotDePasse))
+        return Results.BadRequest("Le mot de passe n'a pas été fourni.");
+
+    var utilisateurEntity = mapper.Map<Utilisateur>(utilisateur);
+    utilisateurEntity.Empreinte = PasswordHelper.HashPassword(utilisateur.MotDePasse);
+
+    db.Utilisateurs.Add(utilisateurEntity);
+
     await db.SaveChangesAsync();
 
-    return Results.Created($"/utilisateurs/{utilisateur.Id}", utilisateur);
+    return Results.Created($"/utilisateurs/{utilisateur.Id}", mapper.Map<UtilisateurResponseDTO>(utilisateurEntity));
 });
 
-app.MapPut("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] async ([FromBody] Utilisateur updatedUtilisateur, int idUtilisateur, ProspectManagerDbContext db) =>
+app.MapPut("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] async ([FromBody] UtilisateurRequestDTO updatedUtilisateur, int idUtilisateur, ProspectManagerDbContext db) =>
 {
     if (idUtilisateur != updatedUtilisateur.Id)
         return Results.BadRequest("Les identifiants ne sont pas cohérents.");
@@ -532,9 +542,16 @@ app.MapPut("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] as
         return Results.NotFound();
 
     db.Entry(existingUtilisateur).CurrentValues.SetValues(updatedUtilisateur);
+
+    if (!string.IsNullOrEmpty(updatedUtilisateur.MotDePasse))
+    {
+        existingUtilisateur.Empreinte = PasswordHelper.HashPassword(updatedUtilisateur.MotDePasse);
+        existingUtilisateur.DateModificationMotDePasse = DateTime.Now;
+    }
+
     await db.SaveChangesAsync();
 
-    return Results.Ok(existingUtilisateur);
+    return Results.Ok(mapper.Map<UtilisateurResponseDTO>(existingUtilisateur));
 });
 
 app.MapDelete("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] async (int idUtilisateur, ProspectManagerDbContext db) =>
