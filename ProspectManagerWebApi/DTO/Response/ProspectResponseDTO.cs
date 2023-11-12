@@ -16,7 +16,7 @@ namespace ProspectManagerWebApi.DTO.Response
         public Statut? Statut { get; set; }
         public TypeOrganisme? TypeOrganisme { get; set; }
         public ICollection<Contact>? Contacts { get; set; }
-        public Utilisateur? UtilisateurCreation { get; set; }
+        public UtilisateurResponseDTO? UtilisateurCreation { get; set; }
         public ICollection<Modification>? Modifications { get; set; }
         public ICollection<ProduitProspectResponseDTO>? ProduitProspects { get; set; }
         public ICollection<EvenementResponseDTO>? Evenements { get; set; }

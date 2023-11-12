@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Statut } from '../models/statut';
 import { environment } from 'src/environments/environment';
 import { Observable, catchError, tap } from 'rxjs';
+import { DeleteResponseDto } from '../dto/delete-response-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,6 @@ export class StatutService {
 
   getStatuts(): Observable<Statut[]> {
     return this.http.get<Statut[]>(`${environment.baseUrl}/statuts`).pipe(
-      tap(statutList => console.log(statutList)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -23,7 +23,6 @@ export class StatutService {
 
   getStatut(id: number): Observable<Statut> {
     return this.http.get<Statut>(`${environment.baseUrl}/statuts/${id}`).pipe(
-      tap(statut => console.log(statut)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -37,7 +36,6 @@ export class StatutService {
     };
 
     return this.http.post<Statut>(`${environment.baseUrl}/statuts`, statut, httpOptions).pipe(
-      tap(statut => console.log(statut)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -51,7 +49,6 @@ export class StatutService {
     };
 
     return this.http.put<Statut>(`${environment.baseUrl}/statuts/${statut.id}`, statut, httpOptions).pipe(
-      tap(response => console.log(response)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -59,9 +56,8 @@ export class StatutService {
     );
   }
 
-  deleteStatut(statut: Statut) {
-    return this.http.delete<Statut>(`${environment.baseUrl}/statuts/${statut.id}`).pipe(
-      tap(response => console.log(response)),
+  deleteStatut(idStatut: number) {
+    return this.http.delete<DeleteResponseDto>(`${environment.baseUrl}/statuts/${idStatut}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

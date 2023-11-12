@@ -16,7 +16,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 })
 export class EvenementListComponent implements OnInit {
   evenements: MatTableDataSource<Evenement>;
-  displayedColumns: string[] = ['id', 'typeEvenement', 'dateEvenement', 'resultat', 'contact', 'produit', 'actions'];
+  displayedColumns: string[] = ['typeEvenement', 'dateEvenement', 'resultat', 'contact', 'produit', 'actions'];
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;

@@ -15,7 +15,7 @@ import { finalize } from 'rxjs';
 })
 export class UtilisateurListComponent implements OnInit {
   utilisateurs: MatTableDataSource<Utilisateur>;
-  displayedColumns: string[] = ['id', 'login', 'dateConnexion', 'dateModificationMotDePasse', 'role', 'actif'];
+  displayedColumns: string[] = ['login', 'dateConnexion', 'dateModificationMotDePasse', 'role', 'actif'];
   isLoading: boolean = true;
 
   @ViewChild(MatSort) sort: MatSort;

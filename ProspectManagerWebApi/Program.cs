@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -209,18 +210,50 @@ app.MapPut("/produits/{idproduit:int}", [Authorize] async ([FromBody] Produit up
 
 app.MapDelete("/produits/{idproduit:int}", [Authorize(Policy = "Admin")] async (int idProduit, ProspectManagerDbContext db) =>
 {
-    var existingProduit = await db.Produits.FindAsync(idProduit);
-    if (existingProduit == null)
-    {
-        return Results.NotFound();
-    }
+    var existingProduit = await db.Produits
+                                  .Include(p => p.Evenements)
+                                  .Include(p => p.ProduitProspects)
+                                  .FirstOrDefaultAsync(p => p.Id == idProduit);
 
-    db.Produits.Remove(existingProduit);
+    if (existingProduit == null)
+        return Results.NotFound();
+
+    var nbProduitProspect = existingProduit.ProduitProspects?.Count();
+    var nbEvenement = existingProduit.Evenements?.Count();
+
+    if (nbEvenement + nbProduitProspect == 0)
+        db.Produits.Remove(existingProduit);
+    else
+        existingProduit.Actif = false;
+
     await db.SaveChangesAsync();
 
-    return Results.Ok();
+    return Results.Ok(new { Statut = nbEvenement + nbProduitProspect == 0 ? "Deleted" : "Disabled" });
 });
 
+app.MapDelete("/prospects/{idprospect:int}", [Authorize(Policy = "Admin")] async (int idProspect, ProspectManagerDbContext db) =>
+{
+    var existingProspect = await db.Prospects
+                                   .Include(p => p.Contacts)
+                                   .Include(p => p.Evenements)
+                                   .Include(p => p.ProduitProspects)
+                                   .FirstOrDefaultAsync(p => p.Id == idProspect);
+    if (existingProspect == null)
+        return Results.NotFound();
+
+    var nbContact = existingProspect.Contacts?.Count();
+    var nbEvenement = existingProspect.Evenements?.Count();
+    var nbProduitProspect = existingProspect.ProduitProspects?.Count();
+
+    if (nbContact + nbEvenement + nbProduitProspect == 0)
+        db.Prospects.Remove(existingProspect);
+    else
+        existingProspect.Actif = false;
+
+    await db.SaveChangesAsync();
+
+    return Results.Ok(new { Statut = nbContact + nbEvenement + nbProduitProspect == 0 ? "Deleted" : "Disabled" });
+});
 #endregion
 
 #region Gestion des prospects
@@ -239,12 +272,18 @@ await db.Prospects
         .ThenInclude(e => e.Contact)
     .Include(p => p.Evenements)
         .ThenInclude(e => e.Produits)
+    .Include(p => p.UtilisateurCreation)
     .FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
 Results.Ok(mapper.Map<ProspectResponseDTO>(prospect)) : Results.NotFound());
 
-app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, ProspectManagerDbContext db) =>
+app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, ProspectManagerDbContext db,IHttpContextAccessor httpContextAccessor) =>
 {
     prospect.DateCreation = DateTime.UtcNow;
+
+    var login = httpContextAccessor.HttpContext?.User.Identity?.Name;
+    var utilisateur = await db.Utilisateurs.FirstOrDefaultAsync(u => u.Login == login);
+    prospect.UtilisateurCreation = utilisateur;
+
     db.Prospects.Attach(prospect);
     await db.SaveChangesAsync();
 
@@ -307,6 +346,26 @@ app.MapPut("/prospects/{idprospect:int}/produits/{idproduit:int}",
     await db.SaveChangesAsync();
 
     return Results.Ok(existingProduitProspect);
+});
+
+app.MapDelete("/prospects/{idprospect:int}", [Authorize(Policy = "Admin")] async (int idProspect, ProspectManagerDbContext db) =>
+{
+    var existingProspect = await db.Prospects.FindAsync(idProspect);
+    if (existingProspect == null)
+        return Results.NotFound();
+
+    var nbContact = existingProspect.Contacts?.Count();
+    var nbEvenement = existingProspect.Evenements?.Count();
+    var nbProduitProspect = existingProspect.ProduitProspects?.Count();
+
+    if (nbContact + nbEvenement + nbProduitProspect == 0)
+        db.Prospects.Remove(existingProspect);
+    else
+        existingProspect.Actif = false;
+
+    await db.SaveChangesAsync();
+
+    return Results.Ok(new { Statut = nbContact + nbEvenement + nbProduitProspect == 0 ? "Deleted" : "Disabled" });
 });
 
 app.MapDelete("/prospects/{idprospect:int}/produits/{idproduit:int}",
@@ -477,7 +536,7 @@ app.MapPut("/types-evenement/{idtypeevenement:int}", [Authorize(Policy = "Admin"
     return Results.Ok(existingTypeEvenement);
 });
 
-app.MapDelete("/type-evenement/{idtypeevenement:int}", [Authorize(Policy = "Admin")] async (int idTypeEvenement, ProspectManagerDbContext db) =>
+app.MapDelete("/types-evenement/{idtypeevenement:int}", [Authorize(Policy = "Admin")] async (int idTypeEvenement, ProspectManagerDbContext db) =>
 {
     var existingTypeEvenement = await db.TypesEvenement.FindAsync(idTypeEvenement);
     if (existingTypeEvenement == null)
@@ -485,10 +544,16 @@ app.MapDelete("/type-evenement/{idtypeevenement:int}", [Authorize(Policy = "Admi
         return Results.NotFound();
     }
 
-    db.TypesEvenement.Remove(existingTypeEvenement);
+    var nbEvenement = db.Evenements.Count(e => e.TypeEvenement == existingTypeEvenement);
+
+    if (nbEvenement == 0)
+        db.TypesEvenement.Remove(existingTypeEvenement);
+    else
+        existingTypeEvenement.Actif = false;
+
     await db.SaveChangesAsync();
 
-    return Results.Ok();
+    return Results.Ok(new { Statut = nbEvenement == 0 ? "Deleted" : "Disabled" });
 });
 #endregion
 
@@ -531,10 +596,16 @@ app.MapDelete("/statuts/{idstatut:int}", [Authorize(Policy = "Admin")] async (in
         return Results.NotFound();
     }
 
-    db.Statuts.Remove(existingStatut);
+    var nbProspect = db.Prospects.Count(e => e.Statut == existingStatut);
+
+    if (nbProspect == 0)
+        db.Statuts.Remove(existingStatut);
+    else
+        existingStatut.Actif = false;
+
     await db.SaveChangesAsync();
 
-    return Results.Ok();
+    return Results.Ok(new { Statut = nbProspect == 0 ? "Deleted" : "Disabled" });
 });
 #endregion
 

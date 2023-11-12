@@ -4,6 +4,9 @@ import { TypeEvenement } from '../../../models/type-evenement';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { TypeEvenementService } from '../../../services/type-evenement.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-type-evenement-list',
@@ -12,13 +15,13 @@ import { TypeEvenementService } from '../../../services/type-evenement.service';
 })
 export class TypeEvenementListComponent {
   typeEvenements: MatTableDataSource<TypeEvenement>;
-  displayedColumns: string[] = ['id', 'libelle'];
+  displayedColumns: string[] = ['libelle', 'actions'];
   isLoading: boolean = true;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private typeEvenementService: TypeEvenementService) { }
+  constructor(public dialog: MatDialog, private typeEvenementService: TypeEvenementService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
     this.typeEvenementService.getTypesEvenement().subscribe((typeEvenements: TypeEvenement[]) => {
@@ -27,5 +30,58 @@ export class TypeEvenementListComponent {
       this.typeEvenements.paginator = this.paginator;
       this.isLoading = false;
     });
+  }
+
+  openDeleteConfirmationDialog(typeEvenement: TypeEvenement): void {
+    const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+      data: { message: "Voulez-vous vraiment supprimer ce type d'événement ?" }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteEvenement(typeEvenement);
+      }
+    });
+  }
+
+  private deleteEvenement(typeEvenement: TypeEvenement): void {
+    this.typeEvenementService.deleteTypeEvenement(typeEvenement.id).subscribe(
+      {
+        next: (deleteResponse) => {
+          if (deleteResponse.statut === "Deleted") {
+            const data = this.typeEvenements.data;
+            const index = data.findIndex((p) => p.id === typeEvenement.id);
+
+            if (index !== -1) {
+              data.splice(index, 1);
+              this.typeEvenements.data = data;
+            }
+          }
+          else {
+            typeEvenement.actif = false;
+          }
+
+
+          this.snackbarService.openSuccessSnackBar(deleteResponse.statut === "Deleted"
+            ? "🗑️ Suppression réussie !"
+            : "💤 Ce type d'événement est utilisé, il a été marqué comme inactif.");
+
+        },
+        error: () => this.snackbarService.openSuccessSnackBar("🙄 Erreur lors de la suppression.")
+      }
+    );
+  }
+
+  switchStatus(typeEvenement: TypeEvenement, actif: boolean): void {
+
+    this.typeEvenementService.updateTypeEvenement({ ...typeEvenement, actif }).subscribe(
+      {
+        next: () => {
+          this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);
+          typeEvenement.actif = actif;
+        },
+        error: () => this.snackbarService.openErrorSnackBar(`🙄 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation" }.`),
+      }
+    )
   }
 }

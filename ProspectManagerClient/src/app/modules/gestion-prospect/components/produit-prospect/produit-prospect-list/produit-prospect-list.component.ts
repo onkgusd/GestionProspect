@@ -17,7 +17,7 @@ import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-con
 })
 export class ProduitProspectListComponent implements OnInit {
   produitsProspect: MatTableDataSource<ProduitProspect>;
-  displayedColumns: string[] = ['id', 'reference', 'libelle', 'description', 'probabiliteSucces', 'actions'];
+  displayedColumns: string[] = ['reference', 'libelle', 'description', 'probabiliteSucces', 'actions'];
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;

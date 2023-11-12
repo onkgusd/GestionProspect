@@ -10,5 +10,6 @@ namespace ProspectManagerWebApi.Models
 
         [Required]
         public string? Libelle { get; set; }
+        public bool? Actif { get; set; }
     }
 }

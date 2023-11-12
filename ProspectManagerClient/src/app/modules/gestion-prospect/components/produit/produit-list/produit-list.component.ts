@@ -4,6 +4,9 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Produit } from '../../../models/produit';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 
 @Component({
   selector: 'app-produit-list',
@@ -12,12 +15,12 @@ import { MatPaginator } from '@angular/material/paginator';
 })
 export class ProduitListComponent implements OnInit {
   produits: MatTableDataSource<Produit>;
-  displayedColumns: string[] = ['id', 'reference', 'libelle', 'description'];
+  displayedColumns: string[] = ['reference', 'libelle', 'description', 'actions'];
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private produitService: ProduitService) { }
+  constructor(private produitService: ProduitService, public dialog: MatDialog, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
     this.produitService.getProduits().subscribe((produits: Produit[]) => {
@@ -25,5 +28,58 @@ export class ProduitListComponent implements OnInit {
       this.produits.sort = this.sort;
       this.produits.paginator = this.paginator;
     });
+  }
+
+  openDeleteConfirmationDialog(produit: Produit): void {
+    const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+      data: { message: "Voulez-vous vraiment supprimer ce produit ?" }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteEvenement(produit);
+      }
+    });
+  }
+
+  private deleteEvenement(produit: Produit): void {
+    this.produitService.deleteProduit(produit.id).subscribe(
+      {
+        next: (deleteResponse) => {
+          if (deleteResponse.statut === "Deleted") {
+            const data = this.produits.data;
+            const index = data.findIndex((p) => p.id === produit.id);
+
+            if (index !== -1) {
+              data.splice(index, 1);
+              this.produits.data = data;
+            }
+          }
+          else {
+            produit.actif = false;
+          }
+
+
+          this.snackbarService.openSuccessSnackBar(deleteResponse.statut === "Deleted"
+            ? "🗑️ Suppression réussie !"
+            : "💤 Ce produit est utilisé, il a été marqué comme inactif.");
+
+        },
+        error: () => this.snackbarService.openSuccessSnackBar("🙄 Erreur lors de la suppression.")
+      }
+    );
+  }
+
+  switchStatus(produit: Produit, actif: boolean): void {
+
+    this.produitService.updateProduit({ ...produit, actif }).subscribe(
+      {
+        next: () => {
+          this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);
+          produit.actif = actif;
+        },
+        error: () => this.snackbarService.openErrorSnackBar(`🙄 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation"}.`),
+      }
+    )
   }
 }

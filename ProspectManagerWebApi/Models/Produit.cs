@@ -15,6 +15,7 @@ namespace ProspectManagerWebApi.Models
         [Required]
         public string? Libelle {  get; set; }
         public string? Description { get; set; }
+        public bool? Actif { get; set; }
         public ICollection<ProduitProspect>? ProduitProspects { get; set; }
         public ICollection<Evenement>? Evenements { get; set; }
     }

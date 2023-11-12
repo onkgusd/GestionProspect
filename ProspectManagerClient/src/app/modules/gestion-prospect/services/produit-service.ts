@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, tap } from 'rxjs';
 import { Produit } from '../models/produit';
 import { environment } from 'src/environments/environment';
+import { DeleteResponseDto } from '../dto/delete-response-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,6 @@ export class ProduitService {
 
   getProduits(): Observable<Produit[]> {
     return this.http.get<Produit[]>(`${environment.baseUrl}/produits`).pipe(
-      tap(produitsList => console.log(produitsList)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -23,7 +23,6 @@ export class ProduitService {
 
   getProduit(id: number): Observable<Produit> {
     return this.http.get<Produit>(`${environment.baseUrl}/produits/${id}`).pipe(
-      tap(produit => console.log(produit)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -37,7 +36,6 @@ export class ProduitService {
     }
 
     return this.http.post<Produit>(`${environment.baseUrl}/produits`, produit, httpOptions).pipe(
-      tap(produit => console.log(produit)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -51,7 +49,6 @@ export class ProduitService {
     }
 
     return this.http.put<Produit>(`${environment.baseUrl}/produits/${produit.id}`, produit, httpOptions).pipe(
-      tap(response => console.log(response)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -59,9 +56,8 @@ export class ProduitService {
     );
   }
 
-  deleteProduit(produit: Produit) {
-    return this.http.delete<Produit>(`${environment.baseUrl}/produits/${produit.id}`).pipe(
-      tap(response => console.log(response)),
+  deleteProduit(idProduit: number) {
+    return this.http.delete<DeleteResponseDto>(`${environment.baseUrl}/produits/${idProduit}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

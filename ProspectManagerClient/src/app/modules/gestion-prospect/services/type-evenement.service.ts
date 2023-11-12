@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { TypeEvenement } from '../models/type-evenement';
 import { environment } from 'src/environments/environment';
 import { Observable, catchError, tap } from 'rxjs';
+import { DeleteResponseDto } from '../dto/delete-response-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,6 @@ export class TypeEvenementService {
 
   getTypesEvenement(): Observable<TypeEvenement[]> {
     return this.http.get<TypeEvenement[]>(`${environment.baseUrl}/types-evenement`).pipe(
-      tap(typeEvenementList => console.log(typeEvenementList)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -23,7 +23,6 @@ export class TypeEvenementService {
 
   getTypeEvenement(id: number): Observable<TypeEvenement> {
     return this.http.get<TypeEvenement>(`${environment.baseUrl}/types-evenement/${id}`).pipe(
-      tap(typeEvenement => console.log(typeEvenement)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -37,7 +36,6 @@ export class TypeEvenementService {
     }
 
     return this.http.post<TypeEvenement>(`${environment.baseUrl}/types-evenement`, typeEvenement, httpOptions).pipe(
-      tap(produit => console.log(produit)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -51,7 +49,6 @@ export class TypeEvenementService {
     }
 
     return this.http.put<TypeEvenement>(`${environment.baseUrl}/types-evenement/${typeEvenement.id}`, typeEvenement, httpOptions).pipe(
-      tap(response => console.log(response)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -59,9 +56,8 @@ export class TypeEvenementService {
     );
   }
 
-  deleteProduit(typeEvenement: TypeEvenement) {
-    return this.http.delete<TypeEvenement>(`${environment.baseUrl}/types-evenement/${typeEvenement.id}`).pipe(
-      tap(response => console.log(response)),
+  deleteTypeEvenement(idTypeEvenement: number)  {
+    return this.http.delete<DeleteResponseDto>(`${environment.baseUrl}/types-evenement/${idTypeEvenement}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

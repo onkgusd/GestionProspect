@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProspectManagerWebApi.Data;
 
@@ -11,9 +12,11 @@ using ProspectManagerWebApi.Data;
 namespace ProspectManagerWebApi.Migrations
 {
     [DbContext(typeof(ProspectManagerDbContext))]
-    partial class ProspectManagerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231112200245_AddActifFieldsToEntities")]
+    partial class AddActifFieldsToEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -211,9 +214,6 @@ namespace ProspectManagerWebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool?>("Actif")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -261,9 +261,6 @@ namespace ProspectManagerWebApi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Actif")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Adresse")
                         .HasColumnType("nvarchar(max)");

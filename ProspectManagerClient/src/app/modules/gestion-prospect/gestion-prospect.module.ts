@@ -99,7 +99,8 @@ const gestionProspectRoutes: Routes = [
     ContactListComponent, ContactFormComponent, ContactEditComponent, ContactAddComponent,
     StatutListComponent, StatutFormComponent, StatutEditComponent, StatutAddComponent,
     ProduitProspectListComponent, RatingComponent, ProduitProspectDialogComponent,
-    EvenementListComponent, EvenementFormComponent, EvenementEditComponent, EvenementAddComponent, UtilisateurListComponent, UtilisateurFormComponent, UtilisateurEditComponent, UtilisateurAddComponent],
+    EvenementListComponent, EvenementFormComponent, EvenementEditComponent, EvenementAddComponent,
+    UtilisateurListComponent, UtilisateurFormComponent, UtilisateurEditComponent, UtilisateurAddComponent],
   imports: [
     CommonModule,
     BrowserModule,
