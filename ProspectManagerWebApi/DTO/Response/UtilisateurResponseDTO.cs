@@ -5,7 +5,8 @@
         public int Id { get; set; }
         public string Login { get; set; }
         public string? MotDePasse { get; set; }
-        public string Role { get; set; }
+        public string? Email { get; set; }
+        public string? Role { get; set; }
         public bool Actif { get; set; }
         public DateTime? DateConnexion { get; set; }
         public DateTime? DateModificationMotDePasse { get; set; }

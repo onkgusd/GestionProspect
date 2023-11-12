@@ -55,7 +55,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<PasswordResetService>();
+builder.Services.AddScoped<PasswordManagerService>();
 builder.Services.AddDbContext<ProspectManagerDbContext>();
 
 // Configuration de l'authentification JWT
@@ -163,14 +163,14 @@ SecurityAlgorithms.HmacSha512);
     return Results.Ok(new LoginResponseDTO() { Token = stringToken, ExpirationDate = expirationDate });
 });
 
-app.MapPost("/authentication/demande-reinitialisation", async (HttpContext http, PasswordResetService resetService, [FromBody] PasswordResetLinkRequestDTO passwordResetLinkRequest) =>
+app.MapPost("/authentication/demande-reinitialisation", async (HttpContext http, PasswordManagerService resetService, [FromBody] PasswordResetLinkRequestDTO passwordResetLinkRequest) =>
 {
     await resetService.RequestPasswordReset(passwordResetLinkRequest.Email);
     return Results.Ok("Demande de réinitialisation envoyée.");
 });
 
 // Endpoint pour réinitialiser le mot de passe
-app.MapPost("/authentication/reinitialiser-motdepasse", async (HttpContext http, PasswordResetService resetService, [FromBody] PasswordReinitRequestDTO passwordReinitRequest) =>
+app.MapPost("/authentication/reinitialiser-motdepasse", async (HttpContext http, PasswordManagerService resetService, [FromBody] PasswordReinitRequestDTO passwordReinitRequest) =>
     await resetService.ReinitPassword(passwordReinitRequest.Email, passwordReinitRequest.NouveauMotDePasse, passwordReinitRequest.Token)
     ? Results.Ok("Mot de passe réinitialisé.") :  Results.BadRequest("Impossible de réinitialiser le mot de passe (token invalide ou déjà utilisé)."));
 
@@ -546,17 +546,17 @@ app.MapGet("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] as
     await db.Utilisateurs.FindAsync(idUtilisateur) is Utilisateur utilisateur ?
     Results.Ok(mapper.Map<UtilisateurResponseDTO>(utilisateur)) : Results.NotFound());
 
-app.MapPost("/utilisateurs", [Authorize(Policy = "Admin")] async ([FromBody] UtilisateurRequestDTO utilisateur, ProspectManagerDbContext db) =>
+app.MapPost("/utilisateurs", [Authorize(Policy = "Admin")] async ([FromBody] UtilisateurRequestDTO utilisateur,
+                                                                    ProspectManagerDbContext db,
+                                                                    PasswordManagerService passwordManagerService) =>
 {
-    if (string.IsNullOrEmpty(utilisateur.MotDePasse))
-        return Results.BadRequest("Le mot de passe n'a pas été fourni.");
-
     var utilisateurEntity = mapper.Map<Utilisateur>(utilisateur);
-    utilisateurEntity.Empreinte = PasswordHelper.HashPassword(utilisateur.MotDePasse);
 
     db.Utilisateurs.Add(utilisateurEntity);
 
     await db.SaveChangesAsync();
+
+    await passwordManagerService.SendInvitationEmail(utilisateurEntity);
 
     return Results.Created($"/utilisateurs/{utilisateur.Id}", mapper.Map<UtilisateurResponseDTO>(utilisateurEntity));
 });

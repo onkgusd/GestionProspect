@@ -21,6 +21,7 @@ export class ReinitMotDePasseComponent implements OnInit {
   constructor(private route: ActivatedRoute, private snackbarService: SnackbarService, private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
+    this.authService.logout();
     this.token = this.route.snapshot.queryParamMap.get('token');
     if (!this.token) {
        this.snackbarService.openErrorSnackBar("Demande invalide !");
@@ -34,7 +35,7 @@ export class ReinitMotDePasseComponent implements OnInit {
         next: (result) => {
           if (result){
             this.snackbarService.openSuccessSnackBar("Mot passe réinitialisé :)");
-            this.router.navigate(["/login"]);
+            this.authService.login(this.email, this.motdepasse).subscribe(() => this.router.navigate(["/login"]));
           }
           else {
             this.snackbarService.openErrorSnackBar("Une erreur est survenue lors de la modification du mot de passe...");

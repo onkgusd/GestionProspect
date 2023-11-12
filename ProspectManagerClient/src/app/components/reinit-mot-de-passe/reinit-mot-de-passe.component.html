@@ -8,7 +8,7 @@
         <div fxLayout="row" fxLayoutAlign="center center">
             <mat-card class="center-container" style="max-width: 500px;">
                 <mat-card-header fxLayoutAlign="center center">
-                    <mat-card-title>Réinitialisation du mot de passe</mat-card-title>
+                    <mat-card-title>Définition du mot de passe</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                     <form #reinitMotdepasseForm="ngForm" (ngSubmit)="onSubmit(reinitMotdepasseForm)">
@@ -17,13 +17,13 @@
                             <input matInput placeholder="exemple@exemple.fr" type="email" name="username"
                                 [(ngModel)]="email" required email #emailInput="ngModel"> <mat-error
                                 *ngIf="emailInput.invalid && emailInput.errors?.['email']">Veuillez saisir une adresse
-                                email
-                                valide</mat-error>
+                                email valide</mat-error>
                         </mat-form-field>
                         <mat-form-field class="full-width">
                             <mat-label>Nouveau mot de passe</mat-label>
                             <input matInput placeholder="Mot de passe" #passwordInput name="motdepasse" minlength="12"
-                                [(ngModel)]="motdepasse" required [type]="showPassword ? 'text' : 'password'" (input)="setPasswordHasBeenChanged()">
+                                [(ngModel)]="motdepasse" required [type]="showPassword ? 'text' : 'password'"
+                                (input)="setPasswordHasBeenChanged()">
                             <mat-icon matSuffix *ngIf="passwordHasBeenChanged"
                                 (click)="showPassword = !showPassword">{{showPassword ?
                                 'visibility' : 'visibility_off'}}</mat-icon>
@@ -33,8 +33,7 @@
                         <div fxLayout="row" fxLayoutAlign="center">
                             <button mat-raised-button color="secondary" type="button" routerLink="..">Annuler</button>
                             <button mat-raised-button color="primary" type="submit"
-                                [disabled]="!reinitMotdepasseForm.form.valid || isSubmitting">Lancer la
-                                procédure</button>
+                                [disabled]="!reinitMotdepasseForm.form.valid || isSubmitting">Définir le mot de passe</button>
                         </div>
                     </form>
                 </mat-card-content>

@@ -15,12 +15,8 @@
       </mat-form-field>
       <br />
       <mat-form-field class="full-width">
-        <mat-label>Mot de passe</mat-label>
-        <input matInput placeholder="Mot de passe" #passwordInput name="motdepasse" [(ngModel)]="utilisateur.motdepasse"
-          [required]="isAddForm" [type]="showPassword ? 'text' : 'password'" (input)="setPasswordHasBeenChanged()" minlength="12">
-        <mat-icon matSuffix *ngIf="passwordHasBeenChanged" (click)="showPassword = !showPassword">{{showPassword ?
-          'visibility' : 'visibility_off'}}</mat-icon>
-        <mat-icon matSuffix (click)="generatePassword()">refresh</mat-icon>
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="exemple@exemple.fr" name="email" [(ngModel)]="utilisateur.email" required type="email">
       </mat-form-field>
       <br />
       <mat-form-field class="full-width">
@@ -34,6 +30,16 @@
       </mat-form-field>
       <br />
       <mat-checkbox name="actif" [(ngModel)]="utilisateur.actif">Actif</mat-checkbox>
+      <br />
+      <mat-form-field class="full-width" *ngIf="!isAddForm">
+        <mat-label>Mot de passe</mat-label>
+        <input matInput placeholder="Mot de passe" #passwordInput name="motdepasse" [(ngModel)]="utilisateur.motdepasse"
+          [required]="isAddForm" [type]="showPassword ? 'text' : 'password'" (input)="setPasswordHasBeenChanged()" minlength="12">
+        <mat-icon matSuffix *ngIf="passwordHasBeenChanged" (click)="showPassword = !showPassword">{{showPassword ?
+          'visibility' : 'visibility_off'}}</mat-icon>
+        <mat-icon matSuffix (click)="generatePassword()">refresh</mat-icon>
+        <mat-hint *ngIf="passwordHasBeenChanged">Laissez ce champ vide si vous ne souhaitez pas redéfinir le mot de passe</mat-hint>
+      </mat-form-field>
       <br />
       <mat-form-field class="full-width" *ngIf="!isAddForm">
         <mat-label>Dernière connexion</mat-label>

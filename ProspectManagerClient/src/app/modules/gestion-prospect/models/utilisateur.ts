@@ -5,6 +5,7 @@ export class Utilisateur
     dateConnexion: Date;
     dateModificationMotDePasse: Date;
     role: "Admin" | "Utilisateur";
-    actif: boolean;
+    actif: boolean = true;
     motdepasse: string;
+    email: string;
 }

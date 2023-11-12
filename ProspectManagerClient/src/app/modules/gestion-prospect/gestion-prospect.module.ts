@@ -22,6 +22,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDividerModule } from '@angular/material/divider'
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoaderModule } from '../loader/loader.module';
@@ -125,6 +126,7 @@ const gestionProspectRoutes: Routes = [
     MatNativeDateModule,
     MatChipsModule,
     MatAutocompleteModule,
+    MatDividerModule,
     ReactiveFormsModule,
     RouterModule.forChild(gestionProspectRoutes),
     FlexLayoutModule,
