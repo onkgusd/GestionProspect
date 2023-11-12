@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using ProspectManagerWebApi.Helpers;
 using System.Web;
+using System.Net;
 
 namespace ProspectManagerWebApi.Services
 {
@@ -22,7 +23,7 @@ namespace ProspectManagerWebApi.Services
             _emailService = emailService;
         }
 
-        internal async Task RequestPasswordReset(string email)
+        internal async Task RequestPasswordReset(string email, IPAddress adresseIP = null)
         {
             var token = GeneratePasswordResetToken();
 
@@ -32,9 +33,14 @@ namespace ProspectManagerWebApi.Services
             if (utilisateur == null)
                 return;
 
+            if (adresseIP.IsIPv4MappedToIPv6)
+            {
+                adresseIP = adresseIP.MapToIPv4();
+            }
+
             var tokenDuration = int.Parse(_configuration["PasswordLink:DureeValiditeLienReinitMdpEnHeure"] ?? "0");
 
-            await SaveTokenToDatabase(utilisateur, token, DateTime.UtcNow.AddHours(tokenDuration));
+            await SaveTokenToDatabase(utilisateur, token, DateTime.UtcNow.AddHours(tokenDuration), adresseIP.ToString() ?? "Adresse IP inconnue");
 
             await SendPasswordResetEmail(utilisateur, token, tokenDuration);
         }
@@ -108,13 +114,14 @@ namespace ProspectManagerWebApi.Services
                 emailBody);
         }
 
-        private async Task SaveTokenToDatabase(Utilisateur utilisateur, string token, DateTime expirationDate)
+        private async Task SaveTokenToDatabase(Utilisateur utilisateur, string token, DateTime expirationDate, string IPAddress = null)
         {
             var passwordResetToken = new PasswordResetToken
             {
                 Token = token,
                 ExpirationDate = expirationDate,
-                IsUsed = false
+                IsUsed = false,
+                IPAddress = IPAddress
             };
 
             utilisateur.PasswordResetTokens?.Add(passwordResetToken);

@@ -1,13 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProspectManagerWebApi.Models
 {
+    [Index(nameof(Nom), IsUnique = true)]
     public class Prospect : ITableHistorique
     {
         public int Id { get; set; }
 
         [Required]
-        public string Nom { get; set; }
+        public string? Nom { get; set; }
         public string? Departement { get; set; }
         public string? Adresse { get; set; }
         public string? Telephone { get; set; }

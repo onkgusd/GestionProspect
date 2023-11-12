@@ -1,8 +1,14 @@
-﻿namespace ProspectManagerWebApi.Models
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+
+namespace ProspectManagerWebApi.Models
 {
+    [Index(nameof(Libelle), IsUnique = true)]
     public class TypeEvenement
     {
         public int Id { get; set; }
-        public string Libelle { get; set; }
+
+        [Required]
+        public string? Libelle { get; set; }
     }
 }

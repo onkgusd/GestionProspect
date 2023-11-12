@@ -165,7 +165,7 @@ SecurityAlgorithms.HmacSha512);
 
 app.MapPost("/authentication/demande-reinitialisation", async (HttpContext http, PasswordManagerService resetService, [FromBody] PasswordResetLinkRequestDTO passwordResetLinkRequest) =>
 {
-    await resetService.RequestPasswordReset(passwordResetLinkRequest.Email);
+    await resetService.RequestPasswordReset(passwordResetLinkRequest.Email, http.Connection.RemoteIpAddress);
     return Results.Ok("Demande de réinitialisation envoyée.");
 });
 
