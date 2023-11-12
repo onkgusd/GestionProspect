@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { jwtDecode } from "jwt-decode";
+import { ReinitMotDePasseDto } from '../modules/gestion-prospect/dto/reinit-motdepasse-dto';
 
 interface AuthResponse {
   token: string;
@@ -17,7 +18,7 @@ export class AuthService {
   private token: string | undefined = localStorage.getItem("token") ?? void 0;
   private role: string | undefined;
   private userName: string | undefined;
-  
+
   private _isLoggedIn = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this._isLoggedIn.asObservable();
 
@@ -30,7 +31,7 @@ export class AuthService {
   constructor(private http: HttpClient) {
     if (this.token)
       this.readToken(this.token);
-   }
+  }
 
   login(login: string, password: string): Observable<boolean> {
     const httpOptions = {
@@ -74,7 +75,7 @@ export class AuthService {
   private readToken(token: string): boolean {
     const decodedToken = this.getDecodedToken(token);
 
-    if (decodedToken){
+    if (decodedToken) {
       this.role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       this.userName = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] as string;
       this._userName.next(this.userName);
@@ -96,5 +97,38 @@ export class AuthService {
     catch (Error) {
       return null;
     }
+  }
+
+  demandeLienReinitialisationMotDePasse(email: string) {
+    const httpOptions = {
+      headers: new HttpHeaders({ "Content-Type": "application/json" })
+    }
+
+    return this.http.post<AuthResponse>(`${environment.baseUrl}/authentication/demande-reinitialisation`, { email }, httpOptions).pipe(
+      map(() => {
+        return true;
+      }),
+      catchError((error) => {
+        console.log(error);
+        return of(false);
+      })
+    );
+  }
+
+  reinitMotDePasse(email: string, nouveauMotDePasse: string, token: string) {
+    const httpOptions = {
+      headers: new HttpHeaders({ "Content-Type": "application/json" })
+    }
+    const request: ReinitMotDePasseDto = { email, nouveauMotDePasse, token };
+
+    return this.http.post<AuthResponse>(`${environment.baseUrl}/authentication/reinitialiser-motdepasse`, request, httpOptions).pipe(
+      map(() => {
+        return true;
+      }),
+      catchError((error) => {
+        console.log(error);
+        return of(false);
+      })
+    );
   }
 }

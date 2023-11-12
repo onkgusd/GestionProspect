@@ -17,7 +17,7 @@
       <mat-form-field class="full-width">
         <mat-label>Mot de passe</mat-label>
         <input matInput placeholder="Mot de passe" #passwordInput name="motdepasse" [(ngModel)]="utilisateur.motdepasse"
-          [required]="isAddForm" [type]="showPassword ? 'text' : 'password'" (input)="setPasswordHasBeenChanged()">
+          [required]="isAddForm" [type]="showPassword ? 'text' : 'password'" (input)="setPasswordHasBeenChanged()" minlength="12">
         <mat-icon matSuffix *ngIf="passwordHasBeenChanged" (click)="showPassword = !showPassword">{{showPassword ?
           'visibility' : 'visibility_off'}}</mat-icon>
         <mat-icon matSuffix (click)="generatePassword()">refresh</mat-icon>

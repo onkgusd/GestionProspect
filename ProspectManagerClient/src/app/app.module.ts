@@ -32,11 +32,15 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { DeleteConfirmationDialogComponent } from './components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { ForbiddenComponent } from './components/forbidden/forbidden.component';
+import { MotDePasseOublieComponent } from './components/mot-de-passe-oublie/mot-de-passe-oublie.component';
+import { ReinitMotDePasseComponent } from './components/reinit-mot-de-passe/reinit-mot-de-passe.component';
 
 const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
   { path: "login", component: LoginComponent },
   { path: "forbidden", component: ForbiddenComponent },
+  { path: "login/mot-de-passe-oublie", component: MotDePasseOublieComponent },
+  { path: "login/reinit-mot-de-passe", component: ReinitMotDePasseComponent },
   { path: "**", component: PageNotFoundComponent }
 ];
 
@@ -46,7 +50,9 @@ const routes: Routes = [
     LoginComponent,
     PageNotFoundComponent,
     DeleteConfirmationDialogComponent,
-    ForbiddenComponent
+    ForbiddenComponent,
+    MotDePasseOublieComponent,
+    ReinitMotDePasseComponent
   ],
   imports: [
     HttpClientModule,

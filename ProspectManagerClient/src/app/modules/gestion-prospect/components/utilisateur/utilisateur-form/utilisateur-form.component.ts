@@ -4,6 +4,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 import { UtilisateurService } from '../../../services/utilisateur.service';
 import { Location } from '@angular/common';
 import { environment } from 'src/environments/environment';
+import { PasswordHelper } from 'src/app/utils/PasswordHelper';
 
 @Component({
   selector: 'app-utilisateur-form',
@@ -63,15 +64,7 @@ export class UtilisateurFormComponent implements OnInit {
   }
 
   generatePassword() {
-    const length = environment.passwordLength;
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+<>?";
-    let password = "";
-  
-    for (let i = 0, n = charset.length; i < length; ++i) {
-      password += charset.charAt(Math.floor(Math.random() * n));
-    }
-
-    this.utilisateur.motdepasse = password;
+    this.utilisateur.motdepasse = PasswordHelper.generatePassword();
     this.showPassword = true;
     this.setPasswordHasBeenChanged();
   }

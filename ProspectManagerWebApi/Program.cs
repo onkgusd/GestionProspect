@@ -10,11 +10,13 @@ using ProspectManagerWebApi.DTO.Request;
 using ProspectManagerWebApi.DTO.Response;
 using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
+using ProspectManagerWebApi.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
 
+#region Build Webapi
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
@@ -51,6 +53,9 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<PasswordResetService>();
 
 // Add services to the container.
 builder.Services.AddDbContext<ProspectManagerDbContext>();
@@ -104,6 +109,8 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseCors();
 
+#endregion
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -114,12 +121,15 @@ if (app.Environment.IsDevelopment())
 app.MapPost("/authentication/getToken",
 [AllowAnonymous] async (LoginRequestDTO user, ProspectManagerDbContext db) =>
 {
-    var utilisateur = await db.Utilisateurs.FirstAsync(u => u.Login == user.Login && u.Actif);
+    var utilisateur = await db.Utilisateurs
+                              .FirstAsync(u => (u.Login == user.Login
+                                               || u.Email == user.Login)
+                                               && u.Actif);
 
     if (utilisateur == null || !PasswordHelper.VerifyPassword(user.Password, utilisateur.Empreinte))
         return Results.Unauthorized();
 
-    utilisateur.DateConnexion = DateTime.Now;
+    utilisateur.DateConnexion = DateTime.UtcNow;
     await db.SaveChangesAsync();
 
     var issuer = builder.Configuration["Jwt:Issuer"];
@@ -145,6 +155,18 @@ SecurityAlgorithms.HmacSha512);
 
     return Results.Ok(new LoginResponseDTO() { Token = stringToken, ExpirationDate = expirationDate });
 });
+
+app.MapPost("/authentication/demande-reinitialisation", async (HttpContext http, PasswordResetService resetService, [FromBody] PasswordResetLinkRequestDTO passwordResetLinkRequest) =>
+{
+    await resetService.RequestPasswordReset(passwordResetLinkRequest.Email);
+    return Results.Ok("Demande de rÃ©initialisation envoyÃ©e.");
+});
+
+// Endpoint pour rÃ©initialiser le mot de passe
+app.MapPost("/authentication/reinitialiser-motdepasse", async (HttpContext http, PasswordResetService resetService, [FromBody] PasswordReinitRequestDTO passwordReinitRequest) =>
+    await resetService.ReinitPassword(passwordReinitRequest.Email, passwordReinitRequest.NouveauMotDePasse, passwordReinitRequest.Token)
+    ? Results.Ok("Mot de passe rÃ©initialisÃ©.") : Results.Forbid());
+
 #endregion
 
 #region Gestion des produits
@@ -166,7 +188,7 @@ app.MapPost("/produits", [Authorize(Policy = "Admin")] async ([FromBody] Produit
 app.MapPut("/produits/{idproduit:int}", [Authorize] async ([FromBody] Produit updatedProduit, int idProduit, ProspectManagerDbContext db) =>
 {
     if (idProduit != updatedProduit.Id)
-        return Results.BadRequest("Les identifiants produits ne sont pas cohérents.");
+        return Results.BadRequest("Les identifiants produits ne sont pas cohÃ©rents.");
 
     var existingProduit = await db.Produits.FindAsync(idProduit);
     if (existingProduit == null)
@@ -225,7 +247,7 @@ app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, Pros
 app.MapPut("/prospects/{idprospect:int}", [Authorize] async ([FromBody] Prospect updatedProspect, int idProspect, ProspectManagerDbContext db) =>
 {
     if (idProspect != updatedProspect.Id)
-        return Results.BadRequest("Les identifiants produits ne sont pas cohérents.");
+        return Results.BadRequest("Les identifiants produits ne sont pas cohÃ©rents.");
 
     var existingProspect = await db.Prospects.Include(p => p.Statut).FirstAsync(p => p.Id == idProspect);
 
@@ -318,9 +340,9 @@ app.MapPost("/prospects/{idprospect:int}/contacts/", [Authorize] async ([FromBod
 {
     var prospect = await db.Prospects.Include(p => p.Contacts).FirstOrDefaultAsync(p => p.Id == idProspect);
     if (prospect == null)
-        return Results.NotFound($"Aucun prospect trouvé avec l'ID {idProspect}.");
+        return Results.NotFound($"Aucun prospect trouvÃ© avec l'ID {idProspect}.");
 
-    prospect.Contacts.Add(contact);
+    prospect?.Contacts?.Add(contact);
 
     await db.SaveChangesAsync();
     return Results.Created($"/prospects/{idProspect}/contacts/{contact.Id}", contact);
@@ -329,7 +351,7 @@ app.MapPost("/prospects/{idprospect:int}/contacts/", [Authorize] async ([FromBod
 app.MapPut("/contacts/{idcontact:int}", [Authorize] async ([FromBody] Contact updatedContact, int idcontact, ProspectManagerDbContext db) =>
 {
     if (idcontact != updatedContact.Id)
-        return Results.BadRequest("Les identifiants de contact ne sont pas cohérents.");
+        return Results.BadRequest("Les identifiants de contact ne sont pas cohÃ©rents.");
 
     var existingContact = await db.Contacts.FindAsync(idcontact);
     if (existingContact == null)
@@ -356,7 +378,7 @@ app.MapDelete("/contacts/{idContact:int}", [Authorize] async (int idContact, Pro
 });
 #endregion
 
-#region Gestion des événements
+#region Gestion des Ã©vÃ©nements
 app.MapGet("/evenements", async (ProspectManagerDbContext db) =>
     await db.Evenements.ToListAsync());
 
@@ -375,7 +397,7 @@ app.MapPost("/prospects/{idProspect:int}/evenements", [Authorize] async ([FromBo
 {
     var prospect = await db.Prospects.Include(p => p.Evenements).FirstOrDefaultAsync(p => p.Id == idProspect);
     if (prospect == null)
-        return Results.NotFound($"Aucun prospect trouvé avec l'ID {idProspect}.");
+        return Results.NotFound($"Aucun prospect trouvÃ© avec l'ID {idProspect}.");
 
     prospect.Evenements?.Add(evenement);
 
@@ -386,7 +408,7 @@ app.MapPost("/prospects/{idProspect:int}/evenements", [Authorize] async ([FromBo
 app.MapPut("/evenements/{idEvenement:int}", [Authorize] async ([FromBody] Evenement updatedEvenement, int idEvenement, ProspectManagerDbContext db) =>
 {
     if (idEvenement != updatedEvenement.Id)
-        return Results.BadRequest("Les identifiants d'événement ne sont pas cohérents.");
+        return Results.BadRequest("Les identifiants d'Ã©vÃ©nement ne sont pas cohÃ©rents.");
 
     var existingEvenement = await db.Evenements.Include(e => e.Produits).FirstAsync(e => e.Id == idEvenement);
     if (existingEvenement == null)
@@ -417,7 +439,7 @@ app.MapDelete("/evenements/{idEvenement:int}", [Authorize] async (int idEvenemen
 });
 #endregion
 
-#region Gestion des type d'événement
+#region Gestion des type d'Ã©vÃ©nement
 app.MapGet("/types-evenement", [Authorize] async (ProspectManagerDbContext db) =>
     await db.TypesEvenement.ToListAsync());
 
@@ -436,7 +458,7 @@ app.MapPost("/types-evenement", [Authorize(Policy = "Admin")] async ([FromBody] 
 app.MapPut("/types-evenement/{idtypeevenement:int}", [Authorize(Policy = "Admin")] async ([FromBody] TypeEvenement updatedTypeEvenement, int idTypeEvenement, ProspectManagerDbContext db) =>
 {
     if (idTypeEvenement != updatedTypeEvenement.Id)
-        return Results.BadRequest("Les identifiants ne sont pas cohérents.");
+        return Results.BadRequest("Les identifiants ne sont pas cohÃ©rents.");
 
     var existingTypeEvenement = await db.TypesEvenement.FindAsync(idTypeEvenement);
     if (existingTypeEvenement == null)
@@ -482,7 +504,7 @@ app.MapGet("/statuts/{idstatut:int}", [Authorize] async (int idStatut, ProspectM
 app.MapPut("/statuts/{idstatut:int}", [Authorize] async ([FromBody] Statut updatedStatut, int idStatut, ProspectManagerDbContext db) =>
 {
     if (idStatut != updatedStatut.Id)
-        return Results.BadRequest("Les identifiants ne sont pas cohérents.");
+        return Results.BadRequest("Les identifiants ne sont pas cohÃ©rents.");
 
     var existingStatut = await db.Statuts.FindAsync(idStatut);
     if (existingStatut == null)
@@ -520,7 +542,7 @@ app.MapGet("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] as
 app.MapPost("/utilisateurs", [Authorize(Policy = "Admin")] async ([FromBody] UtilisateurRequestDTO utilisateur, ProspectManagerDbContext db) =>
 {
     if (string.IsNullOrEmpty(utilisateur.MotDePasse))
-        return Results.BadRequest("Le mot de passe n'a pas été fourni.");
+        return Results.BadRequest("Le mot de passe n'a pas Ã©tÃ© fourni.");
 
     var utilisateurEntity = mapper.Map<Utilisateur>(utilisateur);
     utilisateurEntity.Empreinte = PasswordHelper.HashPassword(utilisateur.MotDePasse);
@@ -535,7 +557,7 @@ app.MapPost("/utilisateurs", [Authorize(Policy = "Admin")] async ([FromBody] Uti
 app.MapPut("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] async ([FromBody] UtilisateurRequestDTO updatedUtilisateur, int idUtilisateur, ProspectManagerDbContext db) =>
 {
     if (idUtilisateur != updatedUtilisateur.Id)
-        return Results.BadRequest("Les identifiants ne sont pas cohérents.");
+        return Results.BadRequest("Les identifiants ne sont pas cohÃ©rents.");
 
     var existingUtilisateur = await db.Utilisateurs.FindAsync(idUtilisateur);
     if (existingUtilisateur == null)
@@ -546,7 +568,7 @@ app.MapPut("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] as
     if (!string.IsNullOrEmpty(updatedUtilisateur.MotDePasse))
     {
         existingUtilisateur.Empreinte = PasswordHelper.HashPassword(updatedUtilisateur.MotDePasse);
-        existingUtilisateur.DateModificationMotDePasse = DateTime.Now;
+        existingUtilisateur.DateModificationMotDePasse = DateTime.UtcNow;
     }
 
     await db.SaveChangesAsync();
