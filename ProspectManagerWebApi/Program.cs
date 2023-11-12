@@ -56,8 +56,6 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<PasswordResetService>();
-
-// Add services to the container.
 builder.Services.AddDbContext<ProspectManagerDbContext>();
 
 // Configuration de l'authentification JWT
@@ -97,11 +95,20 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
-    mc.AddProfile(new MappingProfile()); // Votre classe de profil de mappage
+    mc.AddProfile(new MappingProfile());
 });
 
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
+
+var emailConfig = builder.Configuration.GetSection("EmailSettings");
+builder.Services.AddSingleton(new EmailService(
+    emailConfig["SmtpServer"] ?? "",
+    int.Parse(emailConfig["SmtpPort"] ?? "0"),
+    emailConfig["FromAddress"] ?? "",
+    emailConfig["Login"] ?? "",
+    emailConfig["Password"] ?? ""
+));
 
 var app = builder.Build();
 
@@ -165,7 +172,7 @@ app.MapPost("/authentication/demande-reinitialisation", async (HttpContext http,
 // Endpoint pour réinitialiser le mot de passe
 app.MapPost("/authentication/reinitialiser-motdepasse", async (HttpContext http, PasswordResetService resetService, [FromBody] PasswordReinitRequestDTO passwordReinitRequest) =>
     await resetService.ReinitPassword(passwordReinitRequest.Email, passwordReinitRequest.NouveauMotDePasse, passwordReinitRequest.Token)
-    ? Results.Ok("Mot de passe réinitialisé.") : Results.Forbid());
+    ? Results.Ok("Mot de passe réinitialisé.") :  Results.BadRequest("Impossible de réinitialiser le mot de passe (token invalide ou déjà utilisé)."));
 
 #endregion
 

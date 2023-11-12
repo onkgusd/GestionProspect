@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { PasswordHelper } from 'src/app/utils/PasswordHelper';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-reinit-mot-de-passe',
@@ -32,7 +31,15 @@ export class ReinitMotDePasseComponent implements OnInit {
   onSubmit(form: NgForm) {
     if (form.valid) { 
       this.authService.reinitMotDePasse(this.email, this.motdepasse, this.token || "").subscribe({
-        next: () => this.snackbarService.openSuccessSnackBar("Mot passe réinitialisé :)"),
+        next: (result) => {
+          if (result){
+            this.snackbarService.openSuccessSnackBar("Mot passe réinitialisé :)");
+            this.router.navigate(["/login"]);
+          }
+          else {
+            this.snackbarService.openErrorSnackBar("Une erreur est survenue lors de la modification du mot de passe...");
+          }
+        },
         error: () => this.snackbarService.openErrorSnackBar("Une erreur est survenue lors de la modification du mot de passe...")
       });
     }

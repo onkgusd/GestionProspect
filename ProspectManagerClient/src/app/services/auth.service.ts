@@ -104,10 +104,8 @@ export class AuthService {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     }
 
-    return this.http.post<AuthResponse>(`${environment.baseUrl}/authentication/demande-reinitialisation`, { email }, httpOptions).pipe(
-      map(() => {
-        return true;
-      }),
+    return this.http.post(`${environment.baseUrl}/authentication/demande-reinitialisation`, { email }, httpOptions).pipe(
+      map(() => true),
       catchError((error) => {
         console.log(error);
         return of(false);
@@ -115,16 +113,13 @@ export class AuthService {
     );
   }
 
-  reinitMotDePasse(email: string, nouveauMotDePasse: string, token: string) {
+  reinitMotDePasse(email: string, nouveauMotDePasse: string, token: string): Observable<boolean> {
     const httpOptions = {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     }
     const request: ReinitMotDePasseDto = { email, nouveauMotDePasse, token };
 
-    return this.http.post<AuthResponse>(`${environment.baseUrl}/authentication/reinitialiser-motdepasse`, request, httpOptions).pipe(
-      map(() => {
-        return true;
-      }),
+    return this.http.post<any>(`${environment.baseUrl}/authentication/reinitialiser-motdepasse`, request, httpOptions).pipe(
       catchError((error) => {
         console.log(error);
         return of(false);

@@ -3,7 +3,6 @@ using ProspectManagerWebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using ProspectManagerWebApi.Helpers;
-using System.Security.Policy;
 using System.Web;
 
 namespace ProspectManagerWebApi.Services
@@ -12,36 +11,38 @@ namespace ProspectManagerWebApi.Services
     {
         private readonly ProspectManagerDbContext _dbContext;
         private readonly IConfiguration _configuration;
+        private readonly EmailService _emailService;
 
         public PasswordResetService(ProspectManagerDbContext dbContext,
-                                    IConfiguration configuration)
+                                    IConfiguration configuration,
+                                    EmailService emailService)
         {
             _dbContext = dbContext;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         private string GeneratePasswordResetToken()
         {
-            // Générer un jeton sécurisé
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                var tokenData = new byte[32];
-                rng.GetBytes(tokenData);
-                return Convert.ToBase64String(tokenData);
-            }
+            var tokenData = new byte[32];
+            RandomNumberGenerator.Fill(tokenData);
+            return Convert.ToBase64String(tokenData);
         }
 
-        private async Task SendPasswordResetEmail(string email, string token)
+        private async Task SendPasswordResetEmail(string email, string token, Utilisateur utilisateur)
         {
             var encodedToken = HttpUtility.UrlEncode($"{token}");
             var resetLink = $"{_configuration["Client:ClientBaseUrl"]}/login/reinit-mot-de-passe?token={encodedToken}";
+            var emailBody = File.ReadAllText("Resources/EmailTemplates/ResetPassword.html");
+            
+            emailBody = emailBody.Replace("[Name]", utilisateur.Login);
+            emailBody = emailBody.Replace("[ResetPasswordLink]", resetLink);
 
-            // Code pour envoyer l'email
-            // Utilisez votre service d'emailing ici (par exemple, SmtpClient)
-            Console.WriteLine($"Envoyer à {email}: {resetLink}");
+            await _emailService.SendEmailAsync(email,
+                "Votre demande réinitialisation de mot de passe",
+                emailBody);
         }
 
-        // Appelez cette méthode lorsque l'utilisateur demande une réinitialisation de mot de passe
         public async Task RequestPasswordReset(string email)
         {
             var token = GeneratePasswordResetToken();
@@ -54,7 +55,7 @@ namespace ProspectManagerWebApi.Services
 
             await SaveTokenToDatabase(utilisateur, token, DateTime.UtcNow.AddHours(1));
 
-            await SendPasswordResetEmail(email, token);
+            await SendPasswordResetEmail(email, token, utilisateur);
         }
 
         private async Task SaveTokenToDatabase(Utilisateur utilisateur, string token, DateTime expirationDate)
@@ -74,7 +75,7 @@ namespace ProspectManagerWebApi.Services
         {
             var utilisateur = await _dbContext.Utilisateurs
                 .Include(u => u.PasswordResetTokens)
-                .FirstAsync(u => u.Email == email);
+                .FirstOrDefaultAsync(u => u.Email == email);
 
             if (utilisateur == null) return false;
 
