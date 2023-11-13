@@ -11,7 +11,7 @@ namespace ProspectManagerWebApi.Models
         [Required]
         public string? Token { get; set; }
         [Required]
-        public DateTime ExpirationDate { get; set; }
+        public DateTimeOffset ExpirationDate { get; set; }
         public bool IsUsed { get; set; }
         public string? IPAddress { get; set; }
     }

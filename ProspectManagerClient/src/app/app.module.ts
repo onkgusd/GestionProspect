@@ -1,4 +1,4 @@
-import { NgModule, Provider } from '@angular/core';
+import { LOCALE_ID, NgModule, Provider } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -34,6 +34,10 @@ import { DeleteConfirmationDialogComponent } from './components/delete-confirmat
 import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 import { MotDePasseOublieComponent } from './components/mot-de-passe-oublie/mot-de-passe-oublie.component';
 import { ReinitMotDePasseComponent } from './components/reinit-mot-de-passe/reinit-mot-de-passe.component';
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+
+registerLocaleData(localeFr);
 
 const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
@@ -84,7 +88,8 @@ const routes: Routes = [
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptorService,
     multi: true
-  } as Provider],
+  } as Provider,
+  { provide: LOCALE_ID, useValue: 'fr-FR' }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -12,8 +12,8 @@ namespace ProspectManagerWebApi.Models
         [Required]
         public string? Login { get; set; }
         public string? Empreinte { get; set; }
-        public DateTime? DateConnexion {  get; set; }
-        public DateTime? DateModificationMotDePasse { get; set; }
+        public DateTimeOffset? DateConnexion {  get; set; }
+        public DateTimeOffset? DateModificationMotDePasse { get; set; }
         public string? Role { get; set; }
         public bool Actif { get; set; }
 

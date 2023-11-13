@@ -12,7 +12,7 @@ namespace ProspectManagerWebApi.DTO.Response
         public string? Telephone { get; set; }
         public string? Mail { get; set; }
         public string? SecteurActivite { get; set; }
-        public DateTime DateCreation { get; set; }
+        public DateTimeOffset DateCreation { get; set; }
         public Statut? Statut { get; set; }
         public TypeOrganisme? TypeOrganisme { get; set; }
         public ICollection<Contact>? Contacts { get; set; }

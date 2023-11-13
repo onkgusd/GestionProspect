@@ -15,9 +15,9 @@ export class Prospect {
     dateCreation: string;
     statut: Statut;
     // typeOrganisme: TypeOrganisme;
-    contacts: Contact[];
-    utilisateurCreation: Utilisateur;
+    contacts: Contact[] = [];
+    utilisateurCreation?: Utilisateur;
     // modifications: Modification[];
-    produitProspects: ProduitProspect[];
-    evenements: Evenement[];
+    produitProspects: ProduitProspect[] = [];
+    evenements: Evenement[] = [];
 }

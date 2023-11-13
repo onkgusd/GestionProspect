@@ -6,7 +6,7 @@ namespace ProspectManagerWebApi.DTO.Response
     {
         public int Id { get; set; }
         public TypeEvenement TypeEvenement { get; set; }
-        public DateTime DateEvenement { get; set; }
+        public DateTimeOffset DateEvenement { get; set; }
         public string? Resultat { get; set; }
         public Contact? Contact { get; set; }
         public ICollection<ProduitResponseDTO>? Produits { get; set; }

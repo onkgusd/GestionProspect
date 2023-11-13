@@ -16,13 +16,13 @@
         <!-- Date de Connexion Column -->
         <ng-container matColumnDef="dateConnexion">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Date de Connexion</th>
-            <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.dateConnexion | date }}</td>
+            <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.dateConnexion | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
         </ng-container>
 
         <!-- Date de Modification du Mot de Passe Column -->
         <ng-container matColumnDef="dateModificationMotDePasse">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Date de Modification du MDP</th>
-            <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.dateModificationMotDePasse | date }}</td>
+            <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.dateModificationMotDePasse | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
         </ng-container>
 
         <!-- Rôle Column -->
