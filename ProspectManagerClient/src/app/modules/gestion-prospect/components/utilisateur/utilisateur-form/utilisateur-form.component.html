@@ -4,11 +4,6 @@
   </mat-card-header>
   <mat-card-content>
     <form #utilisateurForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
-      <mat-form-field class="full-width" *ngIf="!isAddForm">
-        <mat-label>ID</mat-label>
-        <input matInput placeholder="ID" name="id" [(ngModel)]="utilisateur.id" readonly>
-      </mat-form-field>
-      <br />
       <mat-form-field class="full-width">
         <mat-label>Login</mat-label>
         <input matInput placeholder="Login" name="login" [(ngModel)]="utilisateur.login" required>

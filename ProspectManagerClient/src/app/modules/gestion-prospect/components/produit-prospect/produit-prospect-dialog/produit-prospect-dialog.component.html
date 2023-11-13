@@ -14,8 +14,7 @@
             </mat-form-field>
             <br />
             <div fxLayout="row" fxLayoutAlign="center">
-                <span>Probabilité de succès</span>
-                <app-rating [(rating)]="selectedRating" (ratingChange)="onRatingChanged($event)" />
+                <app-rating label="Probabilité de succès" [(rating)]="selectedRating" (ratingChange)="onRatingChanged($event)" />
             </div>
             <div fxLayout="row" fxLayoutAlign="center">
                 <button mat-button color="secondary" type="button" (click)="onNoClick()">Annuler</button>

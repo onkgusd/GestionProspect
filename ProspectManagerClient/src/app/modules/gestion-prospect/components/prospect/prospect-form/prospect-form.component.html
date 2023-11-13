@@ -4,24 +4,15 @@
   </mat-card-header>
   <mat-card-content fxLayout="column" fxLayoutAlign="center stretch">
     <form #prospectForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
-      <mat-form-field *ngIf="!isAddForm">
-        <mat-label>Id</mat-label>
-        <input matInput placeholder="Id" name="Id" [ngModel]="prospect.id" readonly>
+      <mat-form-field class="full-width">
+        <mat-label>Nom</mat-label>
+        <input matInput placeholder="Nom" name="nom" [(ngModel)]="prospect.nom" required>
       </mat-form-field>
-      <mat-form-field *ngIf="!isAddForm">
-        <mat-label>Date de création</mat-label>
-        <input matInput placeholder="Date de création" name="dateCreation" [ngModel]="prospect.dateCreation" readonly>
-      </mat-form-field>
-      <br />
       <mat-form-field>
         <mat-label>Statut</mat-label>
         <mat-select [(ngModel)]="prospect.statut" [ngModelOptions]="{standalone: true}" [compareWith]="compareStatuts">
           <mat-option *ngFor="let statut of statuts" [value]="statut">{{ statut.libelle }}</mat-option>
         </mat-select>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Nom</mat-label>
-        <input matInput placeholder="Nom" name="nom" [(ngModel)]="prospect.nom" required>
       </mat-form-field>
       <mat-form-field>
         <mat-label>Secteur d'activité</mat-label>

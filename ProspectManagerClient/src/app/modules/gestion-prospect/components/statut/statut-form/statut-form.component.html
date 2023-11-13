@@ -4,10 +4,6 @@
   </mat-card-header>
   <mat-card-content fxLayout="column" fxLayoutAlign="center stretch">
     <form #statutForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
-      <mat-form-field *ngIf="!isAddForm">
-        <mat-label>ID</mat-label>
-        <input matInput placeholder="ID" [(ngModel)]="statut.id" name="id" readonly>
-      </mat-form-field>
       <mat-form-field class="full-width">
         <mat-label>Libellé</mat-label>
         <input matInput placeholder="Libellé" [(ngModel)]="statut.libelle" name="libelle" required>

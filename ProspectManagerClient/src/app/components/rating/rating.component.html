@@ -1,5 +1,9 @@
-<div class="rating">
-    <span *ngFor="let star of stars" (click)="setRating(star)">
-      <mat-icon class="star {{ star <= rating ? 'full' : '' }}">{{ star <= rating ? 'star' : 'star_border' }}</mat-icon>
+
+<div fxLayout="row" fxLayoutAlign="start" class="full-width">
+  <label *ngIf="label">{{label}}</label>
+  <div class="rating">
+    <span *ngFor="let star of defaultStars; let i = index" (click)="!readonly && setRating(i + 1)">
+      <mat-icon class="star" [style.color]="getColor(i)">{{ getIcon(i) }}</mat-icon>
     </span>
   </div>
+</div>

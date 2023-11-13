@@ -4,10 +4,6 @@
   </mat-card-header>
   <mat-card-content>
     <form #evenementForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
-      <mat-form-field class="full-width" *ngIf="!isAddForm">
-        <input matInput placeholder="ID" name="id" [(ngModel)]="evenement.id" readonly>
-      </mat-form-field>
-      <br />
       <mat-form-field class="full-width">
         <mat-label>Type d'Evenement</mat-label>
         <mat-select [(ngModel)]="evenement.typeEvenement" [ngModelOptions]="{ standalone: true }" required
@@ -25,6 +21,12 @@
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
       <br />
+      <app-rating
+      label="Evaluation du ressenti"
+      [customIcons]="['sentiment_very_dissatisfied', 'sentiment_dissatisfied', 'sentiment_neutral', 'sentiment_satisfied', 'sentiment_very_satisfied']"
+      [customColors]="['#C2E0F4', '#A3D8F4', '#7FD9F3', '#98E2A3', '#72C79B']"
+      [(rating)]="evenement.evaluation">
+    </app-rating>
       <mat-form-field class="full-width">
         <textarea matInput placeholder="Resultat" name="resultat" [(ngModel)]="evenement.resultat">
                 </textarea>
@@ -57,7 +59,6 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-      <br />
       <div fxLayout="row" fxLayoutAlign="center">
         <button mat-raised-button color="secondary" type="button" (click)="previousPage()">Annuler</button>
         <button mat-raised-button color="primary" type="submit"

@@ -1,6 +1,7 @@
 import { Contact } from "./contact";
 import { Produit } from "./produit";
 import { TypeEvenement } from "./type-evenement";
+import { Utilisateur } from "./utilisateur";
 
 export class Evenement {
     id: number;
@@ -9,6 +10,7 @@ export class Evenement {
     resultat: string;
     contact: Contact;
     produits: Produit[] = [];
-    // utilisateur: Utilisateur;
+    evaluation: number;
+    utilisateur: Utilisateur;
     // modifications: Modification[];
 }

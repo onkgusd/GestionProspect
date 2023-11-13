@@ -4,10 +4,6 @@
   </mat-card-header>
   <mat-card-content fxLayout="column" fxLayoutAlign="center stretch">
     <form #produitForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
-      <mat-form-field *ngIf="!isAddForm">
-        <mat-label>ID</mat-label>
-        <input matInput placeholder="ID" [(ngModel)]="produit.id" name="id" readonly>
-      </mat-form-field>
       <mat-form-field>
         <mat-label>Référence</mat-label>
         <input matInput placeholder="Référence" [(ngModel)]="produit.reference" name="reference" required>
