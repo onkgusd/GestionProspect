@@ -66,6 +66,7 @@ import { TypeOrganismeListComponent } from './components/type-organisme/type-org
 import { TypeOrganismeEditComponent } from './components/type-organisme/type-organisme-edit/type-organisme-edit.component';
 import { TypeOrganismeAddComponent } from './components/type-organisme/type-organisme-add/type-organisme-add.component';
 import { TypeOrganismeFormComponent } from './components/type-organisme/type-organisme-form/type-organisme-form.component';
+import { ProspectSearchComponent } from './components/prospect-search/prospect-search.component';
 
 const gestionProspectRoutes: Routes = [
   // Produit
@@ -97,18 +98,25 @@ const gestionProspectRoutes: Routes = [
   // Utilisateur
   { path: "utilisateurs", component: UtilisateurListComponent, canActivate: [AdminGuard] },
   { path: "utilisateurs/add", component: UtilisateurAddComponent, canActivate: [AdminGuard] },
-  { path: "utilisateurs/:id", component: UtilisateurEditComponent, canActivate: [AdminGuard] }
+  { path: "utilisateurs/:id", component: UtilisateurEditComponent, canActivate: [AdminGuard] },
+
+  // Search
+  { path: "search", component: ProspectSearchComponent, canActivate: [AuthGuard] }
 ]
 
 @NgModule({
-  declarations: [ProduitListComponent, ProduitAddComponent, ProduitFormComponent, ProduitEditComponent,
+  declarations: [
+    ProduitListComponent, ProduitAddComponent, ProduitFormComponent, ProduitEditComponent,
     TypeEvenementListComponent, TypeEvenementFormComponent, TypeEvenementAddComponent, TypeEvenementEditComponent,
     ProspectListComponent, ProspectFormComponent, ProspectAddComponent, ProspectEditComponent,
     ContactListComponent, ContactFormComponent, ContactEditComponent, ContactAddComponent,
     StatutListComponent, StatutFormComponent, StatutEditComponent, StatutAddComponent,
     ProduitProspectListComponent, RatingComponent, ProduitProspectDialogComponent,
     EvenementListComponent, EvenementFormComponent, EvenementEditComponent, EvenementAddComponent,
-    UtilisateurListComponent, UtilisateurFormComponent, UtilisateurEditComponent, UtilisateurAddComponent, TypeOrganismeListComponent, TypeOrganismeEditComponent, TypeOrganismeAddComponent, TypeOrganismeFormComponent],
+    UtilisateurListComponent, UtilisateurFormComponent, UtilisateurEditComponent, UtilisateurAddComponent,
+    TypeOrganismeListComponent, TypeOrganismeEditComponent, TypeOrganismeAddComponent, TypeOrganismeFormComponent,
+    ProspectSearchComponent
+  ],
   imports: [
     CommonModule,
     BrowserModule,
