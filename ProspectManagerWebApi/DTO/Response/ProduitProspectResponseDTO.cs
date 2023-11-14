@@ -2,7 +2,7 @@
 {
     public class ProduitProspectResponseDTO
     {
-        public ProduitResponseDTO Produit { get; set; }
+        public ProduitResponseDTO Produit { get; set; } = new ProduitResponseDTO();
         public double ProbabiliteSucces { get; set; }
     }
 }

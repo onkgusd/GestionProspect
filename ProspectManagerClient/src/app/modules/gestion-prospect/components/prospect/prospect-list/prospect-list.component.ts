@@ -13,7 +13,7 @@ import { MatTableDataSource } from '@angular/material/table';
 
 export class ProspectListComponent implements OnInit {
   prospects: MatTableDataSource<Prospect>;
-  displayedColumns: string[] = ['nom', 'statut', 'departement', 'adresse', 'telephone', 'mail', 'secteurActivite', 'dateCreation'];
+  displayedColumns: string[] = ['type-organisme', 'nom', 'statut', 'departement', 'secteurActivite', 'telephone', 'mail', 'dateCreation'];
   isLoading: boolean = true;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;

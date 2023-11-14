@@ -4,6 +4,12 @@
   </mat-card-header>
   <mat-card-content fxLayout="column" fxLayoutAlign="center stretch">
     <form #prospectForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
+      <mat-form-field>
+        <mat-label>Type d'organisme</mat-label>
+        <mat-select [(ngModel)]="prospect.typeOrganisme" [ngModelOptions]="{standalone: true}" [compareWith]="compareTypesOrganisme">
+          <mat-option *ngFor="let typeOrganisme of typesOrganisme" [value]="typeOrganisme">{{ typeOrganisme.libelle }}</mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-form-field class="full-width">
         <mat-label>Nom</mat-label>
         <input matInput placeholder="Nom" name="nom" [(ngModel)]="prospect.nom" required>

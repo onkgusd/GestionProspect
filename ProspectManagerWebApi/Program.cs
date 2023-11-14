@@ -13,6 +13,7 @@ using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
 using ProspectManagerWebApi.Services;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -258,22 +259,24 @@ app.MapDelete("/prospects/{idprospect:int}", [Authorize(Policy = "Admin")] async
 
 #region Gestion des prospects
 app.MapGet("/prospects", async (ProspectManagerDbContext db) =>
-    await db.Prospects.Include(p => p.Statut).ToListAsync());
+    await db.Prospects.Include(p => p.TypeOrganisme)
+                      .Include(p => p.Statut)
+                      .ToListAsync());
 
 app.MapGet("/prospects/{idprospect:int}", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
-await db.Prospects
-    .Include(p => p.Contacts)
-    .Include(p => p.Statut)
-    .Include(p => p.ProduitProspects)
-        .ThenInclude(pp => pp.Produit)
-    .Include(p => p.Evenements)
-        .ThenInclude(e => e.TypeEvenement)
-    .Include(p => p.Evenements)
-        .ThenInclude(e => e.Contact)
-    .Include(p => p.Evenements)
-        .ThenInclude(e => e.Produits)
-    .Include(p => p.UtilisateurCreation)
-    .FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
+await db.Prospects.Include(p => p.Contacts)
+                  .Include(p => p.Statut)
+                  .Include(p => p.ProduitProspects)
+                      .ThenInclude(pp => pp.Produit)
+                  .Include(p => p.Evenements)
+                      .ThenInclude(e => e.TypeEvenement)
+                  .Include(p => p.Evenements)
+                      .ThenInclude(e => e.Contact)
+                  .Include(p => p.Evenements)
+                      .ThenInclude(e => e.Produits)
+                  .Include(p => p.UtilisateurCreation)
+                  .Include(p => p.TypeOrganisme)
+                  .FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
 Results.Ok(mapper.Map<ProspectResponseDTO>(prospect)) : Results.NotFound());
 
 app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, ProspectManagerDbContext db,IHttpContextAccessor httpContextAccessor) =>
@@ -282,6 +285,10 @@ app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, Pros
 
     var login = httpContextAccessor.HttpContext?.User.Identity?.Name;
     var utilisateur = await db.Utilisateurs.FirstOrDefaultAsync(u => u.Login == login);
+
+    if (utilisateur == null)
+        return Results.Unauthorized();
+
     prospect.UtilisateurCreation = utilisateur;
 
     db.Prospects.Attach(prospect);
@@ -295,13 +302,20 @@ app.MapPut("/prospects/{idprospect:int}", [Authorize] async ([FromBody] Prospect
     if (idProspect != updatedProspect.Id)
         return Results.BadRequest("Les identifiants produits ne sont pas cohérents.");
 
-    var existingProspect = await db.Prospects.Include(p => p.Statut).FirstAsync(p => p.Id == idProspect);
+    var existingProspect = await db.Prospects.Include(p => p.Statut)
+                                             .Include(p => p.TypeOrganisme)
+                                             .FirstAsync(p => p.Id == idProspect);
 
     if (existingProspect == null)
         return Results.NotFound();
 
     db.Entry(existingProspect).CurrentValues.SetValues(updatedProspect);
-    existingProspect.Statut = updatedProspect.Statut;
+
+    if (updatedProspect.Statut.Id != existingProspect.Statut.Id)
+        existingProspect.Statut = await db.Statuts.FindAsync(updatedProspect.TypeOrganisme.Id);
+
+    if (updatedProspect.TypeOrganisme.Id != existingProspect.TypeOrganisme.Id)
+        existingProspect.TypeOrganisme = await db.TypesOrganisme.FindAsync(updatedProspect.TypeOrganisme.Id);
 
     await db.SaveChangesAsync();
 
@@ -557,6 +571,58 @@ app.MapDelete("/types-evenement/{idtypeevenement:int}", [Authorize(Policy = "Adm
 });
 #endregion
 
+#region Gestion des type d'organisme
+app.MapGet("/types-organisme", [Authorize] async (ProspectManagerDbContext db) =>
+    await db.TypesOrganisme.ToListAsync());
+
+app.MapGet("/types-organisme/{idtypeorganisme:int}", [Authorize] async (int idTypeOrganisme, ProspectManagerDbContext db) =>
+    await db.TypesOrganisme.FindAsync(idTypeOrganisme) is TypeOrganisme typeOrganisme ?
+    Results.Ok(typeOrganisme) : Results.NotFound());
+
+app.MapPost("/types-organisme", [Authorize(Policy = "Admin")] async ([FromBody] TypeOrganisme typeOrganisme, ProspectManagerDbContext db) =>
+{
+    db.TypesOrganisme.Add(typeOrganisme);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/produits/{typeOrganisme.Id}", typeOrganisme);
+});
+
+app.MapPut("/types-organisme/{idtypeorganisme:int}", [Authorize(Policy = "Admin")] async ([FromBody] TypeOrganisme updatedTypeOrganisme, int idTypeOrganisme, ProspectManagerDbContext db) =>
+{
+    if (idTypeOrganisme != updatedTypeOrganisme.Id)
+        return Results.BadRequest("Les identifiants ne sont pas cohérents.");
+
+    var existingTypeOrganisme = await db.TypesOrganisme.FindAsync(idTypeOrganisme);
+    if (existingTypeOrganisme == null)
+        return Results.NotFound();
+
+    db.Entry(existingTypeOrganisme).CurrentValues.SetValues(updatedTypeOrganisme);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(existingTypeOrganisme);
+});
+
+app.MapDelete("/types-organisme/{idtypeorganisme:int}", [Authorize(Policy = "Admin")] async (int idTypeOrganisme, ProspectManagerDbContext db) =>
+{
+    var existingTypeOrganisme = await db.TypesOrganisme.FindAsync(idTypeOrganisme);
+    if (existingTypeOrganisme == null)
+    {
+        return Results.NotFound();
+    }
+
+    var nbOrganisme = db.Prospects.Count(e => e.TypeOrganisme == existingTypeOrganisme);
+
+    if (nbOrganisme == 0)
+        db.TypesOrganisme.Remove(existingTypeOrganisme);
+    else
+        existingTypeOrganisme.Actif = false;
+
+    await db.SaveChangesAsync();
+
+    return Results.Ok(new { Statut = nbOrganisme == 0 ? "Deleted" : "Disabled" });
+});
+#endregion
+
 #region Gestion des statuts
 app.MapGet("/statuts", [Authorize] async (ProspectManagerDbContext db) =>
     await db.Statuts.ToListAsync());
@@ -668,9 +734,6 @@ app.MapDelete("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")]
     return Results.Ok();
 });
 #endregion
-
-app.MapGet("/types-organisme", [Authorize] async (ProspectManagerDbContext db) =>
-    await db.TypesOrganisme.ToListAsync());
 
 app.Run();
 

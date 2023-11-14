@@ -62,6 +62,10 @@ import { UtilisateurListComponent } from './components/utilisateur/utilisateur-l
 import { UtilisateurFormComponent } from './components/utilisateur/utilisateur-form/utilisateur-form.component';
 import { UtilisateurEditComponent } from './components/utilisateur/utilisateur-edit/utilisateur-edit.component';
 import { UtilisateurAddComponent } from './components/utilisateur/utilisateur-add/utilisateur-add.component';
+import { TypeOrganismeListComponent } from './components/type-organisme/type-organisme-list/type-organisme-list.component';
+import { TypeOrganismeEditComponent } from './components/type-organisme/type-organisme-edit/type-organisme-edit.component';
+import { TypeOrganismeAddComponent } from './components/type-organisme/type-organisme-add/type-organisme-add.component';
+import { TypeOrganismeFormComponent } from './components/type-organisme/type-organisme-form/type-organisme-form.component';
 
 const gestionProspectRoutes: Routes = [
   // Produit
@@ -82,6 +86,10 @@ const gestionProspectRoutes: Routes = [
   { path: "types-evenement", component: TypeEvenementListComponent, canActivate: [AdminGuard] },
   { path: "types-evenement/add", component: TypeEvenementAddComponent, canActivate: [AdminGuard] },
   { path: "types-evenement/:id", component: TypeEvenementEditComponent, canActivate: [AdminGuard] },
+  // Type d'organisme
+  { path: "types-organisme", component: TypeOrganismeListComponent, canActivate: [AdminGuard] },
+  { path: "types-organisme/add", component: TypeOrganismeAddComponent, canActivate: [AdminGuard] },
+  { path: "types-organisme/:id", component: TypeOrganismeEditComponent, canActivate: [AdminGuard] },
   // Statut
   { path: "statuts", component: StatutListComponent, canActivate: [AdminGuard] },
   { path: "statuts/add", component: StatutAddComponent, canActivate: [AdminGuard] },
@@ -100,7 +108,7 @@ const gestionProspectRoutes: Routes = [
     StatutListComponent, StatutFormComponent, StatutEditComponent, StatutAddComponent,
     ProduitProspectListComponent, RatingComponent, ProduitProspectDialogComponent,
     EvenementListComponent, EvenementFormComponent, EvenementEditComponent, EvenementAddComponent,
-    UtilisateurListComponent, UtilisateurFormComponent, UtilisateurEditComponent, UtilisateurAddComponent],
+    UtilisateurListComponent, UtilisateurFormComponent, UtilisateurEditComponent, UtilisateurAddComponent, TypeOrganismeListComponent, TypeOrganismeEditComponent, TypeOrganismeAddComponent, TypeOrganismeFormComponent],
   imports: [
     CommonModule,
     BrowserModule,
