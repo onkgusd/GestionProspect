@@ -18,7 +18,7 @@ export class ProduitEditComponent implements OnInit {
   ngOnInit(): void {
     const produitId: string | null = this.route.snapshot.paramMap.get("id");
     if (produitId)
-      this.produitService.getProduit(+produitId)
+      this.produitService.get(+produitId)
         .subscribe(
           produit => {
             this.produit = produit;

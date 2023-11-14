@@ -19,7 +19,7 @@ export class StatutEditComponent {
 
     const statutId: string | null = this.route.snapshot.paramMap.get("id");
     if (statutId)
-      this.statutService.getStatut(+statutId)
+      this.statutService.get(+statutId)
         .subscribe(
           statut => {
             this.statut = statut;

@@ -24,7 +24,7 @@ export class TypeEvenementListComponent {
   constructor(public dialog: MatDialog, private typeEvenementService: TypeEvenementService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
-    this.typeEvenementService.getTypesEvenement().subscribe((typeEvenements: TypeEvenement[]) => {
+    this.typeEvenementService.getAll().subscribe((typeEvenements: TypeEvenement[]) => {
       this.typeEvenements = new MatTableDataSource(typeEvenements);
       this.typeEvenements.sort = this.sort;
       this.typeEvenements.paginator = this.paginator;
@@ -45,7 +45,7 @@ export class TypeEvenementListComponent {
   }
 
   private deleteEvenement(typeEvenement: TypeEvenement): void {
-    this.typeEvenementService.deleteTypeEvenement(typeEvenement.id).subscribe(
+    this.typeEvenementService.delete(typeEvenement.id).subscribe(
       {
         next: (deleteResponse) => {
           if (deleteResponse.statut === "Deleted") {
@@ -74,7 +74,7 @@ export class TypeEvenementListComponent {
 
   switchStatus(typeEvenement: TypeEvenement, actif: boolean): void {
 
-    this.typeEvenementService.updateTypeEvenement({ ...typeEvenement, actif }).subscribe(
+    this.typeEvenementService.update({ ...typeEvenement, actif }).subscribe(
       {
         next: () => {
           this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);

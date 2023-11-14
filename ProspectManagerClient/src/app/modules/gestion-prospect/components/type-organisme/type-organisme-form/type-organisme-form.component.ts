@@ -21,7 +21,7 @@ export class TypeOrganismeFormComponent {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.typeOrganismeService.addTypeOrganisme(this.typeOrganisme).subscribe({
+      this.typeOrganismeService.add(this.typeOrganisme).subscribe({
         next: typeOrganisme => {
           this.router.navigate(['types-organisme']);
           this.snackbarService.openErrorSnackBar(`😊 Ajout de "${typeOrganisme.libelle}" réussie !`);
@@ -31,7 +31,7 @@ export class TypeOrganismeFormComponent {
     });
     }
     else {
-      this.typeOrganismeService.updateTypeOrganisme(this.typeOrganisme).subscribe({
+      this.typeOrganismeService.update(this.typeOrganisme).subscribe({
         next: typeOrganisme => {
           this.router.navigate(['types-organisme']);
           this.snackbarService.openErrorSnackBar(`👌 Mise à jour de "${typeOrganisme.libelle}" réussie !`);

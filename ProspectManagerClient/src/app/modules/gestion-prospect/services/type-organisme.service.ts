@@ -12,7 +12,7 @@ export class TypeOrganismeService {
 
   constructor(private http: HttpClient) { }
 
-  getTypesOrganisme(): Observable<TypeOrganisme[]> {
+  getAll(): Observable<TypeOrganisme[]> {
     return this.http.get<TypeOrganisme[]>(`${environment.baseUrl}/types-organisme`).pipe(
       catchError((error) => {
         console.error(error);
@@ -21,7 +21,7 @@ export class TypeOrganismeService {
     );
   }
 
-  getTypeOrganisme(id: number): Observable<TypeOrganisme> {
+  get(id: number): Observable<TypeOrganisme> {
     return this.http.get<TypeOrganisme>(`${environment.baseUrl}/types-organisme/${id}`).pipe(
       catchError((error) => {
         console.error(error);
@@ -30,7 +30,7 @@ export class TypeOrganismeService {
     );
   }
 
-  addTypeOrganisme(typeOrganisme: TypeOrganisme): Observable<TypeOrganisme> {
+  add(typeOrganisme: TypeOrganisme): Observable<TypeOrganisme> {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
@@ -43,7 +43,7 @@ export class TypeOrganismeService {
     )
   }
 
-  updateTypeOrganisme(typeOrganisme: TypeOrganisme) {
+  update(typeOrganisme: TypeOrganisme) {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
@@ -56,7 +56,7 @@ export class TypeOrganismeService {
     );
   }
 
-  deleteTypeOrganisme(idTypeOrganisme: number)  {
+  delete(idTypeOrganisme: number)  {
     return this.http.delete<DeleteResponseDto>(`${environment.baseUrl}/types-organisme/${idTypeOrganisme}`).pipe(
       catchError((error) => {
         console.error(error);

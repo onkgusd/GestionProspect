@@ -22,7 +22,7 @@ export class ProspectListComponent implements OnInit {
   constructor(private prospectService: ProspectService) { }
 
   ngOnInit(): void {
-    this.prospectService.getProspects().subscribe((prospects: Prospect[]) => {
+    this.prospectService.getAll().subscribe((prospects: Prospect[]) => {
       this.prospects = new MatTableDataSource(prospects);
       this.prospects.sort = this.sort;
       this.prospects.paginator = this.paginator;

@@ -18,7 +18,7 @@ export class ProspectEditComponent implements OnInit {
   ngOnInit(): void {
     const prospectId: string | null = this.route.snapshot.paramMap.get("id");
     if (prospectId)
-      this.prospectService.getProspect(+prospectId)
+      this.prospectService.get(+prospectId)
         .subscribe(
           prospect => {
             this.prospect = prospect;

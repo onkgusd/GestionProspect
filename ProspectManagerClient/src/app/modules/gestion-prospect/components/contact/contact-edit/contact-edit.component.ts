@@ -18,7 +18,7 @@ export class ContactEditComponent implements OnInit {
   ngOnInit(): void {
     const idContact: string | null = this.route.snapshot.paramMap.get("idContact");
     if (idContact)
-      this.contactService.getContact(+idContact)
+      this.contactService.get(+idContact)
         .subscribe(
           contact => {
             this.contact = contact;

@@ -23,7 +23,7 @@ export class ContactFormComponent {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.contactService.addContact(this.contact, this.idProspect).subscribe({
+      this.contactService.add(this.contact, this.idProspect).subscribe({
         next: contact => {
           this.previousPage();
           this.snackbarService.openErrorSnackBar(`Ajout de "${contact.nom}" réussi !`);
@@ -34,7 +34,7 @@ export class ContactFormComponent {
         }
       });
     } else {
-      this.contactService.updateContact(this.contact).subscribe({
+      this.contactService.update(this.contact).subscribe({
         next: contact => {
           this.previousPage();
           this.snackbarService.openErrorSnackBar(`Mise à jour de "${contact.nom}" réussie !`);

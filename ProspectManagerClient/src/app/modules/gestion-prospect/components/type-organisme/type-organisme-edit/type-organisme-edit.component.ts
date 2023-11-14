@@ -17,7 +17,7 @@ export class TypeOrganismeEditComponent {
   ngOnInit(): void {
     const typeOrganismeId: string | null = this.route.snapshot.paramMap.get("id");
     if (typeOrganismeId)
-      this.typeOrganismeService.getTypeOrganisme(+typeOrganismeId)
+      this.typeOrganismeService.get(+typeOrganismeId)
         .subscribe(
           typeOrganisme => {
             this.typeOrganisme = typeOrganisme;

@@ -45,7 +45,7 @@ export class ProspectSearchComponent implements OnInit {
               private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
-    this.produitService.getProduits().subscribe({
+    this.produitService.getAll().subscribe({
       next: (produits) => {
         this.produits = produits;
         this.filteredProduits = this.produitsCtrl.valueChanges.pipe(
@@ -64,7 +64,7 @@ export class ProspectSearchComponent implements OnInit {
       error: () => this.snackbarService.openErrorSnackBar("😒 Impossible de lister les produits...")
     });
 
-    this.statutService.getStatuts().subscribe({
+    this.statutService.getAll().subscribe({
       next: (statuts) => {
         this.statuts = statuts;
         this.filteredStatuts = this.statutsCtrl.valueChanges.pipe(
@@ -83,7 +83,7 @@ export class ProspectSearchComponent implements OnInit {
       error: () => this.snackbarService.openErrorSnackBar("😒 Impossible de lister les statuts...")
     });
 
-    this.typeOrganismeService.getTypesOrganisme().subscribe({
+    this.typeOrganismeService.getAll().subscribe({
       next: (typesOrganisme) => {
         this.typesOrganisme = typesOrganisme;
         this.filteredTypesOrganisme = this.typesOrganismeCtrl.valueChanges.pipe(

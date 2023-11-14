@@ -12,7 +12,7 @@ export class TypeEvenementService {
 
   constructor(private http: HttpClient) { }
 
-  getTypesEvenement(): Observable<TypeEvenement[]> {
+  getAll(): Observable<TypeEvenement[]> {
     return this.http.get<TypeEvenement[]>(`${environment.baseUrl}/types-evenement`).pipe(
       catchError((error) => {
         console.error(error);
@@ -21,7 +21,7 @@ export class TypeEvenementService {
     );
   }
 
-  getTypeEvenement(id: number): Observable<TypeEvenement> {
+  get(id: number): Observable<TypeEvenement> {
     return this.http.get<TypeEvenement>(`${environment.baseUrl}/types-evenement/${id}`).pipe(
       catchError((error) => {
         console.error(error);
@@ -30,7 +30,7 @@ export class TypeEvenementService {
     );
   }
 
-  addTypeEvenement(typeEvenement: TypeEvenement): Observable<TypeEvenement> {
+  add(typeEvenement: TypeEvenement): Observable<TypeEvenement> {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
@@ -43,7 +43,7 @@ export class TypeEvenementService {
     )
   }
 
-  updateTypeEvenement(typeEvenement: TypeEvenement) {
+  update(typeEvenement: TypeEvenement) {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
@@ -56,7 +56,7 @@ export class TypeEvenementService {
     );
   }
 
-  deleteTypeEvenement(idTypeEvenement: number)  {
+  delete(idTypeEvenement: number)  {
     return this.http.delete<DeleteResponseDto>(`${environment.baseUrl}/types-evenement/${idTypeEvenement}`).pipe(
       catchError((error) => {
         console.error(error);

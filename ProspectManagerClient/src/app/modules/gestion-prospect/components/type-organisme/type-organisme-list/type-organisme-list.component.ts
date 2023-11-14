@@ -24,7 +24,7 @@ export class TypeOrganismeListComponent {
   constructor(public dialog: MatDialog, private typeOrganismeService: TypeOrganismeService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
-    this.typeOrganismeService.getTypesOrganisme().subscribe((typeOrganismes: TypeOrganisme[]) => {
+    this.typeOrganismeService.getAll().subscribe((typeOrganismes: TypeOrganisme[]) => {
       this.typeOrganismes = new MatTableDataSource(typeOrganismes);
       this.typeOrganismes.sort = this.sort;
       this.typeOrganismes.paginator = this.paginator;
@@ -45,7 +45,7 @@ export class TypeOrganismeListComponent {
   }
 
   private deleteOrganisme(typeOrganisme: TypeOrganisme): void {
-    this.typeOrganismeService.deleteTypeOrganisme(typeOrganisme.id).subscribe(
+    this.typeOrganismeService.delete(typeOrganisme.id).subscribe(
       {
         next: (deleteResponse) => {
           if (deleteResponse.statut === "Deleted") {
@@ -74,7 +74,7 @@ export class TypeOrganismeListComponent {
 
   switchStatus(typeOrganisme: TypeOrganisme, actif: boolean): void {
 
-    this.typeOrganismeService.updateTypeOrganisme({ ...typeOrganisme, actif }).subscribe(
+    this.typeOrganismeService.update({ ...typeOrganisme, actif }).subscribe(
       {
         next: () => {
           this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);

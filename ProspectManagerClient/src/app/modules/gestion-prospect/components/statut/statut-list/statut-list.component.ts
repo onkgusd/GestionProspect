@@ -24,7 +24,7 @@ export class StatutListComponent {
   constructor(public dialog: MatDialog, private statutService: StatutService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
-    this.statutService.getStatuts().subscribe((statuts: Statut[]) => {
+    this.statutService.getAll().subscribe((statuts: Statut[]) => {
       this.statuts = new MatTableDataSource(statuts);
       this.statuts.sort = this.sort;
       this.statuts.paginator = this.paginator;
@@ -45,7 +45,7 @@ export class StatutListComponent {
   }
 
   private deleteEvenement(statut: Statut): void {
-    this.statutService.deleteStatut(statut.id).subscribe(
+    this.statutService.delete(statut.id).subscribe(
       {
         next: (deleteResponse) => {
           if (deleteResponse.statut === "Deleted") {
@@ -73,7 +73,7 @@ export class StatutListComponent {
 
   switchStatus(statut: Statut, actif: boolean): void {
 
-    this.statutService.updateStatut({ ...statut, actif }).subscribe(
+    this.statutService.update({ ...statut, actif }).subscribe(
       {
         next: () => {
           this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);

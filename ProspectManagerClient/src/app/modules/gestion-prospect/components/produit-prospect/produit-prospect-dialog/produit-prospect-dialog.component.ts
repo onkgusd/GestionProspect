@@ -23,7 +23,7 @@ export class ProduitProspectDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.produitService.getProduits().subscribe(
+    this.produitService.getAll().subscribe(
       {
         next: (produits) => {
           this.produits = produits;

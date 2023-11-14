@@ -21,7 +21,7 @@ export class TypeEvenementFormComponent {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.typeEvenementService.addTypeEvenement(this.typeEvenement).subscribe({
+      this.typeEvenementService.add(this.typeEvenement).subscribe({
         next: typeEvenement => {
           this.router.navigate(['types-evenement']);
           this.snackbarService.openErrorSnackBar(`Ajout de "${typeEvenement.libelle}" réussie !`);
@@ -31,7 +31,7 @@ export class TypeEvenementFormComponent {
     });
     }
     else {
-      this.typeEvenementService.updateTypeEvenement(this.typeEvenement).subscribe({
+      this.typeEvenementService.update(this.typeEvenement).subscribe({
         next: typeEvenement => {
           this.router.navigate(['types-evenement']);
           this.snackbarService.openErrorSnackBar(`Mise à jour de "${typeEvenement.libelle}" réussie !`);

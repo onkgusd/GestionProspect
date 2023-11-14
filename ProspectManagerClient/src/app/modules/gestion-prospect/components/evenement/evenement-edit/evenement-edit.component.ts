@@ -19,7 +19,7 @@ export class EvenementEditComponent implements OnInit {
   ngOnInit(): void {
     const idEvenement: string | null = this.route.snapshot.paramMap.get("idEvenement");
     if (idEvenement)
-      this.evenementService.getEvenement(+idEvenement)
+      this.evenementService.get(+idEvenement)
         .subscribe(
           {
             next: evenement => {

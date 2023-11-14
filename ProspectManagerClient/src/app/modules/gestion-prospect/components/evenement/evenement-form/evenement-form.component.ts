@@ -47,19 +47,19 @@ export class EvenementFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.contactService.getContacts(this.idProspect).subscribe(
+    this.contactService.getAll(this.idProspect).subscribe(
       {
         next: contacts => this.contacts = contacts,
         error: () => this.snackbarService.openErrorSnackBar("Impossible de lister les contacts...")
       });
 
-    this.typeEvenementService.getTypesEvenement().subscribe(
+    this.typeEvenementService.getAll().subscribe(
       {
         next: typeEvenements => this.typeEvenements = typeEvenements,
         error: () => this.snackbarService.openErrorSnackBar("Impossible de lister les types d'évenement...")
       });
 
-    this.produitService.getProduits().subscribe({
+    this.produitService.getAll().subscribe({
       next: (produits) => {
         this.produits = produits;
         this.filteredProduits = this.produitsCtrl.valueChanges.pipe(
@@ -83,7 +83,7 @@ export class EvenementFormComponent implements OnInit {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.evenementService.addEvenement(this.idProspect, this.evenement).subscribe({
+      this.evenementService.add(this.idProspect, this.evenement).subscribe({
         next: () => {
           this.snackbarService.openSuccessSnackBar(`Ajout de "${this.evenement.typeEvenement.libelle}" réussi !`);
           this.previousPage();
@@ -94,7 +94,7 @@ export class EvenementFormComponent implements OnInit {
         }
       });
     } else {
-      this.evenementService.updateEvenement(this.evenement).subscribe({
+      this.evenementService.update(this.evenement).subscribe({
         next: () => {
           this.snackbarService.openSuccessSnackBar(`Mise à jour de "${this.evenement.typeEvenement.libelle}" réussie !`);
           this.previousPage();

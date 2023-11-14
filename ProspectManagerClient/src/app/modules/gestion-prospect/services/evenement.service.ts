@@ -12,7 +12,7 @@ export class EvenementService {
   
   constructor(private http: HttpClient) { }
 
-  getEvenements(idProspect: number): Observable<Evenement[]> {
+  getAll(idProspect: number): Observable<Evenement[]> {
     return this.http.get<Evenement[]>(`${environment.baseUrl}prospects/${idProspect}/evenements`).pipe(
       tap(evenements => console.log(evenements)),
       catchError((error) => {
@@ -22,7 +22,7 @@ export class EvenementService {
     );
   }
 
-  getEvenement(id: number): Observable<Evenement> {
+  get(id: number): Observable<Evenement> {
     return this.http.get<Evenement>(`${environment.baseUrl}/evenements/${id}`).pipe(
       tap(evenement => console.log(evenement)),
       catchError((error) => {
@@ -32,7 +32,7 @@ export class EvenementService {
     );
   }
 
-  addEvenement(idProspect: number, evenement: Evenement): Observable<Evenement> {
+  add(idProspect: number, evenement: Evenement): Observable<Evenement> {
     const httpOptions = {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
@@ -46,7 +46,7 @@ export class EvenementService {
     );
   }
 
-  updateEvenement(evenement: Evenement): Observable<Evenement> {
+  update(evenement: Evenement): Observable<Evenement> {
     const httpOptions = {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
@@ -60,7 +60,7 @@ export class EvenementService {
     );
   }
 
-  deleteEvenement(id: number): Observable<Evenement> {
+  delete(id: number): Observable<Evenement> {
     return this.http.delete<Evenement>(`${environment.baseUrl}/evenements/${id}`).pipe(
       catchError((error) => {
         console.error(error);

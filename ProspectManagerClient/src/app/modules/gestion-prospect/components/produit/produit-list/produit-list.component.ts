@@ -23,7 +23,7 @@ export class ProduitListComponent implements OnInit {
   constructor(private produitService: ProduitService, public dialog: MatDialog, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
-    this.produitService.getProduits().subscribe((produits: Produit[]) => {
+    this.produitService.getAll().subscribe((produits: Produit[]) => {
       this.produits = new MatTableDataSource(produits);
       this.produits.sort = this.sort;
       this.produits.paginator = this.paginator;
@@ -43,7 +43,7 @@ export class ProduitListComponent implements OnInit {
   }
 
   private deleteEvenement(produit: Produit): void {
-    this.produitService.deleteProduit(produit.id).subscribe(
+    this.produitService.delete(produit.id).subscribe(
       {
         next: (deleteResponse) => {
           if (deleteResponse.statut === "Deleted") {
@@ -72,7 +72,7 @@ export class ProduitListComponent implements OnInit {
 
   switchStatus(produit: Produit, actif: boolean): void {
 
-    this.produitService.updateProduit({ ...produit, actif }).subscribe(
+    this.produitService.update({ ...produit, actif }).subscribe(
       {
         next: () => {
           this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);

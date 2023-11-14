@@ -17,7 +17,7 @@ export class TypeEvenementEditComponent {
   ngOnInit(): void {
     const typeEvenementId: string | null = this.route.snapshot.paramMap.get("id");
     if (typeEvenementId)
-      this.typeEvenementService.getTypeEvenement(+typeEvenementId)
+      this.typeEvenementService.get(+typeEvenementId)
         .subscribe(
           typeEvenement => {
             this.typeEvenement = typeEvenement;

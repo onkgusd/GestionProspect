@@ -12,7 +12,7 @@ export class ProduitService {
 
   constructor(private http: HttpClient) { }
 
-  getProduits(): Observable<Produit[]> {
+  getAll(): Observable<Produit[]> {
     return this.http.get<Produit[]>(`${environment.baseUrl}/produits`).pipe(
       catchError((error) => {
         console.error(error);
@@ -21,7 +21,7 @@ export class ProduitService {
     );
   }
 
-  getProduit(id: number): Observable<Produit> {
+  get(id: number): Observable<Produit> {
     return this.http.get<Produit>(`${environment.baseUrl}/produits/${id}`).pipe(
       catchError((error) => {
         console.error(error);
@@ -30,7 +30,7 @@ export class ProduitService {
     );
   }
 
-  addProduits(produit: Produit): Observable<Produit> {
+  add(produit: Produit): Observable<Produit> {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
@@ -43,7 +43,7 @@ export class ProduitService {
     )
   }
 
-  updateProduit(produit: Produit) {
+  update(produit: Produit) {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
@@ -56,7 +56,7 @@ export class ProduitService {
     );
   }
 
-  deleteProduit(idProduit: number) {
+  delete(idProduit: number) {
     return this.http.delete<DeleteResponseDto>(`${environment.baseUrl}/produits/${idProduit}`).pipe(
       catchError((error) => {
         console.error(error);

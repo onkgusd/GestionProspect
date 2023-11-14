@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, tap } from 'rxjs';
 import { Contact } from '../models/contact';
 import { environment } from 'src/environments/environment';
+import { IEntityService } from './IEntity.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class ContactService {
   
   constructor(private http: HttpClient) { }
 
-  getContacts(idProspect: number): Observable<Contact[]> {
+  getAll(idProspect: number): Observable<Contact[]> {
     return this.http.get<Contact[]>(`${environment.baseUrl}/prospects/${idProspect}/contacts`).pipe(
       tap(contactsList => console.log(contactsList)),
       catchError((error) => {
@@ -21,7 +22,7 @@ export class ContactService {
     );
   }
 
-  getContact(id: number): Observable<Contact> {
+  get(id: number): Observable<Contact> {
     return this.http.get<Contact>(`${environment.baseUrl}/contacts/${id}`).pipe(
       tap(contact => console.log(contact)),
       catchError((error) => {
@@ -31,7 +32,7 @@ export class ContactService {
     );
   }
 
-  addContact(contact: Contact, idProspect: number): Observable<Contact> {
+  add(contact: Contact, idProspect: number): Observable<Contact> {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
@@ -45,7 +46,7 @@ export class ContactService {
     )
   }
 
-  updateContact(contact: Contact) {
+  update(contact: Contact) {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
@@ -59,7 +60,7 @@ export class ContactService {
     );
   }
 
-  deleteContact(contact: Contact) {
+  delete(contact: Contact) {
     return this.http.delete(`${environment.baseUrl}/contacts/${contact.id}`).pipe(
       tap(response => console.log(response)),
       catchError((error) => {

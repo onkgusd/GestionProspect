@@ -27,10 +27,10 @@ export class ProspectFormComponent implements OnInit {
     private typeOrganismeService: TypeOrganismeService) { }
 
   ngOnInit(): void {
-    this.statutService.getStatuts().subscribe(statuts =>
+    this.statutService.getAll().subscribe(statuts =>
         this.statuts = statuts
     );
-    this.typeOrganismeService.getTypesOrganisme().subscribe(typesOrganisme =>
+    this.typeOrganismeService.getAll().subscribe(typesOrganisme =>
       this.typesOrganisme = typesOrganisme
   );
   }
@@ -39,7 +39,7 @@ export class ProspectFormComponent implements OnInit {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.prospectService.addProspect(this.prospect).subscribe({
+      this.prospectService.add(this.prospect).subscribe({
         next: prospect => {
           this.router.navigate(['prospects']);
           this.snackbarService.openErrorSnackBar(`😊 Ajout de "${prospect.nom}" réussi !`);
@@ -48,7 +48,7 @@ export class ProspectFormComponent implements OnInit {
         complete: () => (this.isSubmitting = false)
       });
     } else {
-      this.prospectService.updateProspect(this.prospect).subscribe({
+      this.prospectService.update(this.prospect).subscribe({
         next: prospect => {
           this.router.navigate(['prospects']);
           this.snackbarService.openErrorSnackBar(`👌 Mise à jour de "${prospect.nom}" réussie !`);

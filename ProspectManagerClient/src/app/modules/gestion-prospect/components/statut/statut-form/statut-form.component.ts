@@ -21,7 +21,7 @@ export class StatutFormComponent {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.statutService.addStatut(this.statut).subscribe({
+      this.statutService.add(this.statut).subscribe({
         next: statut => {
           this.router.navigate(['statuts']);
           this.snackbarService.openErrorSnackBar(`Ajout de "${statut.libelle}" réussi !`);
@@ -31,7 +31,7 @@ export class StatutFormComponent {
       });
     }
     else {
-      this.statutService.updateStatut(this.statut).subscribe({
+      this.statutService.update(this.statut).subscribe({
         next: statut => {
           this.router.navigate(['statuts']);
           this.snackbarService.openErrorSnackBar(`Mise à jour de "${statut.libelle}" réussie !`);

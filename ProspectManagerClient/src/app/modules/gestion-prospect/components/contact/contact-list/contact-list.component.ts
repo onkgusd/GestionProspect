@@ -30,7 +30,7 @@ export class ContactListComponent implements OnInit {
       this.contacts = new MatTableDataSource(this.contactList);
     }
     else {
-      this.contactService.getContacts(this.idProspect).subscribe((contacts: Contact[]) => {
+      this.contactService.getAll(this.idProspect).subscribe((contacts: Contact[]) => {
         this.contacts = new MatTableDataSource(contacts);
       });
     }
@@ -52,7 +52,7 @@ export class ContactListComponent implements OnInit {
   }
 
   private deleteContact(contact: Contact): void {
-    this.contactService.deleteContact(contact).subscribe(
+    this.contactService.delete(contact).subscribe(
       {
         next: () => {
           const index = this.contactList.findIndex((c) => c.id === contact.id);

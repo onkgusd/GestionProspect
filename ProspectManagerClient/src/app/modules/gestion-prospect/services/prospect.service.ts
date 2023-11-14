@@ -13,7 +13,7 @@ export class ProspectService {
   
   constructor(private http: HttpClient) { }
 
-  getProspects(): Observable<Prospect[]> {
+  getAll(): Observable<Prospect[]> {
     return this.http.get<Prospect[]>(`${environment.baseUrl}/prospects`).pipe(
       tap(produitsList => console.log(produitsList)),
       catchError((error) => {
@@ -23,7 +23,7 @@ export class ProspectService {
     );
   }
 
-  getProspect(id: number): Observable<Prospect> {
+  get(id: number): Observable<Prospect> {
     return this.http.get<Prospect>(`${environment.baseUrl}/prospects/${id}`).pipe(
       tap(prospect => console.log(prospect)),
       catchError((error) => {
@@ -33,7 +33,7 @@ export class ProspectService {
     );
   }
 
-  addProspect(prospect: Prospect): Observable<Prospect> {
+  add(prospect: Prospect): Observable<Prospect> {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
@@ -47,7 +47,7 @@ export class ProspectService {
     )
   }
 
-  updateProspect(prospect: Prospect) {
+  update(prospect: Prospect) {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
@@ -61,7 +61,7 @@ export class ProspectService {
     );
   }
 
-  deleteProspect(prospect: Prospect) {
+  delete(prospect: Prospect) {
     return this.http.delete<Prospect>(`${environment.baseUrl}/produits/${prospect.id}`).pipe(
       tap(response => console.log(response)),
       catchError((error) => {

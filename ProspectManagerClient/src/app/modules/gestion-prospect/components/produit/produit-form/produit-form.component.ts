@@ -21,7 +21,7 @@ export class ProduitFormComponent {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.produitService.addProduits(this.produit).subscribe({
+      this.produitService.add(this.produit).subscribe({
         next: produit => {
           this.router.navigate(['produits']);
           this.snackbarService.openErrorSnackBar(`Ajout de "${produit.libelle}" réussie !`);
@@ -31,7 +31,7 @@ export class ProduitFormComponent {
     });
     }
     else {
-      this.produitService.updateProduit(this.produit).subscribe({
+      this.produitService.update(this.produit).subscribe({
         next: produit => {
           this.router.navigate(['produits']);
           this.snackbarService.openErrorSnackBar(`Mise à jour de "${produit.libelle}" réussie !`);

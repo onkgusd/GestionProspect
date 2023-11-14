@@ -12,7 +12,7 @@ export class StatutService {
 
   constructor(private http: HttpClient) { }
 
-  getStatuts(): Observable<Statut[]> {
+  getAll(): Observable<Statut[]> {
     return this.http.get<Statut[]>(`${environment.baseUrl}/statuts`).pipe(
       catchError((error) => {
         console.error(error);
@@ -21,7 +21,7 @@ export class StatutService {
     );
   }
 
-  getStatut(id: number): Observable<Statut> {
+  get(id: number): Observable<Statut> {
     return this.http.get<Statut>(`${environment.baseUrl}/statuts/${id}`).pipe(
       catchError((error) => {
         console.error(error);
@@ -30,7 +30,7 @@ export class StatutService {
     );
   }
 
-  addStatut(statut: Statut): Observable<Statut> {
+  add(statut: Statut): Observable<Statut> {
     const httpOptions = {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
@@ -43,7 +43,7 @@ export class StatutService {
     );
   }
 
-  updateStatut(statut: Statut) {
+  update(statut: Statut) {
     const httpOptions = {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
@@ -56,7 +56,7 @@ export class StatutService {
     );
   }
 
-  deleteStatut(idStatut: number) {
+  delete(idStatut: number) {
     return this.http.delete<DeleteResponseDto>(`${environment.baseUrl}/statuts/${idStatut}`).pipe(
       catchError((error) => {
         console.error(error);

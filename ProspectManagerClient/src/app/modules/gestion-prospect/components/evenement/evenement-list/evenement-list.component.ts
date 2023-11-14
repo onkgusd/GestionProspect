@@ -29,7 +29,7 @@ export class EvenementListComponent implements OnInit {
       this.evenements = new MatTableDataSource(this.evenementList);
     }
     else {
-      this.evenementService.getEvenements(this.idProspect).subscribe((evenements: Evenement[]) => {
+      this.evenementService.getAll(this.idProspect).subscribe((evenements: Evenement[]) => {
         this.evenements = new MatTableDataSource(evenements);
       });
     }
@@ -51,7 +51,7 @@ export class EvenementListComponent implements OnInit {
   }
 
   private deleteEvenement(evenement: Evenement): void {
-    this.evenementService.deleteEvenement(evenement.id).subscribe(
+    this.evenementService.delete(evenement.id).subscribe(
       {
         next: () => {
           const index = this.evenementList.findIndex((p) => p.id === evenement.id);
