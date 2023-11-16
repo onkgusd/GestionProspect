@@ -1,4 +1,4 @@
-<mat-tab-group [hidden]="isLoading">
+<mat-tab-group *ngIf="!isLoading">
     <mat-tab label="Prospect">
         <app-prospect-form [isAddForm]="false" [prospect]="prospect"/>
     </mat-tab>

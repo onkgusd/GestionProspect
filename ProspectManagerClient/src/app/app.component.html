@@ -1,19 +1,20 @@
-<mat-toolbar color="primary" *ngIf="isLoggedIn">
-    <span>
-        <button mat-icon-button (click)="toggleSidenav()" class="menu-button">
-            <mat-icon *ngIf="!isSidenavOpened">menu</mat-icon>
-            <mat-icon *ngIf="isSidenavOpened">close</mat-icon>
-        </button>
-    </span>
-    <span class="toolbar-spacer"></span>
-    <span>{{title}}</span>
-    <span class="toolbar-spacer"></span>
-    <span>Bonjour {{ userName }} !</span>
-    <button mat-icon-button (click)="logout()">
-        <mat-icon>logout</mat-icon>
-    </button>
-</mat-toolbar>
+
 <div fxLayout="column" style="height: 100vh;">
+    <mat-toolbar color="primary" *ngIf="isLoggedIn">
+        <span>
+            <button mat-icon-button (click)="toggleSidenav()" class="menu-button">
+                <mat-icon *ngIf="!isSidenavOpened">menu</mat-icon>
+                <mat-icon *ngIf="isSidenavOpened">close</mat-icon>
+            </button>
+        </span>
+        <span class="toolbar-spacer"></span>
+        <span>{{title}}</span>
+        <span class="toolbar-spacer"></span>
+        <span>Bonjour {{ userName }} !</span>
+        <button mat-icon-button (click)="logout()">
+            <mat-icon>logout</mat-icon>
+        </button>
+    </mat-toolbar>
     <mat-sidenav-container class="example-container" style="height: 100%;">
         <mat-sidenav [opened]="isSidenavOpened" mode="side" *ngIf="isLoggedIn" class="sidebar-background"
             position="start" style="height: 100%;">
@@ -53,7 +54,7 @@
                 </a>
             </mat-nav-list>
         </mat-sidenav>
-        <mat-sidenav-content style="height: 100%;">
+        <mat-sidenav-content>
             <router-outlet />
         </mat-sidenav-content>
     </mat-sidenav-container>
