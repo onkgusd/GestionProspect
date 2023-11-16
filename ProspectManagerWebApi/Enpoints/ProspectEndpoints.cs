@@ -8,6 +8,7 @@ using ProspectManagerWebApi.DTO.Response;
 using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
 using ProspectManagerWebApi.Services;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ProspectManagerWebApi.Enpoints
 {
@@ -63,9 +64,6 @@ namespace ProspectManagerWebApi.Enpoints
                 ProspectManagerDbContext db,
                 UserService userService) =>
             {
-                if (idProspect != updatedProspect.Id)
-                    return Results.BadRequest("Les identifiants produits ne sont pas cohérents.");
-
                 var existingProspect = await db.Prospects.Include(p => p.Statut)
                                                          .Include(p => p.TypeOrganisme)
                                                          .FirstAsync(p => p.Id == idProspect);
@@ -102,10 +100,15 @@ namespace ProspectManagerWebApi.Enpoints
 
             app.MapPost("/prospects/{idprospect:int}/produits/{idproduit:int}", [Authorize] async ([FromBody] ProduitProspectRequestDTO produitProspect, [FromRoute] int idProspect, [FromRoute] int idProduit, ProspectManagerDbContext db) =>
             {
+                var produit = db.Produits.Find(idProduit);
+                var prospect = db.Prospects.Find(idProspect);
+
+                if (produit == null || prospect == null) return Results.BadRequest();
+
                 db.ProduitProspect.Add(new ProduitProspect()
                 {
-                    Produit = db.Produits.Find(idProduit),
-                    Prospect = db.Prospects.Find(idProspect),
+                    Produit = produit,
+                    Prospect = prospect,
                     ProbabiliteSucces = produitProspect.ProbabiliteSucces
                 });
 
@@ -118,19 +121,38 @@ namespace ProspectManagerWebApi.Enpoints
                 [Authorize] async ([FromBody] ProduitProspectRequestDTO produitProspect,
                 [FromRoute] int idProspect,
                 [FromRoute] int idProduit,
-                ProspectManagerDbContext db) =>
+                ProspectManagerDbContext db,
+                UserService userService) =>
                 {
-                    var existingProduitProspect = await db.ProduitProspect.FirstAsync(p => p.Prospect.Id == idProspect
-                                                                                && p.Produit.Id == idProduit);
+                    var existingProduitProspect = await db.ProduitProspect
+                                                          .FirstAsync(p => p.Prospect.Id == idProspect
+                                                                      && p.Produit.Id == idProduit);
 
                     if (existingProduitProspect == null)
                         return Results.NotFound();
 
-                    existingProduitProspect.ProbabiliteSucces = produitProspect.ProbabiliteSucces;
+                    var produit = db.Produits.Find(idProduit);
+                    var prospect = db.Prospects.Find(idProspect);
 
-                    await db.SaveChangesAsync();
+                    if (produit == null || prospect == null) return Results.BadRequest();
 
-                    return Results.Ok(existingProduitProspect);
+                    if (existingProduitProspect.ProbabiliteSucces != produitProspect.ProbabiliteSucces)
+                    {
+                        existingProduitProspect.Modifications.Add(new Modification
+                        {
+                            AncienneValeur = existingProduitProspect.ProbabiliteSucces.ToString(),
+                            NouvelleValeur = produitProspect.ProbabiliteSucces.ToString(),
+                            Champ = nameof(produitProspect.ProbabiliteSucces),
+                            DateModification = DateTime.UtcNow,
+                            Utilisateur = await userService.GetCurrentUser()
+                        });
+
+                        existingProduitProspect.ProbabiliteSucces = produitProspect.ProbabiliteSucces;
+
+                        await db.SaveChangesAsync();
+                    }
+
+                    return Results.Ok(produitProspect);
                 });
 
             app.MapDelete("/prospects/{idprospect:int}", [Authorize(Policy = "Admin")] async (int idProspect, ProspectManagerDbContext db) =>
@@ -157,14 +179,26 @@ namespace ProspectManagerWebApi.Enpoints
                 [Authorize] async (
                 [FromRoute] int idProspect,
                 [FromRoute] int idProduit,
-                ProspectManagerDbContext db) =>
+                ProspectManagerDbContext db,
+                UserService userService) =>
                 {
-                    var existingProduitProspect = await db.ProduitProspect.Where(pp => pp.Produit.Id == idProduit
-                                                                        && pp.Prospect.Id == idProspect).FirstOrDefaultAsync();
+                    var existingProduitProspect = await db.ProduitProspect.Include(p => p.Prospect)
+                                                                          .Include(p => p.Produit)
+                                                                          .Where(pp => pp.Produit.Id == idProduit
+                                                                                && pp.Prospect.Id == idProspect).FirstOrDefaultAsync();
                     if (existingProduitProspect == null)
                     {
                         return Results.NotFound();
                     }
+
+                    existingProduitProspect.Prospect.Modifications.Add(new Modification
+                    {
+                        AncienneValeur = $"Produit {existingProduitProspect.Produit.Libelle} (probabilité : {existingProduitProspect.ProbabiliteSucces})",
+                        NouvelleValeur = "Supprimé",
+                        Champ = nameof(existingProduitProspect.ProbabiliteSucces),
+                        DateModification = DateTime.UtcNow,
+                        Utilisateur = await userService.GetCurrentUser()
+                    });
 
                     db.ProduitProspect.Remove(existingProduitProspect);
                     await db.SaveChangesAsync();

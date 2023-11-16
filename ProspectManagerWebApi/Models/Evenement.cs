@@ -10,6 +10,6 @@
         public int Evaluation { get; set; }
         public ICollection<Produit>? Produits { get; set; }
         public Utilisateur? Utilisateur { get; set; }
-        public ICollection<Modification>? Modifications { get; set; }
+        public ICollection<Modification> Modifications { get; set; } = new List<Modification>();
     }
 }

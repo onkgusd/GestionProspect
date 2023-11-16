@@ -11,7 +11,7 @@ namespace ProspectManagerWebApi.Enpoints
         public static void Map(WebApplication app)
         {
             app.MapGet("/types-evenement", [Authorize] async (ProspectManagerDbContext db) =>
-    await db.TypesEvenement.ToListAsync());
+                await db.TypesEvenement.ToListAsync());
 
             app.MapGet("/types-evenement/{idtypeevenement:int}", [Authorize] async (int idTypeEvenement, ProspectManagerDbContext db) =>
                 await db.TypesEvenement.FindAsync(idTypeEvenement) is TypeEvenement typeEvenement ?

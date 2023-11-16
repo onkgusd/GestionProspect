@@ -4,7 +4,6 @@ namespace ProspectManagerWebApi.DTO.Request
 {
     public class UtilisateurRequestDTO
     {
-        public int? Id { get; set; }
         [Required]
         public string? Login { get; set; }
         [Required]

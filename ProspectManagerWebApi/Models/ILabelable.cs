@@ -2,6 +2,6 @@
 {
     public interface ILabelable
     {
-        string Libelle {  get; set; }
+        string GetLabel();
     }
 }

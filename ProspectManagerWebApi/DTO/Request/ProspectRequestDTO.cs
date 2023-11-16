@@ -5,8 +5,6 @@ namespace ProspectManagerWebApi.DTO.Request
 {
     public class ProspectRequestDTO
     {
-        public int Id { get; set; }
-
         [Required]
         public string? Nom { get; set; } = "";
         public string? Departement { get; set; }

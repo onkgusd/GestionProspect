@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProspectManagerWebApi.Data;
+using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
+using ProspectManagerWebApi.Services;
 
 namespace ProspectManagerWebApi.Enpoints
 {
@@ -26,7 +28,11 @@ namespace ProspectManagerWebApi.Enpoints
                 return Results.Created($"/produits/{produit.Id}", produit);
             });
 
-            app.MapPut("/produits/{idproduit:int}", [Authorize] async ([FromBody] Produit updatedProduit, int idProduit, ProspectManagerDbContext db) =>
+            app.MapPut("/produits/{idproduit:int}", [Authorize] async (
+                                       [FromBody] Produit updatedProduit,
+                                       int idProduit,
+                                       ProspectManagerDbContext db,
+                                       UserService userService) =>
             {
                 if (idProduit != updatedProduit.Id)
                     return Results.BadRequest("Les identifiants produits ne sont pas cohérents.");
@@ -34,6 +40,13 @@ namespace ProspectManagerWebApi.Enpoints
                 var existingProduit = await db.Produits.FindAsync(idProduit);
                 if (existingProduit == null)
                     return Results.NotFound();
+
+                var modifications = ModificationHelper.GetModifications(await userService.GetCurrentUser(), existingProduit, updatedProduit);
+
+                if (modifications?.Count == 0)
+                    return Results.Ok(existingProduit);
+
+                modifications?.ForEach(m => existingProduit.Modifications.Add(m));
 
                 db.Entry(existingProduit).CurrentValues.SetValues(updatedProduit);
                 await db.SaveChangesAsync();

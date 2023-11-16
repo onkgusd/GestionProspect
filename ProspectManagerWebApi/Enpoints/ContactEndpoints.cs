@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProspectManagerWebApi.Data;
+using ProspectManagerWebApi.DTO.Request;
+using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
+using ProspectManagerWebApi.Services;
 
 namespace ProspectManagerWebApi.Enpoints
 {
@@ -35,14 +38,21 @@ namespace ProspectManagerWebApi.Enpoints
                 return Results.Created($"/prospects/{idProspect}/contacts/{contact.Id}", contact);
             });
 
-            app.MapPut("/contacts/{idcontact:int}", [Authorize] async ([FromBody] Contact updatedContact, int idcontact, ProspectManagerDbContext db) =>
+            app.MapPut("/contacts/{idcontact:int}", [Authorize] async ([FromBody] ContactRequestDTO updatedContact,
+                                                                                  int idcontact,
+                                                                                  ProspectManagerDbContext db,
+                                                                                  UserService userService) =>
             {
-                if (idcontact != updatedContact.Id)
-                    return Results.BadRequest("Les identifiants de contact ne sont pas cohérents.");
-
                 var existingContact = await db.Contacts.FindAsync(idcontact);
                 if (existingContact == null)
                     return Results.NotFound();
+
+                var modifications = ModificationHelper.GetModifications(await userService.GetCurrentUser(), existingContact, updatedContact);
+
+                if (modifications?.Count == 0)
+                    return Results.Ok(existingContact);
+
+                modifications?.ForEach(m => existingContact.Modifications.Add(m));
 
                 db.Entry(existingContact).CurrentValues.SetValues(updatedContact);
                 await db.SaveChangesAsync();

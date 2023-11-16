@@ -19,10 +19,10 @@ namespace ProspectManagerWebApi.Models
         public Statut Statut { get; set; } = new Statut();
         public bool Actif {  get; set; }
         public TypeOrganisme TypeOrganisme { get; set; } = new TypeOrganisme();
-        public ICollection<Contact> Contacts { get; set; } = new HashSet<Contact>();
+        public ICollection<Contact> Contacts { get; set; } = new List<Contact>();
         public Utilisateur UtilisateurCreation { get; set; } = new Utilisateur();
-        public ICollection<Modification> Modifications { get; set; } = new HashSet<Modification>();
-        public ICollection<ProduitProspect> ProduitProspects { get; set; } = new HashSet<ProduitProspect>();
-        public ICollection<Evenement> Evenements { get; set; } = new HashSet<Evenement>();
+        public ICollection<Modification> Modifications { get; set; } = new List<Modification>();
+        public ICollection<ProduitProspect> ProduitProspects { get; set; } = new List<ProduitProspect>();
+        public ICollection<Evenement> Evenements { get; set; } = new List<Evenement>();
     }
 }

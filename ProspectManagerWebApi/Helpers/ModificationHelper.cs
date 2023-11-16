@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using ProspectManagerWebApi.Models;
+using System.Collections;
 using System.Reflection;
 
 namespace ProspectManagerWebApi.Helpers
@@ -12,8 +13,8 @@ namespace ProspectManagerWebApi.Helpers
 
             if (typeof(ILabelable).IsAssignableFrom(typeof(TOriginal)) && !string.IsNullOrEmpty(parentProperty))
             {
-                var originalLibelle = (original as ILabelable)?.Libelle;
-                var updatedLibelle = (updated as ILabelable)?.Libelle;
+                var originalLibelle = (original as ILabelable)?.GetLabel();
+                var updatedLibelle = (updated as ILabelable)?.GetLabel();
 
                 if (!Equals(originalLibelle, updatedLibelle))
                 {
@@ -31,17 +32,16 @@ namespace ProspectManagerWebApi.Helpers
 
                 if (propertyType.IsClass && propertyType != typeof(string))
                 {
-                    parentProperty = prop.Name;
                     var getModificationsMethod = typeof(ModificationHelper).GetMethod(nameof(GetModifications), BindingFlags.Static | BindingFlags.Public);
                     var genericMethod = getModificationsMethod?.MakeGenericMethod(new Type[] { propertyType, propertyType });
-                    var childModifications = genericMethod?.Invoke(null, new object[] { utilisateur, originalValue, updatedValue, parentProperty }) as List<Modification>;
+                    var childModifications = genericMethod?.Invoke(null, new object[] { utilisateur, originalValue, updatedValue, prop.Name }) as List<Modification>;
 
                     if (childModifications != null)
                     {
                         modifications.AddRange(childModifications);
                     }
                 }
-                else if (!Equals(originalValue, updatedValue))
+                else if (!Equals(originalValue, updatedValue) && !typeof(IEnumerable).IsAssignableFrom(originalValue?.GetType()))
                 {
                     var propertyName = string.IsNullOrEmpty(parentProperty) ? prop.Name : $"{parentProperty}.{prop.Name}";
                     modifications.Add(CreateModification<TOriginal>(utilisateur, propertyName, originalValue, updatedValue));
@@ -56,8 +56,8 @@ namespace ProspectManagerWebApi.Helpers
             return new Modification
             {
                 Champ = propertyName,
-                AncienneValeur = originalValue?.ToString(),
-                NouvelleValeur = updatedValue?.ToString(),
+                AncienneValeur = originalValue?.ToString() ?? "",
+                NouvelleValeur = updatedValue?.ToString() ?? "",
                 DateModification = DateTime.UtcNow,
                 Utilisateur = utilisateur
             };

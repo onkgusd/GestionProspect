@@ -2,8 +2,8 @@
 {
     public class PasswordReinitRequestDTO
     {
-        public string Email { get; set; }
-        public string Token { get; set; }
-        public string NouveauMotDePasse { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string Token { get; set; } = string.Empty;
+        public string NouveauMotDePasse { get; set; } = string.Empty;
     }
 }

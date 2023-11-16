@@ -23,7 +23,7 @@ namespace ProspectManagerWebApi.Services
             _emailService = emailService;
         }
 
-        internal async Task RequestPasswordReset(string email, IPAddress adresseIP = null)
+        internal async Task RequestPasswordReset(string email, IPAddress? adresseIP = null)
         {
             var token = GeneratePasswordResetToken();
 
@@ -114,7 +114,7 @@ namespace ProspectManagerWebApi.Services
                 emailBody);
         }
 
-        private async Task SaveTokenToDatabase(Utilisateur utilisateur, string token, DateTime expirationDate, string IPAddress = null)
+        private async Task SaveTokenToDatabase(Utilisateur utilisateur, string token, DateTime expirationDate, string IPAddress = "")
         {
             var passwordResetToken = new PasswordResetToken
             {

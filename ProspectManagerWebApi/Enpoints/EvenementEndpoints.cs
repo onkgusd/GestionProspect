@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProspectManagerWebApi.Data;
 using ProspectManagerWebApi.DTO.Response;
+using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
+using ProspectManagerWebApi.Services;
 
 namespace ProspectManagerWebApi.Enpoints
 {
@@ -13,7 +15,7 @@ namespace ProspectManagerWebApi.Enpoints
         public static void Map(WebApplication app, IMapper mapper)
         {
             app.MapGet("/evenements", async (ProspectManagerDbContext db) =>
-    await db.Evenements.ToListAsync());
+                await db.Evenements.ToListAsync());
 
             app.MapGet("/prospects/{idprospect:int}/evenements", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
                 await db.Prospects.Where(p => p.Id == idprospect).Select(p => p.Evenements).ToListAsync());
@@ -38,19 +40,34 @@ namespace ProspectManagerWebApi.Enpoints
                 return Results.Created($"/prospects/{idProspect}/evenements/{evenement.Id}", mapper.Map<EvenementResponseDTO>(evenement));
             });
 
-            app.MapPut("/evenements/{idEvenement:int}", [Authorize] async ([FromBody] Evenement updatedEvenement, int idEvenement, ProspectManagerDbContext db) =>
+            app.MapPut("/evenements/{idEvenement:int}", [Authorize] async (
+                [FromBody] Evenement updatedEvenement, 
+                int idEvenement, 
+                ProspectManagerDbContext db,
+                UserService userService) =>
             {
                 if (idEvenement != updatedEvenement.Id)
                     return Results.BadRequest("Les identifiants d'événement ne sont pas cohérents.");
 
-                var existingEvenement = await db.Evenements.Include(e => e.Produits).FirstAsync(e => e.Id == idEvenement);
+                var existingEvenement = await db.Evenements.Include(e => e.Produits)
+                                                           .Include(e => e.Contact)
+                                                           .Include(e => e.TypeEvenement)
+                                                           .FirstAsync(e => e.Id == idEvenement);
                 if (existingEvenement == null)
                     return Results.NotFound();
 
+                var modifications = ModificationHelper.GetModifications(await userService.GetCurrentUser(), existingEvenement, updatedEvenement);
+
+                if (modifications?.Count == 0)
+                    return Results.Ok(existingEvenement);
+
+                modifications?.ForEach(m => existingEvenement.Modifications.Add(m));
+
                 db.Entry(existingEvenement).CurrentValues.SetValues(updatedEvenement);
                 existingEvenement.Produits = updatedEvenement.Produits?
-                .Select(p => db.Produits.FirstOrDefault(existing => existing.Id == p.Id) ?? p)
-                .ToList();
+                                                             .Select(p => db.Produits
+                                                                            .FirstOrDefault(existing => existing.Id == p.Id) ?? p)
+                                                             .ToList();
 
                 await db.SaveChangesAsync();
 
@@ -64,6 +81,8 @@ namespace ProspectManagerWebApi.Enpoints
                 {
                     return Results.NotFound();
                 }
+
+
 
                 db.Evenements.Remove(existingEvenement);
                 await db.SaveChangesAsync();

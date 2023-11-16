@@ -9,7 +9,8 @@ namespace ProspectManagerWebApi.Models
         public int Id { get; set; }
 
         [Required]
-        public string? Libelle { get; set; }
+        public string Libelle { get; set; } = string.Empty;
         public bool? Actif { get; set; }
+        public string GetLabel() => Libelle;
     }
 }

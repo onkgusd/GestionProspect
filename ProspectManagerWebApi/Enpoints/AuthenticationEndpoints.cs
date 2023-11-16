@@ -34,10 +34,8 @@ namespace ProspectManagerWebApi.Enpoints
 
                 var issuer = builder.Configuration["Jwt:Issuer"];
                 var audience = builder.Configuration["Jwt:Audience"];
-                var securityKey = new SymmetricSecurityKey
-            (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new Exception("Jwt key is not set.")));
-                var credentials = new SigningCredentials(securityKey,
-            SecurityAlgorithms.HmacSha512);
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new Exception("Jwt key is not set.")));
+                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
 
                 var expirationDate = DateTime.UtcNow.AddHours(24);
                 var token = new JwtSecurityToken(issuer: issuer,
@@ -45,8 +43,8 @@ namespace ProspectManagerWebApi.Enpoints
                     signingCredentials: credentials,
                     claims: new[]
                         {
-            new Claim(ClaimTypes.Name, utilisateur.Login),
-            new Claim(ClaimTypes.Role, utilisateur.Role)
+                            new Claim(ClaimTypes.Name, utilisateur.Login),
+                            new Claim(ClaimTypes.Role, utilisateur.Role)
                     },
                     expires: expirationDate);
 

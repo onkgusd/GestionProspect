@@ -15,6 +15,6 @@ namespace ProspectManagerWebApi.Models
 
         public Prospect Prospect { get; set; } = new Prospect();
         public int ProbabiliteSucces { get; set; }
-        public ICollection<Modification>? Modifications { get; set; }
+        public ICollection<Modification> Modifications { get; set; } = new List<Modification>();
     }
 }

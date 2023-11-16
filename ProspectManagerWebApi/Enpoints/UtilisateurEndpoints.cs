@@ -34,14 +34,11 @@ namespace ProspectManagerWebApi.Enpoints
 
                 await passwordManagerService.SendInvitationEmail(utilisateurEntity);
 
-                return Results.Created($"/utilisateurs/{utilisateur.Id}", mapper.Map<UtilisateurResponseDTO>(utilisateurEntity));
+                return Results.Created($"/utilisateurs/{utilisateurEntity.Id}", mapper.Map<UtilisateurResponseDTO>(utilisateurEntity));
             });
 
             app.MapPut("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] async ([FromBody] UtilisateurRequestDTO updatedUtilisateur, int idUtilisateur, ProspectManagerDbContext db) =>
             {
-                if (idUtilisateur != updatedUtilisateur.Id)
-                    return Results.BadRequest("Les identifiants ne sont pas cohérents.");
-
                 var existingUtilisateur = await db.Utilisateurs.FindAsync(idUtilisateur);
                 if (existingUtilisateur == null)
                     return Results.NotFound();

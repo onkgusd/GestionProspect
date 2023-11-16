@@ -11,7 +11,7 @@ namespace ProspectManagerWebApi.Enpoints
         public static void Map(WebApplication app)
         {
             app.MapGet("/statuts", [Authorize] async (ProspectManagerDbContext db) =>
-    await db.Statuts.ToListAsync());
+                await db.Statuts.ToListAsync());
 
             app.MapPost("/statuts", [Authorize(Policy = "Admin")] async ([FromBody] Statut statut, ProspectManagerDbContext db) =>
             {
