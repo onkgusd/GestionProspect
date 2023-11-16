@@ -1,5 +1,5 @@
 <div class="mat-elevation-z8" [hidden]="isLoading">
-  <table mat-table [dataSource]="prospects" matSort>
+  <table mat-table [dataSource]="prospects" matSort class="print-section">
 
     <!-- ID Column -->
     <ng-container matColumnDef="id">
@@ -70,6 +70,11 @@
 
 <app-loader *ngIf="isLoading"></app-loader>
 
-<button mat-fab color="primary" class="floating-button" routerLink="/prospects/add">
-  <mat-icon>add</mat-icon>
-</button>
+<div class="floating-button" fxLayout="column">
+  <button mat-fab color="primary" (click)="printList()" *ngIf="isPrintable">
+    <mat-icon>print</mat-icon>
+  </button>
+  <button mat-fab color="primary" routerLink="/prospects/add">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

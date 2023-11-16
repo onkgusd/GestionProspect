@@ -30,10 +30,19 @@ body {
     margin-bottom: 1.4rem;
 }
 
-button.floating-button {
+button.floating-button,
+div.floating-button {
     position: fixed;
     bottom: 25px;
     right: 25px;
+
+    & button {
+        margin-bottom: 10px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
 
 tr,
@@ -50,8 +59,32 @@ th {
     &.clickable {
         cursor: pointer;
     }
-    
+
     &.clickable:hover {
         background-color: lighten(grey, 40%);
+    }
+}
+
+@media screen {
+    .only-for-printing {
+        display: none;
+    }
+}
+
+@media print {
+    @page {
+        size: landscape;
+    }
+
+    body *:not(:has(.print-section)):not(.print-section):not(.print-section *) {
+        display: none !important;
+    }
+
+    mat-sidenav-content {
+        margin-left: 0 !important;
+        position: static !important;
+        & * {
+            box-shadow: none !important;
+        }
     }
 }

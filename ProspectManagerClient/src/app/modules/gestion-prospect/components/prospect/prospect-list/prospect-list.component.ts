@@ -12,6 +12,9 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 
 export class ProspectListComponent implements OnInit {
+  @Input() isPrintable: boolean;
+  @Input() prospectList: Prospect[];
+
   prospects: MatTableDataSource<Prospect>;
   displayedColumns: string[] = ['type-organisme', 'nom', 'statut', 'departement', 'secteurActivite', 'telephone', 'mail', 'dateCreation'];
   isLoading: boolean = true;
@@ -30,8 +33,6 @@ export class ProspectListComponent implements OnInit {
     }
   }
 
-  @Input() prospectList: Prospect[];
-
   constructor(private prospectService: ProspectService) { }
 
   ngOnInit(): void {
@@ -45,5 +46,9 @@ export class ProspectListComponent implements OnInit {
         this.isLoading = false;
       });
     }
+  }
+
+  printList() {
+    window.print();
   }
 }

@@ -123,8 +123,21 @@
         </div>
     </form>
 
+    <div class="print-section only-for-printing">
+        <div *ngIf="searchCriteria.length > 0; else noCriteria">
+            <strong>Récapitulatif des critères de recherche :</strong>
+            <ul class="criteria-list">
+                <li *ngFor="let criterion of searchCriteria">{{ criterion }}</li>
+            </ul>
+        </div>
+        <ng-template #noCriteria>
+            <strong>Pas de critère de recherche spécifié.</strong>
+        </ng-template>
+    </div>
+
     <app-prospect-list [prospectList]="prospectSearchResult"
-        *ngIf="!isLoading && prospectSearchResult.length > 0"></app-prospect-list>
+        *ngIf="!isLoading && prospectSearchResult.length > 0"
+        [isPrintable]="true"></app-prospect-list>
 
     <div *ngIf="hasBeenLaunched && !isLoading && prospectSearchResult.length === 0" class="no-result">
         <span>

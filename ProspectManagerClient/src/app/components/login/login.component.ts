@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.getToken())
-      this.router.navigate(['/produits']);
+      this.router.navigate(['/search']);
   }
 
   onSubmit(form: NgForm) {
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
           this.snackbarService.openSnackBar("Connecté :)");
           this.snackbarService.openSnackBar("Connecté :) :)");
           this.snackbarService.openSnackBar("Connecté :) :) :)");
-          this.router.navigate(['/produits']);
+          this.router.navigate(['/search']);
         } else {
           this.snackbarService.openErrorSnackBar("Erreur lors de la connexion !", 10000);
         }

@@ -28,6 +28,7 @@ export class ProspectSearchComponent implements OnInit {
   hasBeenLaunched: boolean;
   prospectSearchResult: Prospect[] = [];
   prospectSearchDto: ProspectSearchDto = new ProspectSearchDto();
+  searchCriteria: string[] = [];
 
   @ViewChild('produitsInput') produitsInput: ElementRef<HTMLInputElement>;
   produitsCtrl = new FormControl('');
@@ -336,9 +337,38 @@ export class ProspectSearchComponent implements OnInit {
     this.searchService.searchProspect(this.prospectSearchDto).subscribe({
       next: result => {
         this.prospectSearchResult = result;
-        this.isLoading = false
+        this.isLoading = false;
+        this.refreshSearchCriteriaLabel();
       },
       error: error => this.snackbarService.openErrorSnackBar("😖 Une erreur est survenue lors de la recherche...")
     })
+  }
+
+  refreshSearchCriteriaLabel() {
+    this.searchCriteria = [];
+
+    if (this.prospectSearchDto.noms?.length > 0){
+      this.searchCriteria.push(`Nom : ${this.prospectSearchDto.noms.join(", ")}`);
+    }
+    
+    if (this.prospectSearchDto.departements?.length > 0){
+      this.searchCriteria.push(`Zone géographique : ${this.prospectSearchDto.departements.join(", ")}`);
+    }
+    
+    if (this.prospectSearchDto.secteursActivite?.length > 0){
+      this.searchCriteria.push(`Secteur d'activité : ${this.prospectSearchDto.secteursActivite.join(", ")}`);
+    }
+
+    if (this.prospectSearchDto.statuts?.length > 0){
+      this.searchCriteria.push(`Statut : ${this.prospectSearchDto.statuts.map(s => s.libelle).join(", ")}`);
+    }
+
+    if (this.prospectSearchDto.typesOrganisme?.length > 0){
+      this.searchCriteria.push(`Type d'organisme : ${this.prospectSearchDto.typesOrganisme.map(t => t.libelle).join(", ")}`);
+    }
+
+    if (this.prospectSearchDto.produits?.length > 0){
+      this.searchCriteria.push(`Produits proposés : ${this.prospectSearchDto.produits.map(p => p.libelle).join(", ")}`);
+    }
   }
 }
