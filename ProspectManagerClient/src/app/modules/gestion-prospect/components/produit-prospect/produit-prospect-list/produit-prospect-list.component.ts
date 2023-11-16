@@ -16,25 +16,37 @@ import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-con
   styleUrls: ['./produit-prospect-list.component.scss']
 })
 export class ProduitProspectListComponent implements OnInit {
-  produitsProspect: MatTableDataSource<ProduitProspect>;
+  produitProspects: MatTableDataSource<ProduitProspect>;
   displayedColumns: string[] = ['reference', 'libelle', 'description', 'probabiliteSucces', 'actions'];
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort)
+  set sort(value: MatSort) {
+    if (this.produitProspects) {
+      this.produitProspects.sort = value;
+    }
+  }
+
+  @ViewChild(MatPaginator)
+  set paginator(value: MatPaginator) {
+    if (this.produitProspects) {
+      this.produitProspects.paginator = value;
+    }
+  }
+
   @Input() prospect: Prospect;
-  produitsProspectList: ProduitProspect[];
+  produitProspectList: ProduitProspect[];
 
   constructor(public dialog: MatDialog, private prospectService: ProspectService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
 
     if (this.prospect.produitProspects) {
-      this.produitsProspectList = this.prospect.produitProspects
+      this.produitProspectList = this.prospect.produitProspects
       this.refreshTable();
     }
     else {
       this.prospectService.getProduits(this.prospect.id).subscribe((produits: ProduitProspect[]) => {
-        this.produitsProspectList = produits;
+        this.produitProspectList = produits;
         this.refreshTable();
       });
     }
@@ -43,7 +55,7 @@ export class ProduitProspectListComponent implements OnInit {
   openProductDialog(): void {
     const dialogRef = this.dialog.open(ProduitProspectDialogComponent, {
       width: '500px',
-      data: { disabledProduits: this.produitsProspectList?.map(pp => pp.produit.id) }
+      data: { disabledProduits: this.produitProspectList?.map(pp => pp.produit.id) }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -56,9 +68,9 @@ export class ProduitProspectListComponent implements OnInit {
 
         this.prospectService.addProduit(newProduitProspect).subscribe({
           next: () => {
-            this.produitsProspectList.push(newProduitProspect);
-            this.produitsProspect.data = this.produitsProspectList;
-            this.produitsProspect._updateChangeSubscription();
+            this.produitProspectList.push(newProduitProspect);
+            this.produitProspects.data = this.produitProspectList;
+            this.produitProspects._updateChangeSubscription();
           },
           error: () => this.snackbarService.openSuccessSnackBar("Erreur lors de l'ajout :(")
         });
@@ -67,9 +79,7 @@ export class ProduitProspectListComponent implements OnInit {
   }
 
   refreshTable(): void {
-    this.produitsProspect = new MatTableDataSource(this.produitsProspectList);
-    this.produitsProspect.sort = this.sort;
-    this.produitsProspect.paginator = this.paginator;
+    this.produitProspects = new MatTableDataSource(this.produitProspectList);
   }
 
   onProbabiliteSuccesChange(probabiliteSucces: number, produitProspect: ProduitProspect): void {
@@ -100,13 +110,13 @@ export class ProduitProspectListComponent implements OnInit {
     this.prospectService.deleteProduit(produitProspect).subscribe(
       {
         next: () => {
-          const index = this.produitsProspectList.findIndex((p) => p.produit.id === produitProspect.produit.id);
+          const index = this.produitProspectList.findIndex((p) => p.produit.id === produitProspect.produit.id);
           if (index !== -1) {
-            this.produitsProspectList.splice(index, 1);
+            this.produitProspectList.splice(index, 1);
           }
 
-          this.produitsProspect.data = this.produitsProspectList;
-          this.produitsProspect._updateChangeSubscription();
+          this.produitProspects.data = this.produitProspectList;
+          this.produitProspects._updateChangeSubscription();
 
           this.snackbarService.openSuccessSnackBar("Suppression réussie.");
         },

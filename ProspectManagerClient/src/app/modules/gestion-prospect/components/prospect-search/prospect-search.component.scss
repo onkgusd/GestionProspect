@@ -1,0 +1,24 @@
+.search-form {
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.search-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-button {
+    margin-top: 10px;
+}
+
+.no-result {
+    text-align: center;
+    padding: 10px;
+}

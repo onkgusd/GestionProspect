@@ -17,8 +17,20 @@ export class EvenementListComponent implements OnInit {
   evenements: MatTableDataSource<Evenement>;
   displayedColumns: string[] = ['typeEvenement', 'dateEvenement', 'contact', 'produit', 'actions'];
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort)
+  set sort(value: MatSort) {
+    if (this.evenements) {
+      this.evenements.sort = value;
+    }
+  }
+
+  @ViewChild(MatPaginator)
+  set paginator(value: MatPaginator) {
+    if (this.evenements) {
+      this.evenements.paginator = value;
+    }
+  }
+
   @Input() idProspect: number;
   @Input() evenementList: Evenement[];
 
@@ -33,16 +45,13 @@ export class EvenementListComponent implements OnInit {
         this.evenements = new MatTableDataSource(evenements);
       });
     }
-
-    this.evenements.sort = this.sort;
-    this.evenements.paginator = this.paginator;
   }
 
   openDeleteConfirmationDialog(evenement: Evenement): void {
     const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
       data: { message: 'Voulez-vous vraiment supprimer cet évènement ?' }
     });
-  
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.deleteEvenement(evenement);

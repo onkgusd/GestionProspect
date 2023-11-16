@@ -18,8 +18,20 @@ export class ContactListComponent implements OnInit {
   contacts: MatTableDataSource<Contact>;
   displayedColumns: string[] = ['nom', 'fonction', 'email', 'telephone', 'actif','actions'];
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort)
+  set sort(value: MatSort) {
+    if (this.contacts) {
+      this.contacts.sort = value;
+    }
+  }
+
+  @ViewChild(MatPaginator)
+  set paginator(value: MatPaginator) {
+    if (this.contacts) {
+      this.contacts.paginator = value;
+    }
+  }
+
   @Input() idProspect: number;
   @Input() contactList: Contact[];
 
@@ -34,9 +46,6 @@ export class ContactListComponent implements OnInit {
         this.contacts = new MatTableDataSource(contacts);
       });
     }
-
-    this.contacts.sort = this.sort;
-    this.contacts.paginator = this.paginator;
   }
 
   openDeleteConfirmationDialog(contact: Contact): void {

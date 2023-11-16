@@ -1,7 +1,7 @@
 using AutoMapper;
+using LinqKit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,7 +13,6 @@ using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
 using ProspectManagerWebApi.Services;
 using System.IdentityModel.Tokens.Jwt;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -174,7 +173,7 @@ app.MapPost("/authentication/demande-reinitialisation", async (HttpContext http,
 // Endpoint pour réinitialiser le mot de passe
 app.MapPost("/authentication/reinitialiser-motdepasse", async (HttpContext http, PasswordManagerService resetService, [FromBody] PasswordReinitRequestDTO passwordReinitRequest) =>
     await resetService.ReinitPassword(passwordReinitRequest.Email, passwordReinitRequest.NouveauMotDePasse, passwordReinitRequest.Token)
-    ? Results.Ok("Mot de passe réinitialisé.") :  Results.BadRequest("Impossible de réinitialiser le mot de passe (token invalide ou déjà utilisé)."));
+    ? Results.Ok("Mot de passe réinitialisé.") : Results.BadRequest("Impossible de réinitialiser le mot de passe (token invalide ou déjà utilisé)."));
 
 #endregion
 
@@ -279,7 +278,7 @@ await db.Prospects.Include(p => p.Contacts)
                   .FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
 Results.Ok(mapper.Map<ProspectResponseDTO>(prospect)) : Results.NotFound());
 
-app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, ProspectManagerDbContext db,IHttpContextAccessor httpContextAccessor) =>
+app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, ProspectManagerDbContext db, IHttpContextAccessor httpContextAccessor) =>
 {
     prospect.DateCreation = DateTime.UtcNow;
 
@@ -312,7 +311,7 @@ app.MapPut("/prospects/{idprospect:int}", [Authorize] async ([FromBody] Prospect
     db.Entry(existingProspect).CurrentValues.SetValues(updatedProspect);
 
     if (updatedProspect.Statut.Id != existingProspect.Statut.Id)
-        existingProspect.Statut = await db.Statuts.FindAsync(updatedProspect.TypeOrganisme.Id);
+        existingProspect.Statut = await db.Statuts.FindAsync(updatedProspect.Statut.Id);
 
     if (updatedProspect.TypeOrganisme.Id != existingProspect.TypeOrganisme.Id)
         existingProspect.TypeOrganisme = await db.TypesOrganisme.FindAsync(updatedProspect.TypeOrganisme.Id);
@@ -732,6 +731,89 @@ app.MapDelete("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")]
     await db.SaveChangesAsync();
 
     return Results.Ok();
+});
+#endregion
+
+#region Recherche
+app.MapPost("/prospects/search", [Authorize] async ([FromBody] ProspectSearchRequestDTO prospectSearch,
+                                                                    ProspectManagerDbContext db) =>
+{
+    var prospects = db.Prospects.Include(p => p.Statut)
+                                .Include(p => p.TypeOrganisme)
+                                .AsQueryable();
+
+    if (prospectSearch.Noms?.Length > 0)
+    {
+        var predicate = PredicateBuilder.New<Prospect>(false);
+
+        foreach (var nom in prospectSearch.Noms)
+        {
+            predicate = predicate.Or(p => p.Nom.Contains(nom));
+        }
+
+        prospects = prospects.Where(predicate);
+    }
+
+    if (prospectSearch.Statuts?.Length > 0)
+    {
+        var statutPredicate = PredicateBuilder.New<Prospect>(false);
+        foreach (var statut in prospectSearch.Statuts)
+        {
+            int tempStatutId = statut.Id; // Variable temporaire pour éviter la fermeture sur la variable de boucle
+            statutPredicate = statutPredicate.Or(p => p.Statut.Id == tempStatutId);
+        }
+        prospects = prospects.Where(statutPredicate);
+    }
+
+    if (prospectSearch.TypesOrganisme?.Length > 0)
+    {
+        var typeOrganismePredicate = PredicateBuilder.New<Prospect>(false);
+        foreach (var typeOrganisme in prospectSearch.TypesOrganisme)
+        {
+            int tempTypeOrganismeId = typeOrganisme.Id;
+            typeOrganismePredicate = typeOrganismePredicate.Or(p => p.TypeOrganisme.Id == tempTypeOrganismeId);
+        }
+        prospects = prospects.Where(typeOrganismePredicate);
+    }
+
+    if (prospectSearch.Produits?.Length > 0)
+    {
+        var produitPredicate = PredicateBuilder.New<Prospect>(false);
+        foreach (var produit in prospectSearch.Produits)
+        {
+            int tempProduitId = produit.Id;
+            produitPredicate = produitPredicate.Or(p => p.ProduitProspects.Any(pp => pp.Produit.Id == tempProduitId));
+        }
+        prospects = prospects.Where(produitPredicate);
+    }
+
+    if (prospectSearch.SecteursActivite?.Length > 0)
+    {
+        var predicate = PredicateBuilder.New<Prospect>(false);
+
+        foreach (var secteurActivite in prospectSearch.SecteursActivite)
+        {
+            predicate = predicate.Or(p => p.SecteurActivite != null
+                                          && p.SecteurActivite.Contains(secteurActivite));
+        }
+
+        prospects = prospects.Where(predicate);
+    }
+
+    if (prospectSearch.Departements?.Length > 0)
+    {
+        var predicate = PredicateBuilder.New<Prospect>(false);
+
+        foreach (var secteurGeographique in prospectSearch.Departements)
+        {
+            predicate = predicate.Or(p => p.Departement != null
+                                          && p.Departement.Contains(secteurGeographique));
+        }
+
+        prospects = prospects.Where(predicate);
+    }
+
+    return Results.Ok(await prospects.ToListAsync());
 });
 #endregion
 

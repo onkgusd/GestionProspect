@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Prospect } from '../../../models/prospect';
 import { ProspectService } from '../../../services/prospect.service';
 import { MatPaginator } from '@angular/material/paginator';
@@ -16,17 +16,34 @@ export class ProspectListComponent implements OnInit {
   displayedColumns: string[] = ['type-organisme', 'nom', 'statut', 'departement', 'secteurActivite', 'telephone', 'mail', 'dateCreation'];
   isLoading: boolean = true;
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  
+  @ViewChild(MatSort)
+  set sort(value: MatSort) {
+    if (this.prospects) {
+      this.prospects.sort = value;
+    }
+  }
+
+  @ViewChild(MatPaginator)
+  set paginator(value: MatPaginator) {
+    if (this.prospects) {
+      this.prospects.paginator = value;
+    }
+  }
+
+  @Input() prospectList: Prospect[];
+
   constructor(private prospectService: ProspectService) { }
 
   ngOnInit(): void {
-    this.prospectService.getAll().subscribe((prospects: Prospect[]) => {
-      this.prospects = new MatTableDataSource(prospects);
-      this.prospects.sort = this.sort;
-      this.prospects.paginator = this.paginator;
+    if (this.prospectList !== void 0) {
+      this.prospects = new MatTableDataSource(this.prospectList);
       this.isLoading = false;
-    });
+    }
+    else {
+      this.prospectService.getAll().subscribe((prospects: Prospect[]) => {
+        this.prospects = new MatTableDataSource(prospects);
+        this.isLoading = false;
+      });
+    }
   }
 }

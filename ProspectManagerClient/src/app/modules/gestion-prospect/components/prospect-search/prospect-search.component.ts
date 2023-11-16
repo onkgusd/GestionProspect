@@ -12,16 +12,21 @@ import { StatutService } from '../../services/statut.service';
 import { Statut } from '../../models/statut';
 import { TypeOrganisme } from '../../models/type-organisme';
 import { TypeOrganismeService } from '../../services/type-organisme.service';
+import { SearchService } from '../../services/search.service';
+import { Prospect } from '../../models/prospect';
 
 @Component({
   selector: 'app-prospect-search',
   templateUrl: './prospect-search.component.html',
   styleUrls: ['./prospect-search.component.scss']
 })
+
 export class ProspectSearchComponent implements OnInit {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   searchForm: FormGroup;
   isLoading: boolean;
+  hasBeenLaunched: boolean;
+  prospectSearchResult: Prospect[] = [];
   prospectSearchDto: ProspectSearchDto = new ProspectSearchDto();
 
   @ViewChild('produitsInput') produitsInput: ElementRef<HTMLInputElement>;
@@ -42,6 +47,7 @@ export class ProspectSearchComponent implements OnInit {
   constructor(private produitService: ProduitService,
               private statutService: StatutService,
               private typeOrganismeService: TypeOrganismeService,
+              private searchService: SearchService,
               private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
@@ -88,7 +94,7 @@ export class ProspectSearchComponent implements OnInit {
         this.typesOrganisme = typesOrganisme;
         this.filteredTypesOrganisme = this.typesOrganismeCtrl.valueChanges.pipe(
           startWith(null),
-          map((typeOrganismeLibelle: string | null) => this._filterStatut(typeOrganismeLibelle ?? "")
+          map((typeOrganismeLibelle: string | null) => this._filterTypeOrganisme(typeOrganismeLibelle ?? "")
           )
         );
         if (this.prospectSearchDto.typesOrganisme && this.prospectSearchDto.typesOrganisme.length > 0) {
@@ -101,6 +107,10 @@ export class ProspectSearchComponent implements OnInit {
       },
       error: () => this.snackbarService.openErrorSnackBar("😒 Impossible de lister les types d'organisme...")
     });
+
+    this.prospectSearchResult = this.searchService.getStoredResult();
+    this.prospectSearchDto = this.searchService.getStoredSearch();
+    this.hasBeenLaunched = this.searchService.hasBeenLaunched();
   }
 
   addNom(event: MatChipInputEvent): void {
@@ -132,6 +142,70 @@ export class ProspectSearchComponent implements OnInit {
     const index = this.prospectSearchDto.noms.indexOf(nom);
     if (index >= 0) {
       this.prospectSearchDto.noms[index] = value;
+    }
+  }
+
+  addSecteurActivite(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value) {
+      this.prospectSearchDto.secteursActivite.push(value);
+    }
+
+    event.chipInput!.clear();
+  }
+
+  removeSecteurActivite(secteurActivite: string): void {
+    const index = this.prospectSearchDto.secteursActivite.indexOf(secteurActivite);
+
+    if (index >= 0) {
+      this.prospectSearchDto.secteursActivite.splice(index, 1);
+    }
+  }
+
+  editSecteurActivite(secteurActivite: string, event: MatChipEditedEvent) {
+    const value = event.value.trim();
+
+    if (!value) {
+      this.removeSecteurActivite(secteurActivite);
+      return;
+    }
+
+    const index = this.prospectSearchDto.secteursActivite.indexOf(secteurActivite);
+    if (index >= 0) {
+      this.prospectSearchDto.secteursActivite[index] = value;
+    }
+  }
+
+  addSecteurGeographique(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value) {
+      this.prospectSearchDto.departements.push(value);
+    }
+
+    event.chipInput!.clear();
+  }
+
+  removeSecteurGeographique(secteurGeographique: string): void {
+    const index = this.prospectSearchDto.departements.indexOf(secteurGeographique);
+
+    if (index >= 0) {
+      this.prospectSearchDto.departements.splice(index, 1);
+    }
+  }
+
+  editSecteurGeographique(secteurGeographique: string, event: MatChipEditedEvent) {
+    const value = event.value.trim();
+
+    if (!value) {
+      this.removeSecteurGeographique(secteurGeographique);
+      return;
+    }
+
+    const index = this.prospectSearchDto.departements.indexOf(secteurGeographique);
+    if (index >= 0) {
+      this.prospectSearchDto.departements[index] = value;
     }
   }
 
@@ -256,7 +330,15 @@ export class ProspectSearchComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // Ici, vous pouvez ajouter la logique pour traiter la soumission du formulaire
-    console.log(this.searchForm.value);
+    this.isLoading = true;
+    this.prospectSearchResult = [];
+    this.hasBeenLaunched = true;
+    this.searchService.searchProspect(this.prospectSearchDto).subscribe({
+      next: result => {
+        this.prospectSearchResult = result;
+        this.isLoading = false
+      },
+      error: error => this.snackbarService.openErrorSnackBar("😖 Une erreur est survenue lors de la recherche...")
+    })
   }
 }
