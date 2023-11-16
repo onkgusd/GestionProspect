@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using ProspectManagerWebApi.Data;
 using ProspectManagerWebApi.DTO.Request;
 using ProspectManagerWebApi.DTO.Response;
+using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
+using ProspectManagerWebApi.Services;
 
 namespace ProspectManagerWebApi.Enpoints
 {
@@ -31,15 +33,18 @@ namespace ProspectManagerWebApi.Enpoints
                                   .ThenInclude(e => e.Produits)
                               .Include(p => p.UtilisateurCreation)
                               .Include(p => p.TypeOrganisme)
+                              .Include(p => p.Modifications)
                               .FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
             Results.Ok(mapper.Map<ProspectResponseDTO>(prospect)) : Results.NotFound());
 
-            app.MapPost("/prospects/", [Authorize] async ([FromBody] Prospect prospect, ProspectManagerDbContext db, IHttpContextAccessor httpContextAccessor) =>
+            app.MapPost("/prospects/", [Authorize] async ([FromBody] ProspectRequestDTO prospectRequest,
+                ProspectManagerDbContext db,
+                UserService userService) =>
             {
+                var prospect = mapper.Map<Prospect>(prospectRequest);
                 prospect.DateCreation = DateTime.UtcNow;
 
-                var login = httpContextAccessor.HttpContext?.User.Identity?.Name;
-                var utilisateur = await db.Utilisateurs.FirstOrDefaultAsync(u => u.Login == login);
+                var utilisateur = await userService.GetCurrentUser();
 
                 if (utilisateur == null)
                     return Results.Unauthorized();
@@ -52,7 +57,11 @@ namespace ProspectManagerWebApi.Enpoints
                 return Results.Created($"/prospects/{prospect.Id}", prospect);
             });
 
-            app.MapPut("/prospects/{idprospect:int}", [Authorize] async ([FromBody] Prospect updatedProspect, int idProspect, ProspectManagerDbContext db) =>
+            app.MapPut("/prospects/{idprospect:int}", [Authorize] async (
+                [FromBody] ProspectRequestDTO updatedProspect,
+                int idProspect,
+                ProspectManagerDbContext db,
+                UserService userService) =>
             {
                 if (idProspect != updatedProspect.Id)
                     return Results.BadRequest("Les identifiants produits ne sont pas cohérents.");
@@ -63,6 +72,13 @@ namespace ProspectManagerWebApi.Enpoints
 
                 if (existingProspect == null)
                     return Results.NotFound();
+
+                var modifications = ModificationHelper.GetModifications(await userService.GetCurrentUser(), existingProspect, updatedProspect);
+
+                if (modifications?.Count == 0)
+                    return Results.Ok(existingProspect);
+
+                modifications?.ForEach(m => existingProspect.Modifications.Add(m));
 
                 db.Entry(existingProspect).CurrentValues.SetValues(updatedProspect);
 

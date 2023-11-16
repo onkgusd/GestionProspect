@@ -12,7 +12,9 @@ public class MappingProfile : Profile
         CreateMap<ProduitProspect, ProduitProspectResponseDTO>();
         CreateMap<Evenement, EvenementResponseDTO>();
         CreateMap<Utilisateur, UtilisateurResponseDTO>();
+        CreateMap<Modification, ModificationResponseDTO>();
 
         CreateMap<UtilisateurRequestDTO, Utilisateur>();
+        CreateMap<ProspectRequestDTO, Prospect>();
     }
 }

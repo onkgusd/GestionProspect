@@ -49,6 +49,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<PasswordManagerService>();
 builder.Services.AddDbContext<ProspectManagerDbContext>();
+builder.Services.AddScoped<UserService>();
 
 // Configuration de l'authentification JWT
 builder.Services.AddAuthentication(o =>

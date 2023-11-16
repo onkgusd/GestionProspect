@@ -3,7 +3,7 @@ using ProspectManagerWebApi.Models;
 
 namespace ProspectManagerWebApi.Data
 {
-    internal class ProspectManagerDbContext : DbContext
+    public class ProspectManagerDbContext : DbContext
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

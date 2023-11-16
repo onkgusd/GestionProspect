@@ -11,7 +11,7 @@ namespace ProspectManagerWebApi.DTO.Response
         public Contact? Contact { get; set; }
         public int Evaluation { get; set; }
         public ICollection<ProduitResponseDTO>? Produits { get; set; }
-        public Utilisateur? Utilisateur { get; set; }
-        public ICollection<Modification>? Modifications { get; set; }
+        public UtilisateurResponseDTO? Utilisateur { get; set; }
+        public ICollection<ModificationResponseDTO>? Modifications { get; set; }
     }
 }

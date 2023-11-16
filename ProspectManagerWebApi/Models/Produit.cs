@@ -5,7 +5,7 @@ namespace ProspectManagerWebApi.Models
 {
     [Index(nameof(Reference), IsUnique = true)]
     [Index(nameof(Libelle), IsUnique = true)]
-    public class Produit
+    public class Produit : ILabelable
     {
         public int Id { get; set; }
 
