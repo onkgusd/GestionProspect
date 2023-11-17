@@ -13,6 +13,7 @@
     </mat-tab>
     <mat-tab label="Historique">
         <p>Créé le {{ prospect.dateCreation | date: 'dd/MM/yyyy HH:mm:ss' }} par {{ prospect.utilisateurCreation?.login || 'un utilisateur inconnu' }}</p>
+        <app-modification-list [modificationList]="prospect.modifications" />
     </mat-tab>
 </mat-tab-group>
 <app-loader *ngIf="isLoading"></app-loader>

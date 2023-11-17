@@ -87,8 +87,8 @@ export class ProduitProspectListComponent implements OnInit {
     produitProspect.prospect = this.prospect;
     this.prospectService.updateProduit(produitProspect).subscribe(
       {
-        next: () => this.snackbarService.openSuccessSnackBar("Mise à jour réussie :)"),
-        error: () => this.snackbarService.openSuccessSnackBar("Erreur lors de la mise à jour :(")
+        next: () => this.snackbarService.openSuccessSnackBar("👍 Mise à jour réussie !"),
+        error: () => this.snackbarService.openSuccessSnackBar("😟 Erreur lors de la mise à jour.")
       }
     )
   }
@@ -118,9 +118,9 @@ export class ProduitProspectListComponent implements OnInit {
           this.produitProspects.data = this.produitProspectList;
           this.produitProspects._updateChangeSubscription();
 
-          this.snackbarService.openSuccessSnackBar("Suppression réussie.");
+          this.snackbarService.openSuccessSnackBar("👍 Suppression réussie.");
         },
-        error: () => this.snackbarService.openSuccessSnackBar("Erreur lors de la mise à jour :(")
+        error: () => this.snackbarService.openSuccessSnackBar("😵 Erreur lors de la mise à jour.")
       }
     );
   }

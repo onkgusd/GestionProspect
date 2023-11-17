@@ -41,7 +41,7 @@ namespace ProspectManagerWebApi.Helpers
                         modifications.AddRange(childModifications);
                     }
                 }
-                else if (!Equals(originalValue, updatedValue) && !typeof(IEnumerable).IsAssignableFrom(originalValue?.GetType()))
+                else if (!Equals(originalValue, updatedValue) && !typeof(ICollection).IsAssignableFrom(originalValue?.GetType()))
                 {
                     var propertyName = string.IsNullOrEmpty(parentProperty) ? prop.Name : $"{parentProperty}.{prop.Name}";
                     modifications.Add(CreateModification<TOriginal>(utilisateur, propertyName, originalValue, updatedValue));

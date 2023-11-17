@@ -1,5 +1,6 @@
 import { Contact } from "./contact";
 import { Evenement } from "./evenement";
+import { Modification } from "./modification";
 import { ProduitProspect } from "./produitprospect";
 import { Statut } from "./statut";
 import { TypeOrganisme } from "./type-organisme";
@@ -18,7 +19,7 @@ export class Prospect {
     typeOrganisme: TypeOrganisme;
     contacts: Contact[] = [];
     utilisateurCreation?: Utilisateur;
-    // modifications: Modification[];
+    modifications: Modification[];
     produitProspects: ProduitProspect[] = [];
     evenements: Evenement[] = [];
 }

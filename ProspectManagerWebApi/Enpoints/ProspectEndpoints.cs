@@ -22,21 +22,38 @@ namespace ProspectManagerWebApi.Enpoints
                                   .ToListAsync());
 
             app.MapGet("/prospects/{idprospect:int}", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
-            await db.Prospects.Include(p => p.Contacts)
-                              .Include(p => p.Statut)
-                              .Include(p => p.ProduitProspects)
-                                  .ThenInclude(pp => pp.Produit)
-                              .Include(p => p.Evenements)
-                                  .ThenInclude(e => e.TypeEvenement)
-                              .Include(p => p.Evenements)
-                                  .ThenInclude(e => e.Contact)
-                              .Include(p => p.Evenements)
-                                  .ThenInclude(e => e.Produits)
-                              .Include(p => p.UtilisateurCreation)
-                              .Include(p => p.TypeOrganisme)
-                              .Include(p => p.Modifications)
-                              .FirstOrDefaultAsync(p => p.Id == idprospect) is Prospect prospect ?
-            Results.Ok(mapper.Map<ProspectResponseDTO>(prospect)) : Results.NotFound());
+            {
+                var prospect = await db.Prospects.Include(p => p.Contacts)
+                                    .ThenInclude(c => c.Modifications)
+                               .Include(p => p.Statut)
+                               .Include(p => p.ProduitProspects)
+                                   .ThenInclude(pp => pp.Produit)
+                               .Include(p => p.ProduitProspects)
+                                   .ThenInclude(pp => pp.Modifications)
+                               .Include(p => p.Evenements)
+                                   .ThenInclude(e => e.TypeEvenement)
+                               .Include(p => p.Evenements)
+                                   .ThenInclude(e => e.Contact)
+                               .Include(p => p.Evenements)
+                                   .ThenInclude(e => e.Produits)
+                               .Include(p => p.Evenements)
+                                   .ThenInclude(e => e.Modifications)
+                               .Include(p => p.UtilisateurCreation)
+                               .Include(p => p.TypeOrganisme)
+                               .Include(p => p.Modifications)
+                               .FirstOrDefaultAsync(p => p.Id == idprospect);
+
+                if (prospect == null) return Results.NotFound();
+
+                prospect.Modifications = prospect.Modifications
+                            .Concat(prospect.Evenements.SelectMany(e => e.Modifications))
+                            .Concat(prospect.Contacts.SelectMany(c => c.Modifications))
+                            .Concat(prospect.ProduitProspects.SelectMany(pp => pp.Modifications))
+                            .OrderByDescending(m => m.DateModification)
+                            .ToList();
+
+                return Results.Ok(mapper.Map<ProspectResponseDTO>(prospect));
+            });
 
             app.MapPost("/prospects/", [Authorize] async ([FromBody] ProspectRequestDTO prospectRequest,
                 ProspectManagerDbContext db,

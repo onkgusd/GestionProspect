@@ -67,6 +67,7 @@ import { TypeOrganismeEditComponent } from './components/type-organisme/type-org
 import { TypeOrganismeAddComponent } from './components/type-organisme/type-organisme-add/type-organisme-add.component';
 import { TypeOrganismeFormComponent } from './components/type-organisme/type-organisme-form/type-organisme-form.component';
 import { ProspectSearchComponent } from './components/prospect-search/prospect-search.component';
+import { ModificationListComponent } from './components/modification/modification-list/modification-list.component';
 
 const gestionProspectRoutes: Routes = [
   // Produit
@@ -115,7 +116,8 @@ const gestionProspectRoutes: Routes = [
     EvenementListComponent, EvenementFormComponent, EvenementEditComponent, EvenementAddComponent,
     UtilisateurListComponent, UtilisateurFormComponent, UtilisateurEditComponent, UtilisateurAddComponent,
     TypeOrganismeListComponent, TypeOrganismeEditComponent, TypeOrganismeAddComponent, TypeOrganismeFormComponent,
-    ProspectSearchComponent
+    ProspectSearchComponent,
+    ModificationListComponent
   ],
   imports: [
     CommonModule,
