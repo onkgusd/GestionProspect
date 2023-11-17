@@ -1,4 +1,4 @@
-<mat-tab-group *ngIf="!isLoading">
+<mat-tab-group *ngIf="!isLoading && prospect" (selectedIndexChange)="onTabChange($event)">
     <mat-tab label="Prospect">
         <app-prospect-form [isAddForm]="false" [prospect]="prospect"/>
     </mat-tab>
@@ -12,8 +12,7 @@
         <app-contact-list [contactList]="prospect.contacts"></app-contact-list>
     </mat-tab>
     <mat-tab label="Historique">
-        <p>Créé le {{ prospect.dateCreation | date: 'dd/MM/yyyy HH:mm:ss' }} par {{ prospect.utilisateurCreation?.login || 'un utilisateur inconnu' }}</p>
-        <app-modification-list [modificationList]="prospect.modifications" />
+        <app-modification-list [isVisible]="onModificationsTab" [idProspect]="prospect.id"/>
     </mat-tab>
 </mat-tab-group>
 <app-loader *ngIf="isLoading"></app-loader>

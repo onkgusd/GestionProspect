@@ -7,6 +7,7 @@ import { TypeOrganismeService } from '../../../services/type-organisme.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-type-organisme-list',
@@ -24,12 +25,19 @@ export class TypeOrganismeListComponent {
   constructor(public dialog: MatDialog, private typeOrganismeService: TypeOrganismeService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
-    this.typeOrganismeService.getAll().subscribe((typeOrganismes: TypeOrganisme[]) => {
-      this.typeOrganismes = new MatTableDataSource(typeOrganismes);
-      this.typeOrganismes.sort = this.sort;
-      this.typeOrganismes.paginator = this.paginator;
-      this.isLoading = false;
-    });
+    this.typeOrganismeService.getAll()
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe(
+        {
+          next:
+            (typeOrganismes: TypeOrganisme[]) => {
+              this.typeOrganismes = new MatTableDataSource(typeOrganismes);
+              this.typeOrganismes.sort = this.sort;
+              this.typeOrganismes.paginator = this.paginator;
+              this.isLoading = false;
+            },
+          error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement des types d'organisme.")
+        });
   }
 
   openDeleteConfirmationDialog(typeOrganisme: TypeOrganisme): void {
@@ -80,7 +88,7 @@ export class TypeOrganismeListComponent {
           this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);
           typeOrganisme.actif = actif;
         },
-        error: () => this.snackbarService.openErrorSnackBar(`🙄 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation" }.`),
+        error: () => this.snackbarService.openErrorSnackBar(`🙄 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation"}.`),
       }
     )
   }

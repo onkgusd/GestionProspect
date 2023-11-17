@@ -4,6 +4,8 @@ import { ProspectService } from '../../../services/prospect.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { finalize } from 'rxjs';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-prospect-list',
@@ -33,7 +35,7 @@ export class ProspectListComponent implements OnInit {
     }
   }
 
-  constructor(private prospectService: ProspectService) { }
+  constructor(private prospectService: ProspectService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
     if (this.prospectList !== void 0) {
@@ -41,10 +43,16 @@ export class ProspectListComponent implements OnInit {
       this.isLoading = false;
     }
     else {
-      this.prospectService.getAll().subscribe((prospects: Prospect[]) => {
-        this.prospects = new MatTableDataSource(prospects);
-        this.isLoading = false;
-      });
+      this.prospectService.getAll()
+        .pipe(finalize(() => this.isLoading = false))
+        .subscribe(
+          {
+            next: (prospects: Prospect[]) => {
+              this.prospects = new MatTableDataSource(prospects);
+              this.isLoading = false;
+            },
+            error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement des prospects.")
+          });
     }
   }
 

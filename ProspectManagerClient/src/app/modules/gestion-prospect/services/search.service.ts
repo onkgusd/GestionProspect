@@ -29,7 +29,7 @@ export class SearchService {
       tap(result => this.searchResult = result),
       catchError((error) => {
         console.log(error);
-        return of([]);
+        throw error;
       })
     );
   }

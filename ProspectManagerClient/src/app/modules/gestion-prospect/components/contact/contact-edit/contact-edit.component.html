@@ -1,2 +1,2 @@
-<app-contact-form [isAddForm]="false" [contact]="contact" *ngIf="!isLoading" />
+<app-contact-form [isAddForm]="false" [contact]="contact" *ngIf="!isLoading && contact" />
 <app-loader *ngIf="isLoading"></app-loader>

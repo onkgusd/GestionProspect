@@ -7,6 +7,7 @@ import { StatutService } from '../../../services/statut.service';
 import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { MatDialog } from '@angular/material/dialog';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-statut-list',
@@ -24,27 +25,32 @@ export class StatutListComponent {
   constructor(public dialog: MatDialog, private statutService: StatutService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
-    this.statutService.getAll().subscribe((statuts: Statut[]) => {
-      this.statuts = new MatTableDataSource(statuts);
-      this.statuts.sort = this.sort;
-      this.statuts.paginator = this.paginator;
-      this.isLoading = false;
+    this.statutService.getAll()
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (statuts: Statut[]) => {
+        this.statuts = new MatTableDataSource(statuts);
+        this.statuts.sort = this.sort;
+        this.statuts.paginator = this.paginator;
+        this.isLoading = false;
+      },
+      error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement de la liste des statuts.")
     });
   }
 
   openDeleteConfirmationDialog(statut: Statut): void {
     const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
-      data: { message: "Voulez-vous vraiment supprimer ce type d'événement ?" }
+      data: { message: "Voulez-vous vraiment supprimer ce statut ?" }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.deleteEvenement(statut);
+        this.deleteStatut(statut);
       }
     });
   }
 
-  private deleteEvenement(statut: Statut): void {
+  private deleteStatut(statut: Statut): void {
     this.statutService.delete(statut.id).subscribe(
       {
         next: (deleteResponse) => {
@@ -79,7 +85,7 @@ export class StatutListComponent {
           this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);
           statut.actif = actif;
         },
-        error: () => this.snackbarService.openErrorSnackBar(`😒 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation" } :(`),
+        error: () => this.snackbarService.openErrorSnackBar(`😒 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation"} :(`),
       }
     )
   }

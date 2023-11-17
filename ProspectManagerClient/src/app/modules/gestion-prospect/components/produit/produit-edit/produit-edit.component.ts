@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Produit } from '../../../models/produit';
 import { ProduitService } from '../../../services/produit-service';
 import { ActivatedRoute } from '@angular/router';
+import { finalize } from 'rxjs';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-produit-edit',
@@ -13,16 +15,20 @@ export class ProduitEditComponent implements OnInit {
   produit: Produit;
   isLoading: boolean = true;
 
-  constructor(private produitService: ProduitService, private route: ActivatedRoute) { }
+  constructor(private produitService: ProduitService, private route: ActivatedRoute, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
     const produitId: string | null = this.route.snapshot.paramMap.get("id");
     if (produitId)
       this.produitService.get(+produitId)
+        .pipe(finalize(() => this.isLoading = false))
         .subscribe(
-          produit => {
-            this.produit = produit;
-            this.isLoading = false;
+          {
+            next: produit => {
+              this.produit = produit;
+              this.isLoading = false;
+            },
+            error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement du produit.")
           });
   }
 }

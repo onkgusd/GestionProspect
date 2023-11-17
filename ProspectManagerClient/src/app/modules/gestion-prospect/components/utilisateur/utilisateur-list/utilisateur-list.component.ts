@@ -24,16 +24,16 @@ export class UtilisateurListComponent implements OnInit {
   constructor(public dialog: MatDialog, private utilisateurService: UtilisateurService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
-    this.utilisateurService.getUtilisateurs().pipe(
-      finalize(() => this.isLoading = false)
-    ).subscribe({
-      next: (utilisateurs: Utilisateur[]) => {
-        this.utilisateurs = new MatTableDataSource(utilisateurs);
-        this.utilisateurs.sort = this.sort;
-        this.utilisateurs.paginator = this.paginator;
-      },
-      error: error => this.snackbarService.openErrorSnackBar("Erreur lors du chargement de la liste des utilisateurs :(")
+    this.utilisateurService.getAll()
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (utilisateurs: Utilisateur[]) => {
+          this.utilisateurs = new MatTableDataSource(utilisateurs);
+          this.utilisateurs.sort = this.sort;
+          this.utilisateurs.paginator = this.paginator;
+        },
+        error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement de la liste des utilisateurs.")
       }
-    );
+      );
   }
 }

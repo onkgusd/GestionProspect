@@ -35,7 +35,7 @@ export class UtilisateurFormComponent implements OnInit {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.utilisateurService.addUtilisateur(this.utilisateur).subscribe({
+      this.utilisateurService.add(this.utilisateur).subscribe({
         next: () => {
           this.snackbarService.openSuccessSnackBar(`Utilisateur ajouté avec succès`);
           this.previousPage();
@@ -46,7 +46,7 @@ export class UtilisateurFormComponent implements OnInit {
         }
       });
     } else {
-      this.utilisateurService.updateUtilisateur(this.utilisateur).subscribe({
+      this.utilisateurService.update(this.utilisateur).subscribe({
         next: () => {
           this.snackbarService.openSuccessSnackBar(`Utilisateur mis à jour avec succès`);
           this.previousPage();

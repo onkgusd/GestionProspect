@@ -1,4 +1,4 @@
-<div class="mat-elevation-z8" [hidden]="!produitProspects">
+<div class="mat-elevation-z8" [hidden]="isLoading">
   <table mat-table [dataSource]="produitProspects" matSort>
 
     <!-- ID Column -->
@@ -60,7 +60,7 @@
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>
 
-<app-loader *ngIf="!produitProspects"></app-loader>
+<app-loader *ngIf="isLoading"></app-loader>
 
 <button mat-fab color="primary" class="floating-button" (click)="openProductDialog()">
   <mat-icon>add</mat-icon>

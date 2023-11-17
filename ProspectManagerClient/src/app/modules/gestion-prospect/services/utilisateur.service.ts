@@ -12,9 +12,8 @@ export class UtilisateurService {
   
   constructor(private http: HttpClient) { }
 
-  getUtilisateurs(): Observable<Utilisateur[]> {
+  getAll(): Observable<Utilisateur[]> {
     return this.http.get<Utilisateur[]>(`${environment.baseUrl}/utilisateurs`).pipe(
-      tap(utilisateurs => console.log(utilisateurs)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -22,9 +21,8 @@ export class UtilisateurService {
     );
   }
 
-  getUtilisateur(id: number): Observable<Utilisateur> {
+  get(id: number): Observable<Utilisateur> {
     return this.http.get<Utilisateur>(`${environment.baseUrl}/utilisateurs/${id}`).pipe(
-      tap(utilisateur => console.log(utilisateur)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -32,13 +30,12 @@ export class UtilisateurService {
     );
   }
 
-  addUtilisateur(utilisateur: Utilisateur): Observable<Utilisateur> {
+  add(utilisateur: Utilisateur): Observable<Utilisateur> {
     const httpOptions = {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
 
     return this.http.post<Utilisateur>(`${environment.baseUrl}/utilisateurs`, utilisateur, httpOptions).pipe(
-      tap(newUtilisateur => console.log(newUtilisateur)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -46,13 +43,12 @@ export class UtilisateurService {
     );
   }
 
-  updateUtilisateur(utilisateur: Utilisateur): Observable<Utilisateur> {
+  update(utilisateur: Utilisateur): Observable<Utilisateur> {
     const httpOptions = {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
 
     return this.http.put<Utilisateur>(`${environment.baseUrl}/utilisateurs/${utilisateur.id}`, utilisateur, httpOptions).pipe(
-      tap(updatedUtilisateur => console.log(updatedUtilisateur)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -60,7 +56,7 @@ export class UtilisateurService {
     );
   }
 
-  deleteUtilisateur(id: number): Observable<Utilisateur> {
+  delete(id: number): Observable<Utilisateur> {
     return this.http.delete<Utilisateur>(`${environment.baseUrl}/utilisateurs/${id}`).pipe(
       catchError((error) => {
         console.error(error);

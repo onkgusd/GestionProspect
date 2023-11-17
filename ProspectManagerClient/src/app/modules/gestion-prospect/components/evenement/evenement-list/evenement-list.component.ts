@@ -7,6 +7,7 @@ import { EvenementService } from '../../../services/evenement.service';
 import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-evenement-list',
@@ -16,6 +17,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 export class EvenementListComponent implements OnInit {
   evenements: MatTableDataSource<Evenement>;
   displayedColumns: string[] = ['typeEvenement', 'dateEvenement', 'contact', 'produit', 'actions'];
+  isLoading: boolean;
 
   @ViewChild(MatSort)
   set sort(value: MatSort) {
@@ -41,9 +43,15 @@ export class EvenementListComponent implements OnInit {
       this.evenements = new MatTableDataSource(this.evenementList);
     }
     else {
-      this.evenementService.getAll(this.idProspect).subscribe((evenements: Evenement[]) => {
+      this.isLoading = true;
+      this.evenementService.getAll(this.idProspect)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (evenements: Evenement[]) => {
         this.evenements = new MatTableDataSource(evenements);
-      });
+      },
+        error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement de la liste des événements.")
+    });
     }
   }
 

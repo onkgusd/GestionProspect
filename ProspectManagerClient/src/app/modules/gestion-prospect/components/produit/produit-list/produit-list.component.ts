@@ -7,6 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-produit-list',
@@ -16,6 +17,7 @@ import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-con
 export class ProduitListComponent implements OnInit {
   produits: MatTableDataSource<Produit>;
   displayedColumns: string[] = ['reference', 'libelle', 'description', 'actions'];
+  isLoading: boolean;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -23,10 +25,15 @@ export class ProduitListComponent implements OnInit {
   constructor(private produitService: ProduitService, public dialog: MatDialog, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
-    this.produitService.getAll().subscribe((produits: Produit[]) => {
+    this.produitService.getAll()
+    .pipe(finalize(() => this.isLoading = false))
+    .subscribe({
+      next: (produits: Produit[]) => {
       this.produits = new MatTableDataSource(produits);
       this.produits.sort = this.sort;
       this.produits.paginator = this.paginator;
+      },
+      error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement de la liste des produits.")
     });
   }
 
@@ -35,7 +42,9 @@ export class ProduitListComponent implements OnInit {
       data: { message: "Voulez-vous vraiment supprimer ce produit ?" }
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()
+    .pipe(finalize(() => this.isLoading = false))
+    .subscribe((result) => {
       if (result) {
         this.deleteEvenement(produit);
       }

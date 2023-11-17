@@ -7,6 +7,7 @@ import { TypeEvenementService } from '../../../services/type-evenement.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-type-evenement-list',
@@ -24,11 +25,16 @@ export class TypeEvenementListComponent {
   constructor(public dialog: MatDialog, private typeEvenementService: TypeEvenementService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
-    this.typeEvenementService.getAll().subscribe((typeEvenements: TypeEvenement[]) => {
-      this.typeEvenements = new MatTableDataSource(typeEvenements);
-      this.typeEvenements.sort = this.sort;
-      this.typeEvenements.paginator = this.paginator;
-      this.isLoading = false;
+    this.typeEvenementService.getAll().pipe(
+      finalize(() => this.isLoading = false)
+    ).subscribe({
+      next: (typeEvenements: TypeEvenement[]) => {
+        this.typeEvenements = new MatTableDataSource(typeEvenements);
+        this.typeEvenements.sort = this.sort;
+        this.typeEvenements.paginator = this.paginator;
+        this.isLoading = false;
+      },
+      error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement des types d'événement.")
     });
   }
 
@@ -80,7 +86,7 @@ export class TypeEvenementListComponent {
           this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);
           typeEvenement.actif = actif;
         },
-        error: () => this.snackbarService.openErrorSnackBar(`🙄 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation" }.`),
+        error: () => this.snackbarService.openErrorSnackBar(`🙄 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation"}.`),
       }
     )
   }

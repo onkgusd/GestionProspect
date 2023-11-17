@@ -4,7 +4,7 @@ import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { ProspectSearchDto } from '../../dto/prospect-search-dto';
 import { Produit } from '../../models/produit';
-import { Observable, map, startWith } from 'rxjs';
+import { Observable, finalize, map, startWith } from 'rxjs';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { ProduitService } from '../../services/produit-service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
@@ -46,10 +46,10 @@ export class ProspectSearchComponent implements OnInit {
   filteredTypesOrganisme: Observable<TypeOrganisme[]>;
 
   constructor(private produitService: ProduitService,
-              private statutService: StatutService,
-              private typeOrganismeService: TypeOrganismeService,
-              private searchService: SearchService,
-              private snackbarService: SnackbarService) { }
+    private statutService: StatutService,
+    private typeOrganismeService: TypeOrganismeService,
+    private searchService: SearchService,
+    private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
     this.produitService.getAll().subscribe({
@@ -292,38 +292,38 @@ export class ProspectSearchComponent implements OnInit {
 
   addTypeOrganisme(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
-  
+
     if (!value) {
       return;
     }
-  
+
     const existingTypeOrganisme = this.prospectSearchDto.typesOrganisme.find(p => p.libelle === value);
     if (existingTypeOrganisme) {
       this.prospectSearchDto.typesOrganisme.push(existingTypeOrganisme);
     }
-  
+
     event.chipInput!.clear();
     this.typesOrganismeCtrl.setValue(null);
   }
-  
+
   removeTypeOrganisme(typeOrganisme: TypeOrganisme): void {
     this.prospectSearchDto.typesOrganisme = this.prospectSearchDto.typesOrganisme.filter(p => p.id !== typeOrganisme.id);
   }
-  
+
   selectedTypeOrganisme(event: MatAutocompleteSelectedEvent): void {
     const selectedTypeOrganisme = this.typesOrganisme.find(p => p.libelle === event.option.viewValue);
-  
+
     if (selectedTypeOrganisme) {
       this.prospectSearchDto.typesOrganisme.push(selectedTypeOrganisme);
     }
-  
+
     this.typesOrganismeInput.nativeElement.value = '';
     this.typesOrganismeCtrl.setValue(null);
   }
-  
+
   private _filterTypeOrganisme(value: string): TypeOrganisme[] {
     const filterValue = value.toLowerCase();
-  
+
     return this.typesOrganisme.filter(typeOrganisme =>
       typeOrganisme.libelle.toLowerCase().includes(filterValue) &&
       !this.prospectSearchDto.typesOrganisme.some(selectedTypeOrganisme => selectedTypeOrganisme.id === typeOrganisme.id)
@@ -334,40 +334,42 @@ export class ProspectSearchComponent implements OnInit {
     this.isLoading = true;
     this.prospectSearchResult = [];
     this.hasBeenLaunched = true;
-    this.searchService.searchProspect(this.prospectSearchDto).subscribe({
-      next: result => {
-        this.prospectSearchResult = result;
-        this.isLoading = false;
-        this.refreshSearchCriteriaLabel();
-      },
-      error: error => this.snackbarService.openErrorSnackBar("😖 Une erreur est survenue lors de la recherche...")
-    })
+    this.searchService.searchProspect(this.prospectSearchDto)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: result => {
+          this.prospectSearchResult = result;
+          this.isLoading = false;
+          this.refreshSearchCriteriaLabel();
+        },
+        error: error => this.snackbarService.openErrorSnackBar("😖 Une erreur est survenue lors de la recherche...")
+      })
   }
 
   refreshSearchCriteriaLabel() {
     this.searchCriteria = [];
 
-    if (this.prospectSearchDto.noms?.length > 0){
+    if (this.prospectSearchDto.noms?.length > 0) {
       this.searchCriteria.push(`Nom : ${this.prospectSearchDto.noms.join(", ")}`);
     }
-    
-    if (this.prospectSearchDto.departements?.length > 0){
+
+    if (this.prospectSearchDto.departements?.length > 0) {
       this.searchCriteria.push(`Zone géographique : ${this.prospectSearchDto.departements.join(", ")}`);
     }
-    
-    if (this.prospectSearchDto.secteursActivite?.length > 0){
+
+    if (this.prospectSearchDto.secteursActivite?.length > 0) {
       this.searchCriteria.push(`Secteur d'activité : ${this.prospectSearchDto.secteursActivite.join(", ")}`);
     }
 
-    if (this.prospectSearchDto.statuts?.length > 0){
+    if (this.prospectSearchDto.statuts?.length > 0) {
       this.searchCriteria.push(`Statut : ${this.prospectSearchDto.statuts.map(s => s.libelle).join(", ")}`);
     }
 
-    if (this.prospectSearchDto.typesOrganisme?.length > 0){
+    if (this.prospectSearchDto.typesOrganisme?.length > 0) {
       this.searchCriteria.push(`Type d'organisme : ${this.prospectSearchDto.typesOrganisme.map(t => t.libelle).join(", ")}`);
     }
 
-    if (this.prospectSearchDto.produits?.length > 0){
+    if (this.prospectSearchDto.produits?.length > 0) {
       this.searchCriteria.push(`Produits proposés : ${this.prospectSearchDto.produits.map(p => p.libelle).join(", ")}`);
     }
   }

@@ -1,4 +1,4 @@
-<div class="mat-elevation-z8" [hidden]="!produits">
+<div class="mat-elevation-z8" [hidden]="isLoading">
   <table mat-table [dataSource]="produits" matSort>
 
     <!-- ID Column -->
@@ -59,7 +59,7 @@
   </mat-paginator>
 </div>
 
-<app-loader *ngIf="!produits"></app-loader>
+<app-loader *ngIf="isLoading"></app-loader>
 
 <button mat-fab color="primary" class="floating-button" routerLink="/produits/add">
   <mat-icon>add</mat-icon>

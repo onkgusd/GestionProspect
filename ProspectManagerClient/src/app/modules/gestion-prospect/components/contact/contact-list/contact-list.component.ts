@@ -7,6 +7,7 @@ import { ContactService } from '../../../services/contact.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-contact-list',
@@ -16,7 +17,8 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 
 export class ContactListComponent implements OnInit {
   contacts: MatTableDataSource<Contact>;
-  displayedColumns: string[] = ['nom', 'fonction', 'email', 'telephone', 'actif','actions'];
+  displayedColumns: string[] = ['nom', 'fonction', 'email', 'telephone', 'actif', 'actions'];
+  isLoading: boolean;
 
   @ViewChild(MatSort)
   set sort(value: MatSort) {
@@ -42,9 +44,15 @@ export class ContactListComponent implements OnInit {
       this.contacts = new MatTableDataSource(this.contactList);
     }
     else {
-      this.contactService.getAll(this.idProspect).subscribe((contacts: Contact[]) => {
-        this.contacts = new MatTableDataSource(contacts);
-      });
+      this.contactService.getAll(this.idProspect)
+        .pipe(finalize(() => this.isLoading = false))
+        .subscribe(
+          {
+            next: (contacts: Contact[]) => {
+              this.contacts = new MatTableDataSource(contacts);
+            },
+            error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement des contacts.")
+          });
     }
   }
 

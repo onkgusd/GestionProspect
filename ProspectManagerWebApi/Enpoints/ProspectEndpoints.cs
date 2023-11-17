@@ -45,14 +45,41 @@ namespace ProspectManagerWebApi.Enpoints
 
                 if (prospect == null) return Results.NotFound();
 
-                prospect.Modifications = prospect.Modifications
-                            .Concat(prospect.Evenements.SelectMany(e => e.Modifications))
-                            .Concat(prospect.Contacts.SelectMany(c => c.Modifications))
-                            .Concat(prospect.ProduitProspects.SelectMany(pp => pp.Modifications))
-                            .OrderByDescending(m => m.DateModification)
-                            .ToList();
-
                 return Results.Ok(mapper.Map<ProspectResponseDTO>(prospect));
+            });
+
+            app.MapGet("/prospects/{idprospect:int}/modifications", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
+            {
+                var prospect = await db.Prospects.Include(p => p.Modifications)
+                                .ThenInclude(m => m.Utilisateur)
+                                .Include(p => p.Contacts)
+                                    .ThenInclude(c => c.Modifications)
+                                    .ThenInclude(m => m.Utilisateur)
+                               .Include(p => p.ProduitProspects)
+                                   .ThenInclude(pp => pp.Modifications)
+                                   .ThenInclude(m => m.Utilisateur)
+                               .Include(p => p.Evenements)
+                                   .ThenInclude(e => e.Modifications)
+                                   .ThenInclude(m => m.Utilisateur)
+                               .FirstOrDefaultAsync(p => p.Id == idprospect);
+
+                if (prospect == null) return Results.NotFound();
+
+                var modifications = prospect.Modifications
+                                            .Concat(prospect.Evenements.SelectMany(e => e.Modifications))
+                                            .Concat(prospect.Contacts.SelectMany(c => c.Modifications))
+                                            .Concat(prospect.ProduitProspects.SelectMany(pp => pp.Modifications))
+                                            .Concat(new List<Modification> { new Modification { 
+                                                DateModification = prospect.DateCreation,
+                                                Champ = "Tous les champs",
+                                                AncienneValeur = "Aucune",
+                                                NouvelleValeur = "Fiche créée",
+                                                Utilisateur = prospect.UtilisateurCreation
+                                            }})
+                                            .OrderByDescending(m => m.DateModification)
+                                            .ToList();
+
+                return Results.Ok(mapper.Map<ModificationResponseDTO[]>(modifications));
             });
 
             app.MapPost("/prospects/", [Authorize] async ([FromBody] ProspectRequestDTO prospectRequest,

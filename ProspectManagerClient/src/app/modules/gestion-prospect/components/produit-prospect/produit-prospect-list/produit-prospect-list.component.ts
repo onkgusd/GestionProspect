@@ -9,6 +9,7 @@ import { Prospect } from '../../../models/prospect';
 import { ProspectService } from '../../../services/prospect.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-produit-prospect-list',
@@ -18,6 +19,7 @@ import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-con
 export class ProduitProspectListComponent implements OnInit {
   produitProspects: MatTableDataSource<ProduitProspect>;
   displayedColumns: string[] = ['reference', 'libelle', 'description', 'probabiliteSucces', 'actions'];
+  isLoading: boolean;
 
   @ViewChild(MatSort)
   set sort(value: MatSort) {
@@ -45,9 +47,14 @@ export class ProduitProspectListComponent implements OnInit {
       this.refreshTable();
     }
     else {
-      this.prospectService.getProduits(this.prospect.id).subscribe((produits: ProduitProspect[]) => {
+      this.prospectService.getProduits(this.prospect.id)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (produits: ProduitProspect[]) => {
         this.produitProspectList = produits;
         this.refreshTable();
+        },
+        error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement de la liste des produits associés au prospect.")
       });
     }
   }
