@@ -64,18 +64,15 @@ export class TypeOrganismeListComponent {
               data.splice(index, 1);
               this.typeOrganismes.data = data;
             }
+
+            this.snackbarService.openSuccessSnackBar("🗑️ Suppression réussie !");
           }
           else {
             typeOrganisme.actif = false;
+            this.snackbarService.openWarningSnackBar("💤 Ce type d'événement est utilisé, il a été marqué comme inactif.");
           }
-
-
-          this.snackbarService.openSuccessSnackBar(deleteResponse.statut === "Deleted"
-            ? "🗑️ Suppression réussie !"
-            : "💤 Ce type d'événement est utilisé, il a été marqué comme inactif.");
-
         },
-        error: () => this.snackbarService.openSuccessSnackBar("🙄 Erreur lors de la suppression.")
+        error: () => this.snackbarService.openErrorSnackBar("🙄 Erreur lors de la suppression.")
       }
     );
   }

@@ -7,6 +7,7 @@ using ProspectManagerWebApi.DTO.Response;
 using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
 using ProspectManagerWebApi.Services;
+using System.Text.Json;
 
 namespace ProspectManagerWebApi.Enpoints
 {
@@ -41,8 +42,8 @@ namespace ProspectManagerWebApi.Enpoints
             });
 
             app.MapPut("/evenements/{idEvenement:int}", [Authorize] async (
-                [FromBody] Evenement updatedEvenement, 
-                int idEvenement, 
+                [FromBody] Evenement updatedEvenement,
+                int idEvenement,
                 ProspectManagerDbContext db,
                 UserService userService) =>
             {
@@ -58,9 +59,6 @@ namespace ProspectManagerWebApi.Enpoints
 
                 var modifications = ModificationHelper.GetModifications(await userService.GetCurrentUser(), existingEvenement, updatedEvenement);
 
-                if (modifications?.Count == 0)
-                    return Results.Ok(existingEvenement);
-
                 modifications?.ForEach(m => existingEvenement.Modifications.Add(m));
 
                 db.Entry(existingEvenement).CurrentValues.SetValues(updatedEvenement);
@@ -69,20 +67,44 @@ namespace ProspectManagerWebApi.Enpoints
                                                                             .FirstOrDefault(existing => existing.Id == p.Id) ?? p)
                                                              .ToList();
 
+                if (existingEvenement.TypeEvenement?.Id != updatedEvenement.TypeEvenement?.Id)
+                    existingEvenement.TypeEvenement = await db.TypesEvenement.FindAsync(updatedEvenement.TypeEvenement?.Id);
+
+                if (existingEvenement.Contact?.Id != updatedEvenement.Contact?.Id)
+                    existingEvenement.Contact = await db.Contacts.FindAsync(updatedEvenement.Contact?.Id);
+
                 await db.SaveChangesAsync();
 
                 return Results.Ok(mapper.Map<EvenementResponseDTO>(existingEvenement));
             });
 
-            app.MapDelete("/evenements/{idEvenement:int}", [Authorize] async (int idEvenement, ProspectManagerDbContext db) =>
+            app.MapDelete("/evenements/{idEvenement:int}", [Authorize] async (int idEvenement,
+                                                                              ProspectManagerDbContext db,
+                                                                              UserService userService) =>
             {
-                var existingEvenement = await db.Evenements.FindAsync(idEvenement);
+                var existingEvenement = await db.Evenements
+                                                .Include(e => e.Modifications)
+                                                .Include(e => e.Prospect)
+                                                .Include(e => e.TypeEvenement)
+                                                .FirstOrDefaultAsync(e => e.Id == idEvenement);
+
                 if (existingEvenement == null)
                 {
                     return Results.NotFound();
                 }
 
+                existingEvenement.Prospect.Modifications.Add(
+                    new Modification
+                    {
+                        AncienneValeur = $"{existingEvenement.TypeEvenement?.Libelle} du {existingEvenement.DateEvenement.ToString("dd/MM/yyyy")}",
+                        Champ = "Evénements",
+                        NouvelleValeur = "Evénenement supprimé",
+                        DateModification = DateTime.UtcNow,
+                        Utilisateur = await userService.GetCurrentUser(),
+                        JsonObjectBackup = JsonSerializer.Serialize(existingEvenement)
+                    });
 
+                existingEvenement.Modifications.Clear();
 
                 db.Evenements.Remove(existingEvenement);
                 await db.SaveChangesAsync();

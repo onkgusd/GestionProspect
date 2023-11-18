@@ -79,9 +79,9 @@ export class EvenementListComponent implements OnInit {
           this.evenements.data = this.evenementList;
           this.evenements._updateChangeSubscription();
 
-          this.snackbarService.openSuccessSnackBar("Suppression réussie.");
+          this.snackbarService.openSuccessSnackBar("🗑️ Suppression réussie.");
         },
-        error: () => this.snackbarService.openSuccessSnackBar("Erreur lors de la mise à jour :(")
+        error: () => this.snackbarService.openSuccessSnackBar("😖 Erreur lors de la suppression.")
       }
     );
   }

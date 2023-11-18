@@ -61,25 +61,39 @@ namespace ProspectManagerWebApi.Enpoints
                                .Include(p => p.Evenements)
                                    .ThenInclude(e => e.Modifications)
                                    .ThenInclude(m => m.Utilisateur)
+                               .Include(p => p.Evenements)
+                                   .ThenInclude(e => e.TypeEvenement)
                                .FirstOrDefaultAsync(p => p.Id == idprospect);
 
                 if (prospect == null) return Results.NotFound();
 
                 var modifications = prospect.Modifications
-                                            .Concat(prospect.Evenements.SelectMany(e => e.Modifications))
-                                            .Concat(prospect.Contacts.SelectMany(c => c.Modifications))
-                                            .Concat(prospect.ProduitProspects.SelectMany(pp => pp.Modifications))
-                                            .Concat(new List<Modification> { new Modification { 
-                                                DateModification = prospect.DateCreation,
-                                                Champ = "Tous les champs",
-                                                AncienneValeur = "Aucune",
-                                                NouvelleValeur = "Fiche créée",
-                                                Utilisateur = prospect.UtilisateurCreation
-                                            }})
-                                            .OrderByDescending(m => m.DateModification)
-                                            .ToList();
+                    .Select(m => mapper.Map<Modification, ModificationResponseDTO>(m, opt =>
+                        opt.AfterMap((src, dest) => dest.Libelle = "Changement sur le prospect")))
+                    .Concat(prospect.Contacts.SelectMany(c => c.Modifications.Select(m => new { Modification = m, Contact = c })
+                        .Select(x => mapper.Map<Modification, ModificationResponseDTO>(x.Modification, opt =>
+                            opt.AfterMap((src, dest) => dest.Libelle = $"Changement sur le contact {x.Contact.Nom}")))))
+                    .Concat(prospect.Evenements.SelectMany(e => e.Modifications.Select(m => new { Modification = m, Evenement = e })
+                        .Select(x => mapper.Map<Modification, ModificationResponseDTO>(x.Modification, opt =>
+                            opt.AfterMap((src, dest) => dest.Libelle = $"Changement sur l'événement {x.Evenement.TypeEvenement?.Libelle} du {x.Evenement.DateEvenement:dd/MM/yyyy}")))))
+                    .Concat(prospect.ProduitProspects.SelectMany(pp => pp.Modifications.Select(m => new { Modification = m, Produit = pp.Produit })
+                        .Select(x => mapper.Map<Modification, ModificationResponseDTO>(x.Modification, opt =>
+                            opt.AfterMap((src, dest) => dest.Libelle = $"Changement sur le produit associé {x.Produit.Libelle}")))))
+                    .Concat(new[] {
+                        new ModificationResponseDTO {
+                            DateModification = prospect.DateCreation,
+                            Champ = "Tous les champs",
+                            AncienneValeur = "Aucune",
+                            NouvelleValeur = "Fiche créée",
+                            Utilisateur = mapper.Map<UtilisateurResponseDTO>(prospect.UtilisateurCreation),
+                            Libelle = "Création du prospect"
+                        }
+                    })
+                    .OrderByDescending(m => m.DateModification)
+                    .ToList();
 
-                return Results.Ok(mapper.Map<ModificationResponseDTO[]>(modifications));
+
+                return Results.Ok(modifications);
             });
 
             app.MapPost("/prospects/", [Authorize] async ([FromBody] ProspectRequestDTO prospectRequest,
@@ -116,9 +130,6 @@ namespace ProspectManagerWebApi.Enpoints
                     return Results.NotFound();
 
                 var modifications = ModificationHelper.GetModifications(await userService.GetCurrentUser(), existingProspect, updatedProspect);
-
-                if (modifications?.Count == 0)
-                    return Results.Ok(existingProspect);
 
                 modifications?.ForEach(m => existingProspect.Modifications.Add(m));
 
@@ -201,7 +212,11 @@ namespace ProspectManagerWebApi.Enpoints
 
             app.MapDelete("/prospects/{idprospect:int}", [Authorize(Policy = "Admin")] async (int idProspect, ProspectManagerDbContext db) =>
             {
-                var existingProspect = await db.Prospects.FindAsync(idProspect);
+                var existingProspect = await db.Prospects
+                                               .Include(p => p.Contacts)
+                                               .Include(p => p.Evenements)
+                                               .Include(p => p.ProduitProspects)
+                                               .FirstOrDefaultAsync(p => p.Id == idProspect);
                 if (existingProspect == null)
                     return Results.NotFound();
 
@@ -243,6 +258,8 @@ namespace ProspectManagerWebApi.Enpoints
                         DateModification = DateTime.UtcNow,
                         Utilisateur = await userService.GetCurrentUser()
                     });
+
+                    existingProduitProspect.Modifications.Clear();
 
                     db.ProduitProspect.Remove(existingProduitProspect);
                     await db.SaveChangesAsync();

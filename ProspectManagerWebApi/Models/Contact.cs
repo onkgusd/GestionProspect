@@ -1,4 +1,6 @@
-﻿namespace ProspectManagerWebApi.Models
+﻿using System.Text.Json.Serialization;
+
+namespace ProspectManagerWebApi.Models
 {
     public class Contact : ITableHistorique, ILabelable
     {
@@ -9,7 +11,8 @@
         public string? Telephone { get; set; }
         public bool Actif { get; set; } = true;
         public ICollection<Modification> Modifications { get; set; } = new List<Modification>();
-
         public string GetLabel() => Nom;
+        [JsonIgnore]
+        public Prospect Prospect { get; set; } = new Prospect();
     }
 }

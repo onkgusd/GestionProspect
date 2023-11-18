@@ -50,13 +50,13 @@ export class EvenementFormComponent implements OnInit {
     this.contactService.getAll(this.idProspect).subscribe(
       {
         next: contacts => this.contacts = contacts,
-        error: () => this.snackbarService.openErrorSnackBar("Impossible de lister les contacts...")
+        error: () => this.snackbarService.openErrorSnackBar("😖 Impossible de lister les contacts.")
       });
 
     this.typeEvenementService.getAll().subscribe(
       {
         next: typeEvenements => this.typeEvenements = typeEvenements,
-        error: () => this.snackbarService.openErrorSnackBar("Impossible de lister les types d'évenement...")
+        error: () => this.snackbarService.openErrorSnackBar("😒 Impossible de lister les types d'évenement...")
       });
 
     this.produitService.getAll().subscribe({
@@ -75,7 +75,7 @@ export class EvenementFormComponent implements OnInit {
           this.produitsCtrl.setValue(null);
         }
       },
-      error: () => this.snackbarService.openErrorSnackBar("Impossible de lister les produits...")
+      error: () => this.snackbarService.openErrorSnackBar("😟 Impossible de lister les produits.")
     });
   }
 
@@ -85,22 +85,22 @@ export class EvenementFormComponent implements OnInit {
     if (this.isAddForm) {
       this.evenementService.add(this.idProspect, this.evenement).subscribe({
         next: () => {
-          this.snackbarService.openSuccessSnackBar(`Ajout de "${this.evenement.typeEvenement.libelle}" réussi !`);
+          this.snackbarService.openSuccessSnackBar(`🎉 Ajout de "${this.evenement.typeEvenement.libelle}" réussi !`);
           this.previousPage();
         },
         error: () => {
-          this.snackbarService.openErrorSnackBar(`Oups, une erreur est survenue lors de l'ajout :(`);
+          this.snackbarService.openErrorSnackBar(`😒 Oups, une erreur est survenue lors de l'ajout.`);
           this.isSubmitting = false;
         }
       });
     } else {
       this.evenementService.update(this.evenement).subscribe({
         next: () => {
-          this.snackbarService.openSuccessSnackBar(`Mise à jour de "${this.evenement.typeEvenement.libelle}" réussie !`);
+          this.snackbarService.openSuccessSnackBar(`👌Mise à jour de "${this.evenement.typeEvenement.libelle}" réussie !`);
           this.previousPage();
         },
         error: error => {
-          this.snackbarService.openErrorSnackBar(`Oups, une erreur est survenue lors de la mise à jour :(`);
+          this.snackbarService.openErrorSnackBar(`😵 Oups, une erreur est survenue lors de la mise à jour :(`);
           this.isSubmitting = false;
         }
       });

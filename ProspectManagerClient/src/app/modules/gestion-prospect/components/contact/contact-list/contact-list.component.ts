@@ -17,7 +17,7 @@ import { finalize } from 'rxjs';
 
 export class ContactListComponent implements OnInit {
   contacts: MatTableDataSource<Contact>;
-  displayedColumns: string[] = ['nom', 'fonction', 'email', 'telephone', 'actif', 'actions'];
+  displayedColumns: string[] = ['nom', 'fonction', 'email', 'telephone', 'actions'];
   isLoading: boolean;
 
   @ViewChild(MatSort)
@@ -71,19 +71,37 @@ export class ContactListComponent implements OnInit {
   private deleteContact(contact: Contact): void {
     this.contactService.delete(contact).subscribe(
       {
-        next: () => {
+        next: (deleteResponse) => {
           const index = this.contactList.findIndex((c) => c.id === contact.id);
           if (index !== -1) {
             this.contactList.splice(index, 1);
           }
 
-          this.contacts.data = this.contactList;
-          this.contacts._updateChangeSubscription();
-
-          this.snackbarService.openSuccessSnackBar("Suppression réussie.");
+          if (deleteResponse.statut === "Deleted") {
+            this.contacts.data = this.contactList;
+            this.contacts._updateChangeSubscription();
+            this.snackbarService.openSuccessSnackBar("🗑️ Suppression réussie.");
+          }
+          else {
+            contact.actif = false;
+            this.snackbarService.openWarningSnackBar("💤 Ce statut est utilisé, il a été marqué comme inactif.");
+          }
         },
-        error: () => this.snackbarService.openSuccessSnackBar("Erreur lors de la mise à jour :(")
+        error: () => this.snackbarService.openErrorSnackBar("😟 Erreur lors de la mise à jour.")
       }
     );
+  }
+
+  switchStatus(contact: Contact, actif: boolean): void {
+
+    this.contactService.update({ ...contact, actif }).subscribe(
+      {
+        next: () => {
+          this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);
+          contact.actif = actif;
+        },
+        error: () => this.snackbarService.openErrorSnackBar(`😒 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation"} :(`),
+      }
+    )
   }
 }

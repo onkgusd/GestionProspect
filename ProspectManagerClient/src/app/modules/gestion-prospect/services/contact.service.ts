@@ -4,6 +4,7 @@ import { Observable, catchError, tap } from 'rxjs';
 import { Contact } from '../models/contact';
 import { environment } from 'src/environments/environment';
 import { IEntityService } from './IEntity.service';
+import { DeleteResponseDto } from '../dto/delete-response-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,6 @@ export class ContactService {
 
   getAll(idProspect: number): Observable<Contact[]> {
     return this.http.get<Contact[]>(`${environment.baseUrl}/prospects/${idProspect}/contacts`).pipe(
-      tap(contactsList => console.log(contactsList)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -24,7 +24,6 @@ export class ContactService {
 
   get(id: number): Observable<Contact> {
     return this.http.get<Contact>(`${environment.baseUrl}/contacts/${id}`).pipe(
-      tap(contact => console.log(contact)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -38,7 +37,6 @@ export class ContactService {
     }
 
     return this.http.post<Contact>(`${environment.baseUrl}/prospects/${idProspect}/contacts`, contact, httpOptions).pipe(
-      tap(contact => console.log(contact)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -52,7 +50,6 @@ export class ContactService {
     }
 
     return this.http.put<Contact>(`${environment.baseUrl}/contacts/${contact.id}`, contact, httpOptions).pipe(
-      tap(response => console.log(response)),
       catchError((error) => {
         console.error(error);
         throw error;
@@ -61,8 +58,7 @@ export class ContactService {
   }
 
   delete(contact: Contact) {
-    return this.http.delete(`${environment.baseUrl}/contacts/${contact.id}`).pipe(
-      tap(response => console.log(response)),
+    return this.http.delete<DeleteResponseDto>(`${environment.baseUrl}/contacts/${contact.id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

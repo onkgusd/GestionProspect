@@ -15,7 +15,7 @@ namespace ProspectManagerWebApi.DTO.Response
         public DateTimeOffset DateCreation { get; set; }
         public Statut? Statut { get; set; }
         public TypeOrganisme? TypeOrganisme { get; set; }
-        public ICollection<Contact>? Contacts { get; set; }
+        public ICollection<ContactResponseDTO>? Contacts { get; set; }
         public UtilisateurResponseDTO? UtilisateurCreation { get; set; }
         public ICollection<ModificationResponseDTO>? Modifications { get; set; }
         public ICollection<ProduitProspectResponseDTO>? ProduitProspects { get; set; }

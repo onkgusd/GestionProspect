@@ -14,7 +14,7 @@ import { finalize } from 'rxjs';
 })
 export class ModificationListComponent implements OnInit, OnChanges {
   modifications: MatTableDataSource<Modification>;
-  displayedColumns: string[] = ['dateModification', 'champ', 'ancienneValeur', 'nouvelleValeur', 'utilisateur'];
+  displayedColumns: string[] = ['dateModification', 'libelle', 'champ', 'ancienneValeur', 'nouvelleValeur', 'utilisateur'];
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;

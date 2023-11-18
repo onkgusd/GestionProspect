@@ -79,7 +79,7 @@ export class ProduitProspectListComponent implements OnInit {
             this.produitProspects.data = this.produitProspectList;
             this.produitProspects._updateChangeSubscription();
           },
-          error: () => this.snackbarService.openSuccessSnackBar("Erreur lors de l'ajout :(")
+          error: () => this.snackbarService.openSuccessSnackBar("😖 Erreur lors de l'ajout.")
         });
       }
     });

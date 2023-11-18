@@ -4,4 +4,5 @@ export class Modification {
     ancienneValeur: string;
     nouvelleValeur: string
     utilisateurResponseDTO: string;
+    libelle: string;
 }

@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { finalize } from 'rxjs';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-produit-list',
@@ -22,19 +23,21 @@ export class ProduitListComponent implements OnInit {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private produitService: ProduitService, public dialog: MatDialog, private snackbarService: SnackbarService) { }
+  constructor(private produitService: ProduitService,
+    public dialog: MatDialog,
+    private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
     this.produitService.getAll()
-    .pipe(finalize(() => this.isLoading = false))
-    .subscribe({
-      next: (produits: Produit[]) => {
-      this.produits = new MatTableDataSource(produits);
-      this.produits.sort = this.sort;
-      this.produits.paginator = this.paginator;
-      },
-      error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement de la liste des produits.")
-    });
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (produits: Produit[]) => {
+          this.produits = new MatTableDataSource(produits);
+          this.produits.sort = this.sort;
+          this.produits.paginator = this.paginator;
+        },
+        error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement de la liste des produits.")
+      });
   }
 
   openDeleteConfirmationDialog(produit: Produit): void {
@@ -43,12 +46,12 @@ export class ProduitListComponent implements OnInit {
     });
 
     dialogRef.afterClosed()
-    .pipe(finalize(() => this.isLoading = false))
-    .subscribe((result) => {
-      if (result) {
-        this.deleteEvenement(produit);
-      }
-    });
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe((result) => {
+        if (result) {
+          this.deleteEvenement(produit);
+        }
+      });
   }
 
   private deleteEvenement(produit: Produit): void {
@@ -63,18 +66,15 @@ export class ProduitListComponent implements OnInit {
               data.splice(index, 1);
               this.produits.data = data;
             }
+
+            this.snackbarService.openSuccessSnackBar("🗑️ Suppression réussie !");
           }
           else {
             produit.actif = false;
+            this.snackbarService.openWarningSnackBar("💤 Ce produit est utilisé, il a été marqué comme inactif.");
           }
-
-
-          this.snackbarService.openSuccessSnackBar(deleteResponse.statut === "Deleted"
-            ? "🗑️ Suppression réussie !"
-            : "💤 Ce produit est utilisé, il a été marqué comme inactif.");
-
         },
-        error: () => this.snackbarService.openSuccessSnackBar("🙄 Erreur lors de la suppression.")
+        error: () => this.snackbarService.openErrorSnackBar("🙄 Erreur lors de la suppression.")
       }
     );
   }

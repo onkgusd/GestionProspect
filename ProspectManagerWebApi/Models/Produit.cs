@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ProspectManagerWebApi.Models
 {
@@ -11,12 +12,13 @@ namespace ProspectManagerWebApi.Models
 
         [Required]
         public string? Reference { get; set; }
-
         [Required]
         public string Libelle {  get; set; } = string.Empty;
         public string? Description { get; set; }
         public bool? Actif { get; set; }
+        [JsonIgnore]
         public ICollection<ProduitProspect>? ProduitProspects { get; set; }
+        [JsonIgnore]
         public ICollection<Evenement>? Evenements { get; set; }
         public ICollection<Modification> Modifications { get; set; } = new List<Modification>();
 

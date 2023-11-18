@@ -62,17 +62,14 @@ export class StatutListComponent {
               data.splice(index, 1);
               this.statuts.data = data;
             }
+            this.snackbarService.openSuccessSnackBar("🗑️ Suppression réussie.");
           }
           else {
             statut.actif = false;
+            this.snackbarService.openWarningSnackBar("💤 Ce statut est utilisé, il a été marqué comme inactif.");
           }
-
-          this.snackbarService.openSuccessSnackBar(deleteResponse.statut === "Deleted"
-            ? "🗑️ Suppression réussie."
-            : "💤 Ce statut est utilisé, il a été marqué comme inactif.");
-
         },
-        error: () => this.snackbarService.openSuccessSnackBar("🙄 Erreur lors de la suppression.")
+        error: () => this.snackbarService.openErrorSnackBar("🙄 Erreur lors de la suppression.")
       }
     );
   }
