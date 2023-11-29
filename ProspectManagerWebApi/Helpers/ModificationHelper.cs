@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ProspectManagerWebApi.Models;
 using System.Collections;
 using System.Reflection;
@@ -26,29 +27,34 @@ namespace ProspectManagerWebApi.Helpers
 
             foreach (var prop in typeof(TUpdated).GetProperties())
             {
-                var originalValue = typeof(TOriginal).GetProperty(prop.Name)?.GetValue(original);
-                var updatedValue = prop.GetValue(updated);
-                var propertyType = prop.PropertyType;
-
-                if (propertyType.IsClass && propertyType != typeof(string))
+                if (original != null)
                 {
-                    var getModificationsMethod = typeof(ModificationHelper).GetMethod(nameof(GetModifications), BindingFlags.Static | BindingFlags.Public);
-                    var genericMethod = getModificationsMethod?.MakeGenericMethod(new Type[] { propertyType, propertyType });
-                    var childModifications = genericMethod?.Invoke(null, new object[] { utilisateur, originalValue, updatedValue, prop.Name }) as List<Modification>;
+                    var originalValue = typeof(TOriginal).GetProperty(prop.Name)?.GetValue(original);
+                    var originalPropertyType = typeof(TOriginal).GetProperty(prop.Name)?.PropertyType;
 
-                    if (childModifications != null)
+                    var updatedValue = prop.GetValue(updated);
+                    var updatedPropertyType = prop.PropertyType;
+
+                    if (updatedPropertyType.IsClass && updatedPropertyType != typeof(string))
                     {
-                        modifications.AddRange(childModifications);
+                        var getModificationsMethod = typeof(ModificationHelper).GetMethod(nameof(GetModifications), BindingFlags.Static | BindingFlags.Public);
+                        var genericMethod = getModificationsMethod?.MakeGenericMethod(new Type[] { originalPropertyType, updatedPropertyType });
+                        var childModifications = genericMethod?.Invoke(null, new object[] { utilisateur, originalValue, updatedValue, prop.Name }) as List<Modification>;
+
+                        if (childModifications != null)
+                        {
+                            modifications.AddRange(childModifications);
+                        }
                     }
-                }
-                else if (typeof(ICollection).IsAssignableFrom(updatedValue?.GetType()))
-                {
-                    // TODO : comparaison liste
-                }
-                else if (!Equals(originalValue, updatedValue))
-                {
-                    var propertyName = string.IsNullOrEmpty(parentProperty) ? prop.Name : $"{parentProperty}.{prop.Name}";
-                    modifications.Add(CreateModification<TOriginal>(utilisateur, propertyName, originalValue, updatedValue));
+                    else if (typeof(ICollection).IsAssignableFrom(updatedValue?.GetType()))
+                    {
+                        // TODO : comparaison liste
+                    }
+                    else if (!Equals(originalValue, updatedValue))
+                    {
+                        var propertyName = string.IsNullOrEmpty(parentProperty) ? prop.Name : $"{parentProperty}.{prop.Name}";
+                        modifications.Add(CreateModification<TOriginal>(utilisateur, propertyName, originalValue, updatedValue));
+                    }
                 }
             }
 

@@ -57,11 +57,3 @@
     </form>
   </mat-card-content>
 </mat-card>
-
-<button mat-fab class="floating-button" *ngIf="!isAddForm" color="primary" (click)="printFicheRencontre()"
-  title="Imprimer la fiche écoute">
-  <mat-icon>print</mat-icon>
-</button>
-
-
-<app-fiche-ecoute #printContainer [idProspect]="prospect.id" hidden="true"></app-fiche-ecoute>

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Prospect } from '../../../models/prospect';
 import { ProspectService } from '../../../services/prospect.service';
 import { Router } from '@angular/router';
@@ -20,8 +20,6 @@ export class ProspectFormComponent implements OnInit {
   isSubmitting: boolean = false;
   statuts: Statut[];
   typesOrganisme: TypeOrganisme[];
-  
-  @ViewChild('printContainer', { read: ElementRef }) printContainer: ElementRef;
 
   constructor(private prospectService: ProspectService,
     private router: Router,
@@ -46,7 +44,7 @@ export class ProspectFormComponent implements OnInit {
       this.prospectService.add(this.prospect).subscribe({
         next: prospect => {
           this.router.navigate(['prospects']);
-          this.snackbarService.openErrorSnackBar(`😊 Ajout de "${prospect.nom}" réussi !`);
+          this.snackbarService.openSuccessSnackBar(`😊 Ajout de "${prospect.nom}" réussi !`);
         },
         error: error => this.snackbarService.openErrorSnackBar(`😖 Oups, une erreur technique est survenue lors de l'ajout.`),
         complete: () => (this.isSubmitting = false)
@@ -55,7 +53,7 @@ export class ProspectFormComponent implements OnInit {
       this.prospectService.update(this.prospect).subscribe({
         next: prospect => {
           this.router.navigate(['prospects']);
-          this.snackbarService.openErrorSnackBar(`👌 Mise à jour de "${prospect.nom}" réussie !`);
+          this.snackbarService.openSuccessSnackBar(`👌 Mise à jour de "${prospect.nom}" réussie !`);
         },
         error: error =>
           this.snackbarService.openErrorSnackBar(`🙄 Oups, une erreur technique est survenue lors de la sauvegarde.`),
@@ -70,10 +68,5 @@ export class ProspectFormComponent implements OnInit {
 
   compareTypesOrganisme(typeOrganisme1: TypeOrganisme, typeOrganisme2: TypeOrganisme): boolean {
     return typeOrganisme1 && typeOrganisme2 ? typeOrganisme1.id === typeOrganisme2.id : typeOrganisme1 === typeOrganisme2;
-  }
-
-  printFicheRencontre(): void {
-    let printHead = document.head.innerHTML;
-    this.printService.printHtml(this.printContainer.nativeElement.innerHTML, printHead);
   }
 }

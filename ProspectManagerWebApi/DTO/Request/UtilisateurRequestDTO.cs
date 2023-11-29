@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ProspectManagerWebApi.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProspectManagerWebApi.DTO.Request
 {
-    public class UtilisateurRequestDTO
+    public class UtilisateurRequestDTO : ILabelable
     {
         [Required]
         public string? Login { get; set; }
@@ -13,5 +14,10 @@ namespace ProspectManagerWebApi.DTO.Request
         public string? MotDePasse { get; set; }
         [Required]
         public string? Email { get; set; }
+
+        public string GetLabel()
+        {
+            return Login ?? string.Empty;
+        }
     }
 }

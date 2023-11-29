@@ -1,6 +1,6 @@
 export class Utilisateur
 {
-    id?: number;
+    id: number;
     login: string;
     dateConnexion: Date;
     dateModificationMotDePasse: Date;

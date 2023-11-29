@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProspectManagerWebApi.Data;
+using ProspectManagerWebApi.DTO.Request;
 using ProspectManagerWebApi.DTO.Response;
 using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
@@ -29,27 +30,38 @@ namespace ProspectManagerWebApi.Enpoints
                     .FirstOrDefaultAsync(e => e.Id == idEvenement) is Evenement evenement ?
                 Results.Ok(mapper.Map<EvenementResponseDTO>(evenement)) : Results.NotFound());
 
-            app.MapPost("/prospects/{idProspect:int}/evenements", [Authorize] async ([FromBody] Evenement evenement, int idProspect, ProspectManagerDbContext db) =>
+            app.MapPost("/prospects/{idProspect:int}/evenements", [Authorize] async ([FromBody] EvenementRequestDTO evenement, int idProspect, ProspectManagerDbContext db, UserService userService) =>
             {
-                var prospect = await db.Prospects.Include(p => p.Evenements).FirstOrDefaultAsync(p => p.Id == idProspect);
+                var prospect = await db.Prospects.FirstOrDefaultAsync(p => p.Id == idProspect);
                 if (prospect == null)
                     return Results.NotFound($"Aucun prospect trouvé avec l'ID {idProspect}.");
 
-                prospect.Evenements?.Add(evenement);
+                var utilisateur = await userService.GetCurrentUser();
+                var evenementEntity = mapper.Map<Evenement>(evenement);
+                evenementEntity.Prospect = prospect;
+
+                evenementEntity.Utilisateur = utilisateur;
+
+                db.Evenements.Attach(evenementEntity);
+                prospect.Modifications.Add(new Modification
+                {
+                    NouvelleValeur = $"Création de {evenement.TypeEvenement?.Libelle} du {evenement.DateEvenement.ToString("d")}",
+                    DateModification = DateTimeOffset.UtcNow,
+                    Champ = "Evenement",
+                    Utilisateur = utilisateur
+                });
 
                 await db.SaveChangesAsync();
-                return Results.Created($"/prospects/{idProspect}/evenements/{evenement.Id}", mapper.Map<EvenementResponseDTO>(evenement));
+                return Results.Created($"/prospects/{idProspect}/evenements/{evenementEntity.Id}", mapper.Map<EvenementResponseDTO>(evenementEntity));
             });
 
-            app.MapPut("/evenements/{idEvenement:int}", [Authorize] async (
-                [FromBody] Evenement updatedEvenement,
+            app.MapPut("/evenements/{idEvenement:int}", [Authorize]
+            async (
+                [FromBody] EvenementRequestDTO updatedEvenement,
                 int idEvenement,
                 ProspectManagerDbContext db,
                 UserService userService) =>
             {
-                if (idEvenement != updatedEvenement.Id)
-                    return Results.BadRequest("Les identifiants d'événement ne sont pas cohérents.");
-
                 var existingEvenement = await db.Evenements.Include(e => e.Produits)
                                                            .Include(e => e.Contact)
                                                            .Include(e => e.TypeEvenement)
@@ -78,7 +90,8 @@ namespace ProspectManagerWebApi.Enpoints
                 return Results.Ok(mapper.Map<EvenementResponseDTO>(existingEvenement));
             });
 
-            app.MapDelete("/evenements/{idEvenement:int}", [Authorize] async (int idEvenement,
+            app.MapDelete("/evenements/{idEvenement:int}", [Authorize]
+            async (int idEvenement,
                                                                               ProspectManagerDbContext db,
                                                                               UserService userService) =>
             {

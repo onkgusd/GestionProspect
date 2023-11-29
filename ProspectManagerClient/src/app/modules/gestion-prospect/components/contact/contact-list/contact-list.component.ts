@@ -84,7 +84,7 @@ export class ContactListComponent implements OnInit {
           }
           else {
             contact.actif = false;
-            this.snackbarService.openWarningSnackBar("💤 Ce statut est utilisé, il a été marqué comme inactif.");
+            this.snackbarService.openWarningSnackBar("💤 Ce contact est utilisé, il a été marqué comme inactif.");
           }
         },
         error: () => this.snackbarService.openErrorSnackBar("😟 Erreur lors de la mise à jour.")

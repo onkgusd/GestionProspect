@@ -17,5 +17,7 @@ public class MappingProfile : Profile
 
         CreateMap<UtilisateurRequestDTO, Utilisateur>();
         CreateMap<ProspectRequestDTO, Prospect>();
+        CreateMap<EvenementRequestDTO, Evenement>();
+        CreateMap<ContactRequestDTO, Contact>();
     }
 }

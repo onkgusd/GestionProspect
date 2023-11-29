@@ -20,7 +20,7 @@ export class EvenementListComponent implements OnInit {
   @Input() evenementList: Evenement[];
 
   evenements: MatTableDataSource<Evenement>;
-  displayedColumns: string[] = ['typeEvenement', 'dateEvenement', 'contact', 'produit', 'actions'];
+  displayedColumns: string[] = ['typeEvenement', 'dateEvenement', 'utilisateur', 'contact', 'produit', 'evaluation', 'actions'];
   isLoading: boolean;
 
   @ViewChild(MatSort)

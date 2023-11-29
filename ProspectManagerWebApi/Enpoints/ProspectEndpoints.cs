@@ -38,6 +38,8 @@ namespace ProspectManagerWebApi.Enpoints
                                    .ThenInclude(e => e.Produits)
                                .Include(p => p.Evenements)
                                    .ThenInclude(e => e.Modifications)
+                               .Include(p => p.Evenements)
+                                   .ThenInclude(e => e.Utilisateur)
                                .Include(p => p.UtilisateurCreation)
                                .Include(p => p.TypeOrganisme)
                                .Include(p => p.Modifications)

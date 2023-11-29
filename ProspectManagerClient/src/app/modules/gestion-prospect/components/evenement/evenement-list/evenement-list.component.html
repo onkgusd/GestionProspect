@@ -27,6 +27,12 @@
                     <td mat-cell *matCellDef="let evenement">{{ evenement.resultat }}</td>
                 </ng-container>
 
+                <!-- Utilisateur Column -->
+                <ng-container matColumnDef="utilisateur">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Utilisateur</th>
+                    <td mat-cell *matCellDef="let evenement">{{ evenement.utilisateur?.login }}</td>
+                </ng-container>
+
                 <!-- Contact Column -->
                 <ng-container matColumnDef="contact">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Contact</th>
@@ -45,15 +51,22 @@
                     </td>
                 </ng-container>
 
-                <!-- Actions Column -->
-                <ng-container matColumnDef="actions">
-                    <th mat-header-cell *matHeaderCellDef></th>
+                <!-- Evaluation Column -->
+                <ng-container matColumnDef="evaluation">
+                    <th mat-header-cell *matHeaderCellDef>Evaluation</th>
                     <td mat-cell *matCellDef="let evenement">
                         <app-rating
                             [customIcons]="['sentiment_very_dissatisfied', 'sentiment_dissatisfied', 'sentiment_neutral', 'sentiment_satisfied', 'sentiment_very_satisfied']"
                             [customColors]="['#C2E0F4', '#A3D8F4', '#7FD9F3', '#98E2A3', '#72C79B']"
                             [(rating)]="evenement.evaluation" [readonly]="true">
                         </app-rating>
+                    </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let evenement">
                         <button mat-icon-button
                             (click)="$event.stopPropagation(); openDeleteConfirmationDialog(evenement)">
                             <mat-icon>delete</mat-icon>

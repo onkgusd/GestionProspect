@@ -30,11 +30,11 @@ body {
     margin-bottom: 1.4rem;
 }
 
-button.floating-button,
-div.floating-button {
+button.floating-button {
     position: fixed;
     bottom: 25px;
     right: 25px;
+    z-index: 1;
 
     & button {
         margin-bottom: 10px;
@@ -65,6 +65,14 @@ th {
     }
 }
 
+.snack-error {
+    --mdc-snackbar-container-color: rgb(202, 56, 56);
+}
+
+.snack-warning {
+    --mdc-snackbar-container-color: rgb(152, 123, 7);
+}
+
 @media screen {
     .only-for-printing {
         display: none;
@@ -87,6 +95,7 @@ th {
     mat-sidenav-content {
         margin-left: 0 !important;
         position: static !important;
+
         & * {
             box-shadow: none !important;
         }
@@ -99,7 +108,8 @@ th {
     .print-section {
         position: static;
         overflow: visible;
-        width: auto; /* ou une largeur spécifique qui convient à la page */
+        width: auto;
+        /* ou une largeur spécifique qui convient à la page */
         max-height: none;
         float: none;
     }

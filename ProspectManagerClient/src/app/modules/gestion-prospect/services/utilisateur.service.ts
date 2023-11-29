@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Utilisateur } from '../models/utilisateur';
 import { environment } from 'src/environments/environment';
+import { DeleteResponseDto } from '../dto/delete-response-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -56,8 +57,8 @@ export class UtilisateurService {
     );
   }
 
-  delete(id: number): Observable<Utilisateur> {
-    return this.http.delete<Utilisateur>(`${environment.webapiBaseUrl}/utilisateurs/${id}`).pipe(
+  delete(id: number): Observable<DeleteResponseDto> {
+    return this.http.delete<DeleteResponseDto>(`${environment.webapiBaseUrl}/utilisateurs/${id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

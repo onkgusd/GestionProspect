@@ -58,16 +58,31 @@ namespace ProspectManagerWebApi.Enpoints
 
             app.MapDelete("/utilisateurs/{idutilisateur:int}", [Authorize(Policy = "Admin")] async (int idUtilisateur, ProspectManagerDbContext db) =>
             {
-                var existingUtilisateur = await db.Utilisateurs.FindAsync(idUtilisateur);
+                var existingUtilisateur = await db.Utilisateurs
+                                                    .Include(u => u.PasswordResetTokens)
+                                                    .FirstOrDefaultAsync(u => u.Id == idUtilisateur);
                 if (existingUtilisateur == null)
                 {
                     return Results.NotFound();
                 }
 
-                db.Utilisateurs.Remove(existingUtilisateur);
+                var nbProspect = db.Prospects.Count(p => p.UtilisateurCreation == existingUtilisateur);
+                var nbEvenement = db.Evenements.Count(e => e.Utilisateur == existingUtilisateur);
+                var nbModification = db.Modifications.Count(m => m.Utilisateur == existingUtilisateur);
+
+                if (nbEvenement + nbProspect + nbModification == 0)
+                {
+                    existingUtilisateur.PasswordResetTokens?.Clear();
+                    db.Utilisateurs.Remove(existingUtilisateur);
+                }
+                else
+                {
+                    existingUtilisateur.Actif = false;
+                }
+
                 await db.SaveChangesAsync();
 
-                return Results.Ok();
+                return Results.Ok(new { Statut = nbEvenement + nbProspect + nbModification == 0 ? "Deleted" : "Disabled" });
             });
         }
     }

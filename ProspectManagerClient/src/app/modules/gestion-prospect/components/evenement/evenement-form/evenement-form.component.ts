@@ -100,7 +100,7 @@ export class EvenementFormComponent implements OnInit {
           this.previousPage();
         },
         error: error => {
-          this.snackbarService.openErrorSnackBar(`😵 Oups, une erreur est survenue lors de la mise à jour :(`);
+          this.snackbarService.openErrorSnackBar(`😵 Oups, une erreur est survenue lors de la mise à jour.`);
           this.isSubmitting = false;
         }
       });

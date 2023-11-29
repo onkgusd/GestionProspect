@@ -15,4 +15,12 @@
         <app-modification-list [isVisible]="onModificationsTab" [idProspect]="prospect.id"/>
     </mat-tab>
 </mat-tab-group>
+
+<button mat-fab class="floating-button" *ngIf="!isLoading" color="primary" (click)="printFicheRencontre()"
+  title="Imprimer la fiche écoute">
+  <mat-icon>print</mat-icon>
+</button>
+
+
+<app-fiche-ecoute #printContainer [idProspect]="prospect.id" hidden="true" *ngIf="!isLoading"></app-fiche-ecoute>
 <app-loader *ngIf="isLoading"></app-loader>
