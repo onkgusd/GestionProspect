@@ -10,11 +10,11 @@ export class SnackbarService {
 
   openSnackBar(message: string, duration: number = 5000) {
     this.snackBar.open(message, 'Fermer', {
-      duration: duration,
+      duration: duration
     });
   }
 
-  openErrorSnackBar(message: string, duration: number = 9999999999999) {
+  openErrorSnackBar(message: string, duration: number = 5000) {
     this.snackBar.open(message, 'Fermer', {
       duration: duration,
       panelClass: 'snack-error'
