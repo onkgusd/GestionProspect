@@ -29,12 +29,10 @@ export class LoginComponent implements OnInit {
       this.snackbarService.openSnackBar("Tentative de connexion en cours...");
       this.authService.login(this.username, this.password).subscribe((isLoggedIn: boolean) => {
         if (isLoggedIn) {
-          this.snackbarService.openSnackBar("Connecté :)");
-          this.snackbarService.openSnackBar("Connecté :) :)");
-          this.snackbarService.openSnackBar("Connecté :) :) :)");
+          this.snackbarService.openSuccessSnackBar(`Bienvenue ${this.username} 🤗`);
           this.router.navigate(['/search']);
         } else {
-          this.snackbarService.openErrorSnackBar("Erreur lors de la connexion !", 10000);
+          this.snackbarService.openErrorSnackBar("😟 Erreur lors de la connexion !", 10000);
         }
 
         this.isSubmitting = false;
