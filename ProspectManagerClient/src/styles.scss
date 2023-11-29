@@ -30,7 +30,8 @@ body {
     margin-bottom: 1.4rem;
 }
 
-button.floating-button {
+button.floating-button,
+div.floating-button {
     position: fixed;
     bottom: 25px;
     right: 25px;
@@ -109,7 +110,6 @@ th {
         position: static;
         overflow: visible;
         width: auto;
-        /* ou une largeur spécifique qui convient à la page */
         max-height: none;
         float: none;
     }

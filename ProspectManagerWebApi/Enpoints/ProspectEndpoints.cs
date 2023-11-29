@@ -19,7 +19,10 @@ namespace ProspectManagerWebApi.Enpoints
             app.MapGet("/prospects", async (ProspectManagerDbContext db) =>
                 await db.Prospects.Include(p => p.TypeOrganisme)
                                   .Include(p => p.Statut)
-                                  .ToListAsync());
+                                  .Include(p => p.Contacts)
+                                  .Include(p => p.ProduitProspects)
+                                    .ThenInclude(pp => pp.Produit)
+                                  .Select(p => mapper.Map<ProspectResponseDTO>(p)).ToListAsync());
 
             app.MapGet("/prospects/{idprospect:int}", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
             {

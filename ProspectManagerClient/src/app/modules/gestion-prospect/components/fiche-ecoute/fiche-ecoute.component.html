@@ -1,4 +1,22 @@
-<section class="print-section" *ngIf="!isLoading">
+<div class="mat-elevation-z8" fxLayoutAlign="center center" fxLayout="column">
+    <h2>Imprimer une fiche "écoute"</h2>
+    <section fxLayoutGap="20px">
+        <mat-form-field *ngIf="standalone">
+            <mat-label>Prospect</mat-label>
+            <mat-select [(ngModel)]="prospect">
+                <mat-option aria-selected="true" (onselect)="resetProspect()">Fiche écoute vierge</mat-option>
+                <mat-option *ngFor="let prospect of prospects" [value]="prospect">{{ prospect.nom
+                    }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button *ngIf="!isLoading" mat-fab color="primary" (click)="printFicheRencontre()"
+            title="Imprimer la fiche écoute">
+            <mat-icon>print</mat-icon>
+        </button>
+    </section>
+</div>
+
+<section class="print-section only-for-printing" *ngIf="!isLoading">
     <!-- En-tête -->
     <h1>Fiche écoute</h1>
     <section>
@@ -9,7 +27,7 @@
                 <td><strong>Nom :</strong></td>
                 <td class="text-with-dots">
                     <span>
-                        {{ prospect.nom }}
+                        {{ prospect.nom || "" }}
                     </span>
                 </td>
             </tr>
@@ -17,7 +35,7 @@
                 <td><strong>Département :</strong></td>
                 <td>
                     <span>
-                        {{ prospect.departement }}
+                        {{ prospect.departement || "" }}
                     </span>
                 </td>
             </tr>
@@ -25,7 +43,7 @@
                 <td><strong>Adresse :</strong></td>
                 <td>
                     <span>
-                        {{ prospect.adresse }}
+                        {{ prospect.adresse || "" }}
                     </span>
                 </td>
             </tr>
@@ -33,7 +51,7 @@
                 <td><strong>Téléphone :</strong></td>
                 <td>
                     <span>
-                        {{ prospect.telephone }}
+                        {{ prospect.telephone || "" }}
                     </span>
                 </td>
             </tr>
@@ -41,7 +59,7 @@
                 <td><strong>Email :</strong></td>
                 <td>
                     <span>
-                        {{ prospect.mail }}
+                        {{ prospect.mail || "" }}
                     </span>
                 </td>
             </tr>
@@ -49,17 +67,17 @@
                 <td><strong>Secteur d'Activité :</strong></td>
                 <td>
                     <span>
-                        {{ prospect.secteurActivite }}
+                        {{ prospect.secteurActivite || "" }}
                     </span>
                 </td>
             </tr>
             <tr>
                 <td><strong>Statut :</strong></td>
-                <td><span>{{ prospect.statut.libelle || "" }}</span></td>
+                <td><span>{{ prospect.statut?.libelle || "" }}</span></td>
             </tr>
             <tr>
                 <td><strong>Type d'Organisme :</strong></td>
-                <td><span>{{ prospect.typeOrganisme.libelle || "" }}</span></td>
+                <td><span>{{ prospect.typeOrganisme?.libelle || "" }}</span></td>
             </tr>
         </table>
     </section>
