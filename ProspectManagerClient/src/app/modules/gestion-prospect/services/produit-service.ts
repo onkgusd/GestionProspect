@@ -13,7 +13,7 @@ export class ProduitService {
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<Produit[]> {
-    return this.http.get<Produit[]>(`${environment.baseUrl}/produits`).pipe(
+    return this.http.get<Produit[]>(`${environment.webapiBaseUrl}/produits`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -22,7 +22,7 @@ export class ProduitService {
   }
 
   get(id: number): Observable<Produit> {
-    return this.http.get<Produit>(`${environment.baseUrl}/produits/${id}`).pipe(
+    return this.http.get<Produit>(`${environment.webapiBaseUrl}/produits/${id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -35,7 +35,7 @@ export class ProduitService {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.post<Produit>(`${environment.baseUrl}/produits`, produit, httpOptions).pipe(
+    return this.http.post<Produit>(`${environment.webapiBaseUrl}/produits`, produit, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -48,7 +48,7 @@ export class ProduitService {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.put<Produit>(`${environment.baseUrl}/produits/${produit.id}`, produit, httpOptions).pipe(
+    return this.http.put<Produit>(`${environment.webapiBaseUrl}/produits/${produit.id}`, produit, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -57,7 +57,7 @@ export class ProduitService {
   }
 
   delete(idProduit: number) {
-    return this.http.delete<DeleteResponseDto>(`${environment.baseUrl}/produits/${idProduit}`).pipe(
+    return this.http.delete<DeleteResponseDto>(`${environment.webapiBaseUrl}/produits/${idProduit}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

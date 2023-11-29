@@ -80,11 +80,31 @@ th {
         display: none !important;
     }
 
+    mat-sidenav-container.mat-drawer-container {
+        overflow: visible;
+    }
+
     mat-sidenav-content {
         margin-left: 0 !important;
         position: static !important;
         & * {
             box-shadow: none !important;
         }
+
+        &.mat-drawer-content {
+            overflow: visible;
+        }
+    }
+
+    .print-section {
+        position: static;
+        overflow: visible;
+        width: auto; /* ou une largeur spécifique qui convient à la page */
+        max-height: none;
+        float: none;
+    }
+
+    textarea {
+        border: none;
     }
 }

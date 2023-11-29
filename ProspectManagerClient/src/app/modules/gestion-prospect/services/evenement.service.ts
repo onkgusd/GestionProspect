@@ -13,7 +13,7 @@ export class EvenementService {
   constructor(private http: HttpClient) { }
 
   getAll(idProspect: number): Observable<Evenement[]> {
-    return this.http.get<Evenement[]>(`${environment.baseUrl}prospects/${idProspect}/evenements`).pipe(
+    return this.http.get<Evenement[]>(`${environment.webapiBaseUrl}prospects/${idProspect}/evenements`).pipe(
       tap(evenements => console.log(evenements)),
       catchError((error) => {
         console.error(error);
@@ -23,7 +23,7 @@ export class EvenementService {
   }
 
   get(id: number): Observable<Evenement> {
-    return this.http.get<Evenement>(`${environment.baseUrl}/evenements/${id}`).pipe(
+    return this.http.get<Evenement>(`${environment.webapiBaseUrl}/evenements/${id}`).pipe(
       tap(evenement => console.log(evenement)),
       catchError((error) => {
         console.error(error);
@@ -37,7 +37,7 @@ export class EvenementService {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
 
-    return this.http.post<Evenement>(`${environment.baseUrl}/prospects/${idProspect}/evenements`, evenement, httpOptions).pipe(
+    return this.http.post<Evenement>(`${environment.webapiBaseUrl}/prospects/${idProspect}/evenements`, evenement, httpOptions).pipe(
       tap(newEvenement => console.log(newEvenement)),
       catchError((error) => {
         console.error(error);
@@ -51,7 +51,7 @@ export class EvenementService {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
 
-    return this.http.put<Evenement>(`${environment.baseUrl}/evenements/${evenement.id}`, evenement, httpOptions).pipe(
+    return this.http.put<Evenement>(`${environment.webapiBaseUrl}/evenements/${evenement.id}`, evenement, httpOptions).pipe(
       tap(updatedEvenement => console.log(updatedEvenement)),
       catchError((error) => {
         console.error(error);
@@ -61,7 +61,7 @@ export class EvenementService {
   }
 
   delete(id: number): Observable<Evenement> {
-    return this.http.delete<Evenement>(`${environment.baseUrl}/evenements/${id}`).pipe(
+    return this.http.delete<Evenement>(`${environment.webapiBaseUrl}/evenements/${id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

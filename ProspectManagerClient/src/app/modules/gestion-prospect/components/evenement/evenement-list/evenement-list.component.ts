@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
@@ -8,6 +8,7 @@ import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-con
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { finalize } from 'rxjs';
+import { PrintService } from 'src/app/services/print.service';
 
 @Component({
   selector: 'app-evenement-list',
@@ -15,6 +16,9 @@ import { finalize } from 'rxjs';
   styleUrls: ['./evenement-list.component.scss']
 })
 export class EvenementListComponent implements OnInit {
+  @Input() idProspect: number;
+  @Input() evenementList: Evenement[];
+
   evenements: MatTableDataSource<Evenement>;
   displayedColumns: string[] = ['typeEvenement', 'dateEvenement', 'contact', 'produit', 'actions'];
   isLoading: boolean;
@@ -33,9 +37,6 @@ export class EvenementListComponent implements OnInit {
     }
   }
 
-  @Input() idProspect: number;
-  @Input() evenementList: Evenement[];
-
   constructor(public dialog: MatDialog, private evenementService: EvenementService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
@@ -45,13 +46,13 @@ export class EvenementListComponent implements OnInit {
     else {
       this.isLoading = true;
       this.evenementService.getAll(this.idProspect)
-      .pipe(finalize(() => this.isLoading = false))
-      .subscribe({
-        next: (evenements: Evenement[]) => {
-        this.evenements = new MatTableDataSource(evenements);
-      },
-        error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement de la liste des événements.")
-    });
+        .pipe(finalize(() => this.isLoading = false))
+        .subscribe({
+          next: (evenements: Evenement[]) => {
+            this.evenements = new MatTableDataSource(evenements);
+          },
+          error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement de la liste des événements.")
+        });
     }
   }
 

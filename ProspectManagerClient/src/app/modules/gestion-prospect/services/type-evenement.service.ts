@@ -13,7 +13,7 @@ export class TypeEvenementService {
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<TypeEvenement[]> {
-    return this.http.get<TypeEvenement[]>(`${environment.baseUrl}/types-evenement`).pipe(
+    return this.http.get<TypeEvenement[]>(`${environment.webapiBaseUrl}/types-evenement`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -22,7 +22,7 @@ export class TypeEvenementService {
   }
 
   get(id: number): Observable<TypeEvenement> {
-    return this.http.get<TypeEvenement>(`${environment.baseUrl}/types-evenement/${id}`).pipe(
+    return this.http.get<TypeEvenement>(`${environment.webapiBaseUrl}/types-evenement/${id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -35,7 +35,7 @@ export class TypeEvenementService {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.post<TypeEvenement>(`${environment.baseUrl}/types-evenement`, typeEvenement, httpOptions).pipe(
+    return this.http.post<TypeEvenement>(`${environment.webapiBaseUrl}/types-evenement`, typeEvenement, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -48,7 +48,7 @@ export class TypeEvenementService {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.put<TypeEvenement>(`${environment.baseUrl}/types-evenement/${typeEvenement.id}`, typeEvenement, httpOptions).pipe(
+    return this.http.put<TypeEvenement>(`${environment.webapiBaseUrl}/types-evenement/${typeEvenement.id}`, typeEvenement, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -57,7 +57,7 @@ export class TypeEvenementService {
   }
 
   delete(idTypeEvenement: number)  {
-    return this.http.delete<DeleteResponseDto>(`${environment.baseUrl}/types-evenement/${idTypeEvenement}`).pipe(
+    return this.http.delete<DeleteResponseDto>(`${environment.webapiBaseUrl}/types-evenement/${idTypeEvenement}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

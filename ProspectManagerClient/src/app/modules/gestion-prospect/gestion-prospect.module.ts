@@ -68,6 +68,7 @@ import { TypeOrganismeAddComponent } from './components/type-organisme/type-orga
 import { TypeOrganismeFormComponent } from './components/type-organisme/type-organisme-form/type-organisme-form.component';
 import { ProspectSearchComponent } from './components/prospect-search/prospect-search.component';
 import { ModificationListComponent } from './components/modification/modification-list/modification-list.component';
+import { FicheEcouteComponent } from './components/fiche-ecoute/fiche-ecoute.component';
 
 const gestionProspectRoutes: Routes = [
   // Produit
@@ -102,7 +103,10 @@ const gestionProspectRoutes: Routes = [
   { path: "utilisateurs/:id", component: UtilisateurEditComponent, canActivate: [AdminGuard] },
 
   // Search
-  { path: "search", component: ProspectSearchComponent, canActivate: [AuthGuard] }
+  { path: "search", component: ProspectSearchComponent, canActivate: [AuthGuard] },
+
+  // Print "fiche écoute"
+  { path: "fiche-ecoute", component: FicheEcouteComponent, canActivate: [AuthGuard] },
 ]
 
 @NgModule({
@@ -117,7 +121,8 @@ const gestionProspectRoutes: Routes = [
     UtilisateurListComponent, UtilisateurFormComponent, UtilisateurEditComponent, UtilisateurAddComponent,
     TypeOrganismeListComponent, TypeOrganismeEditComponent, TypeOrganismeAddComponent, TypeOrganismeFormComponent,
     ProspectSearchComponent,
-    ModificationListComponent
+    ModificationListComponent,
+    FicheEcouteComponent
   ],
   imports: [
     CommonModule,

@@ -6,8 +6,10 @@
     <form #prospectForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
       <mat-form-field>
         <mat-label>Type d'organisme</mat-label>
-        <mat-select [(ngModel)]="prospect.typeOrganisme" [ngModelOptions]="{standalone: true}" [compareWith]="compareTypesOrganisme">
-          <mat-option *ngFor="let typeOrganisme of typesOrganisme" [value]="typeOrganisme">{{ typeOrganisme.libelle }}</mat-option>
+        <mat-select [(ngModel)]="prospect.typeOrganisme" [ngModelOptions]="{standalone: true}"
+          [compareWith]="compareTypesOrganisme">
+          <mat-option *ngFor="let typeOrganisme of typesOrganisme" [value]="typeOrganisme">{{ typeOrganisme.libelle
+            }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field class="full-width">
@@ -55,3 +57,11 @@
     </form>
   </mat-card-content>
 </mat-card>
+
+<button mat-fab class="floating-button" *ngIf="!isAddForm" color="primary" (click)="printFicheRencontre()"
+  title="Imprimer la fiche écoute">
+  <mat-icon>print</mat-icon>
+</button>
+
+
+<app-fiche-ecoute #printContainer [idProspect]="prospect.id" hidden="true"></app-fiche-ecoute>

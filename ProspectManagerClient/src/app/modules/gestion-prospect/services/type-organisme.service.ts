@@ -13,7 +13,7 @@ export class TypeOrganismeService {
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<TypeOrganisme[]> {
-    return this.http.get<TypeOrganisme[]>(`${environment.baseUrl}/types-organisme`).pipe(
+    return this.http.get<TypeOrganisme[]>(`${environment.webapiBaseUrl}/types-organisme`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -22,7 +22,7 @@ export class TypeOrganismeService {
   }
 
   get(id: number): Observable<TypeOrganisme> {
-    return this.http.get<TypeOrganisme>(`${environment.baseUrl}/types-organisme/${id}`).pipe(
+    return this.http.get<TypeOrganisme>(`${environment.webapiBaseUrl}/types-organisme/${id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -35,7 +35,7 @@ export class TypeOrganismeService {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.post<TypeOrganisme>(`${environment.baseUrl}/types-organisme`, typeOrganisme, httpOptions).pipe(
+    return this.http.post<TypeOrganisme>(`${environment.webapiBaseUrl}/types-organisme`, typeOrganisme, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -48,7 +48,7 @@ export class TypeOrganismeService {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.put<TypeOrganisme>(`${environment.baseUrl}/types-organisme/${typeOrganisme.id}`, typeOrganisme, httpOptions).pipe(
+    return this.http.put<TypeOrganisme>(`${environment.webapiBaseUrl}/types-organisme/${typeOrganisme.id}`, typeOrganisme, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -57,7 +57,7 @@ export class TypeOrganismeService {
   }
 
   delete(idTypeOrganisme: number)  {
-    return this.http.delete<DeleteResponseDto>(`${environment.baseUrl}/types-organisme/${idTypeOrganisme}`).pipe(
+    return this.http.delete<DeleteResponseDto>(`${environment.webapiBaseUrl}/types-organisme/${idTypeOrganisme}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

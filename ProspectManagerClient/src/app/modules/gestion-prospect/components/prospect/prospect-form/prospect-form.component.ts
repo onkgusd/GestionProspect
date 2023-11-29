@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Prospect } from '../../../models/prospect';
 import { ProspectService } from '../../../services/prospect.service';
 import { Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { Statut } from '../../../models/statut';
 import { StatutService } from '../../../services/statut.service';
 import { TypeOrganisme } from '../../../models/type-organisme';
 import { TypeOrganismeService } from '../../../services/type-organisme.service';
+import { PrintService } from 'src/app/services/print.service';
 
 @Component({
   selector: 'app-prospect-form',
@@ -19,12 +20,15 @@ export class ProspectFormComponent implements OnInit {
   isSubmitting: boolean = false;
   statuts: Statut[];
   typesOrganisme: TypeOrganisme[];
+  
+  @ViewChild('printContainer', { read: ElementRef }) printContainer: ElementRef;
 
   constructor(private prospectService: ProspectService,
     private router: Router,
     private snackbarService: SnackbarService,
     private statutService: StatutService,
-    private typeOrganismeService: TypeOrganismeService) { }
+    private typeOrganismeService: TypeOrganismeService,
+    private printService: PrintService) { }
 
   ngOnInit(): void {
     this.statutService.getAll().subscribe(statuts =>
@@ -66,5 +70,10 @@ export class ProspectFormComponent implements OnInit {
 
   compareTypesOrganisme(typeOrganisme1: TypeOrganisme, typeOrganisme2: TypeOrganisme): boolean {
     return typeOrganisme1 && typeOrganisme2 ? typeOrganisme1.id === typeOrganisme2.id : typeOrganisme1 === typeOrganisme2;
+  }
+
+  printFicheRencontre(): void {
+    let printHead = document.head.innerHTML;
+    this.printService.printHtml(this.printContainer.nativeElement.innerHTML, printHead);
   }
 }

@@ -13,7 +13,7 @@ export class UtilisateurService {
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<Utilisateur[]> {
-    return this.http.get<Utilisateur[]>(`${environment.baseUrl}/utilisateurs`).pipe(
+    return this.http.get<Utilisateur[]>(`${environment.webapiBaseUrl}/utilisateurs`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -22,7 +22,7 @@ export class UtilisateurService {
   }
 
   get(id: number): Observable<Utilisateur> {
-    return this.http.get<Utilisateur>(`${environment.baseUrl}/utilisateurs/${id}`).pipe(
+    return this.http.get<Utilisateur>(`${environment.webapiBaseUrl}/utilisateurs/${id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -35,7 +35,7 @@ export class UtilisateurService {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
 
-    return this.http.post<Utilisateur>(`${environment.baseUrl}/utilisateurs`, utilisateur, httpOptions).pipe(
+    return this.http.post<Utilisateur>(`${environment.webapiBaseUrl}/utilisateurs`, utilisateur, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -48,7 +48,7 @@ export class UtilisateurService {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
 
-    return this.http.put<Utilisateur>(`${environment.baseUrl}/utilisateurs/${utilisateur.id}`, utilisateur, httpOptions).pipe(
+    return this.http.put<Utilisateur>(`${environment.webapiBaseUrl}/utilisateurs/${utilisateur.id}`, utilisateur, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -57,7 +57,7 @@ export class UtilisateurService {
   }
 
   delete(id: number): Observable<Utilisateur> {
-    return this.http.delete<Utilisateur>(`${environment.baseUrl}/utilisateurs/${id}`).pipe(
+    return this.http.delete<Utilisateur>(`${environment.webapiBaseUrl}/utilisateurs/${id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

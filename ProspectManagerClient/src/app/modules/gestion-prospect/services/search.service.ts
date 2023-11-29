@@ -25,7 +25,7 @@ export class SearchService {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     }
 
-    return this.http.post<Prospect[]>(`${environment.baseUrl}/prospects/search/`, prospectSearchDto, httpOptions).pipe(
+    return this.http.post<Prospect[]>(`${environment.webapiBaseUrl}/prospects/search/`, prospectSearchDto, httpOptions).pipe(
       tap(result => this.searchResult = result),
       catchError((error) => {
         console.log(error);

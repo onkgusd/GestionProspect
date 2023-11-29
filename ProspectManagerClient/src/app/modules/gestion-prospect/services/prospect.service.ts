@@ -15,7 +15,7 @@ export class ProspectService {
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<Prospect[]> {
-    return this.http.get<Prospect[]>(`${environment.baseUrl}/prospects`).pipe(
+    return this.http.get<Prospect[]>(`${environment.webapiBaseUrl}/prospects`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -24,7 +24,7 @@ export class ProspectService {
   }
 
   get(id: number): Observable<Prospect> {
-    return this.http.get<Prospect>(`${environment.baseUrl}/prospects/${id}`).pipe(
+    return this.http.get<Prospect>(`${environment.webapiBaseUrl}/prospects/${id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -37,7 +37,7 @@ export class ProspectService {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.post<Prospect>(`${environment.baseUrl}/prospects`, prospect, httpOptions).pipe(
+    return this.http.post<Prospect>(`${environment.webapiBaseUrl}/prospects`, prospect, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -50,7 +50,7 @@ export class ProspectService {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.put<Prospect>(`${environment.baseUrl}/prospects/${prospect.id}`, prospect, httpOptions).pipe(
+    return this.http.put<Prospect>(`${environment.webapiBaseUrl}/prospects/${prospect.id}`, prospect, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -59,7 +59,7 @@ export class ProspectService {
   }
 
   delete(prospect: Prospect) {
-    return this.http.delete<Prospect>(`${environment.baseUrl}/produits/${prospect.id}`).pipe(
+    return this.http.delete<Prospect>(`${environment.webapiBaseUrl}/produits/${prospect.id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -76,7 +76,7 @@ export class ProspectService {
       probabiliteSucces: produitProspect.probabiliteSucces
     }
 
-    return this.http.post<Prospect>(`${environment.baseUrl}/prospects/${produitProspect.prospect.id}/produits/${produitProspect.produit.id}`, produitProspectDto, httpOptions).pipe(
+    return this.http.post<Prospect>(`${environment.webapiBaseUrl}/prospects/${produitProspect.prospect.id}/produits/${produitProspect.produit.id}`, produitProspectDto, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -85,7 +85,7 @@ export class ProspectService {
   }
 
   getProduits(idProspect: number): Observable<ProduitProspect[]> {
-    return this.http.get<ProduitProspect[]>(`${environment.baseUrl}/prospects/${idProspect}/produits`).pipe(
+    return this.http.get<ProduitProspect[]>(`${environment.webapiBaseUrl}/prospects/${idProspect}/produits`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -102,7 +102,7 @@ export class ProspectService {
       probabiliteSucces: produitProspect.probabiliteSucces
     }
 
-    return this.http.put<Prospect>(`${environment.baseUrl}/prospects/${produitProspect.prospect.id}/produits/${produitProspect.produit.id}`, produitProspectDto, httpOptions).pipe(
+    return this.http.put<Prospect>(`${environment.webapiBaseUrl}/prospects/${produitProspect.prospect.id}/produits/${produitProspect.produit.id}`, produitProspectDto, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -111,7 +111,7 @@ export class ProspectService {
   }
 
   deleteProduit(produitProspect: ProduitProspect){
-    return this.http.delete<Prospect>(`${environment.baseUrl}/prospects/${produitProspect.prospect.id}/produits/${produitProspect.produit.id}`).pipe(
+    return this.http.delete<Prospect>(`${environment.webapiBaseUrl}/prospects/${produitProspect.prospect.id}/produits/${produitProspect.produit.id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -120,7 +120,7 @@ export class ProspectService {
   }
 
   getModifications(idProspect: number): Observable<Modification[]> {
-    return this.http.get<Modification[]>(`${environment.baseUrl}/prospects/${idProspect}/modifications`).pipe(
+    return this.http.get<Modification[]>(`${environment.webapiBaseUrl}/prospects/${idProspect}/modifications`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

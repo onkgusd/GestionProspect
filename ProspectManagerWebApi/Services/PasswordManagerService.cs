@@ -107,7 +107,7 @@ namespace ProspectManagerWebApi.Services
             
             emailBody = emailBody.Replace("[Name]", utilisateur.Login);
             emailBody = emailBody.Replace("[ResetPasswordLink]", resetLink);
-            emailBody = emailBody.Replace("[DureeValiditeLienReinitMdpEnHeure]", tokenDuration.ToString());
+            emailBody = emailBody.Replace("[DureeValiditeLienReinitMdpEnHeure]", $"{tokenDuration} {(tokenDuration == 1 ? "heure" : "heures")}");
 
             await _emailService.SendEmailAsync(utilisateur.Email,
                 "Votre demande réinitialisation de mot de passe",

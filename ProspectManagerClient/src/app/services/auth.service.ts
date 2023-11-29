@@ -38,7 +38,7 @@ export class AuthService {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     }
 
-    return this.http.post<AuthResponse>(`${environment.baseUrl}/authentication/getToken`, { login, password }, httpOptions).pipe(
+    return this.http.post<AuthResponse>(`${environment.webapiBaseUrl}/authentication/getToken`, { login, password }, httpOptions).pipe(
       map((response: AuthResponse) => {
         localStorage.setItem("token", response.token)
         localStorage.setItem("expires_at", response.expirationDate.toString());
@@ -104,7 +104,7 @@ export class AuthService {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     }
 
-    return this.http.post(`${environment.baseUrl}/authentication/demande-reinitialisation`, { email }, httpOptions).pipe(
+    return this.http.post(`${environment.webapiBaseUrl}/authentication/demande-reinitialisation`, { email }, httpOptions).pipe(
       map(() => true),
       catchError((error) => {
         console.log(error);
@@ -119,7 +119,7 @@ export class AuthService {
     }
     const request: ReinitMotDePasseDto = { email, nouveauMotDePasse, token };
 
-    return this.http.post<any>(`${environment.baseUrl}/authentication/reinitialiser-motdepasse`, request, httpOptions).pipe(
+    return this.http.post<any>(`${environment.webapiBaseUrl}/authentication/reinitialiser-motdepasse`, request, httpOptions).pipe(
       catchError((error) => {
         console.log(error);
         return of(false);
