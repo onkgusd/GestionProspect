@@ -44,7 +44,7 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Produits</th>
                     <td mat-cell *matCellDef="let evenement">
                         <mat-chip-listbox>
-                            <mat-chip *ngFor="let produit of evenement.produits" color="warn">
+                            <mat-chip *ngFor="let produit of evenement.produits" color="warn" [routerLink]="['/produits', produit.id]">
                                 {{produit.libelle}}
                             </mat-chip>
                         </mat-chip-listbox>

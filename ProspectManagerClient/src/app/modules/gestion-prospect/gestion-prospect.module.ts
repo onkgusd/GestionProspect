@@ -50,7 +50,7 @@ import { StatutListComponent } from './components/statut/statut-list/statut-list
 import { StatutFormComponent } from './components/statut/statut-form/statut-form.component';
 import { StatutEditComponent } from './components/statut/statut-edit/statut-edit.component';
 import { StatutAddComponent } from './components/statut/statut-add/statut-add.component';
-import { ProduitProspectListComponent } from './components/produit-prospect/produit-prospect-list/produit-prospect-list.component';
+import { ProduitProspectListForProspectComponent } from './components/produit-prospect/produit-prospect-list-for-prospect/produit-prospect-list-for-prospect.component';
 import { RatingComponent } from 'src/app/components/rating/rating.component';
 import { ProduitProspectDialogComponent } from './components/produit-prospect/produit-prospect-dialog/produit-prospect-dialog.component';
 import { EvenementListComponent } from './components/evenement/evenement-list/evenement-list.component';
@@ -73,6 +73,7 @@ import { SecteurGeographiqueFormComponent } from './components/secteur-geographi
 import { SecteurGeographiqueAddComponent } from './components/secteur-geographique/secteur-geographique-add/secteur-geographique-add.component';
 import { SecteurGeographiqueEditComponent } from './components/secteur-geographique/secteur-geographique-edit/secteur-geographique-edit.component';
 import { SecteurGeographiqueListComponent } from './components/secteur-geographique/secteur-geographique-list/secteur-geographique-list.component';
+import { ProduitProspectListForProduitComponent } from './components/produit-prospect/produit-prospect-list-for-produit/produit-prospect-list-for-produit.component';
 
 const gestionProspectRoutes: Routes = [
   // Produit
@@ -124,7 +125,7 @@ const gestionProspectRoutes: Routes = [
     ProspectListComponent, ProspectFormComponent, ProspectAddComponent, ProspectEditComponent,
     ContactListComponent, ContactFormComponent, ContactEditComponent, ContactAddComponent,
     StatutListComponent, StatutFormComponent, StatutEditComponent, StatutAddComponent,
-    ProduitProspectListComponent, RatingComponent, ProduitProspectDialogComponent,
+    ProduitProspectListForProspectComponent, RatingComponent, ProduitProspectDialogComponent,
     EvenementListComponent, EvenementFormComponent, EvenementEditComponent, EvenementAddComponent,
     UtilisateurListComponent, UtilisateurFormComponent, UtilisateurEditComponent, UtilisateurAddComponent,
     TypeOrganismeListComponent, TypeOrganismeEditComponent, TypeOrganismeAddComponent, TypeOrganismeFormComponent,
@@ -134,7 +135,8 @@ const gestionProspectRoutes: Routes = [
     SecteurGeographiqueFormComponent,
     SecteurGeographiqueAddComponent,
     SecteurGeographiqueEditComponent,
-    SecteurGeographiqueListComponent
+    SecteurGeographiqueListComponent,
+    ProduitProspectListForProduitComponent
   ],
   imports: [
     CommonModule,

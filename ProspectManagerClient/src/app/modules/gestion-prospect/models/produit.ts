@@ -1,4 +1,5 @@
 import { Modification } from "./modification";
+import { ProduitProspect } from "./produitprospect";
 
 export class Produit {
     id: number;
@@ -6,5 +7,6 @@ export class Produit {
     libelle: string;
     description: string;
     actif: boolean;
-    modifications: Modification[];
+    modifications: Modification[] = [];
+    produitProspects: ProduitProspect[] = [];
 }

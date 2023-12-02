@@ -1,0 +1,89 @@
+<div class="mat-elevation-z8" [hidden]="isLoading">
+    <table mat-table [dataSource]="produitProspects" matSort>
+
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                ID
+            </th>
+            <td mat-cell *matCellDef="let produitProspect"> {{produitProspect.produit.id}} </td>
+        </ng-container>
+
+        <!-- Statut Column -->
+        <ng-container matColumnDef="statut">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Statut
+            </th>
+            <td mat-cell *matCellDef="let produitProspect"> {{produitProspect.prospect.statut.libelle}} </td>
+        </ng-container>
+
+        <!-- Nom Column -->
+        <ng-container matColumnDef="nom">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Nom
+            </th>
+            <td mat-cell *matCellDef="let produitProspect"> {{produitProspect.prospect.nom}} </td>
+        </ng-container>
+
+        <!-- Type organisme Column -->
+        <ng-container matColumnDef="typeOrganisme">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Type d'organisme
+            </th>
+            <td mat-cell *matCellDef="let produitProspect"> {{produitProspect.prospect.typeOrganisme.libelle}} </td>
+        </ng-container>
+
+        <!-- Secteur d'activité Column -->
+        <ng-container matColumnDef="secteurActivite">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Secteur d'activité
+            </th>
+            <td mat-cell *matCellDef="let produitProspect"> {{produitProspect.prospect.secteurActivite}} </td>
+        </ng-container>
+
+        <!-- Secteur géographique Column -->
+        <ng-container matColumnDef="secteurGeographique">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Secteur géographique
+            </th>
+            <td mat-cell *matCellDef="let produitProspect"> {{produitProspect.prospect.secteurGeographique.libelle}} </td>
+        </ng-container>
+
+        <!-- Date proposition Column -->
+        <ng-container matColumnDef="dateProposition">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Date de proposition
+            </th>
+            <td mat-cell *matCellDef="let produitProspect"> {{ produitProspect.dateProposition ?
+                (produitProspect.dateProposition | date: 'dd/MM/yyyy') : '' }} </td>
+        </ng-container>
+
+        <!-- ProbabiliteSucces Column -->
+        <ng-container matColumnDef="probabiliteSucces">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Probabilité de succès
+            </th>
+            <td mat-cell *matCellDef="let produitProspect">
+                <app-rating [rating]="produitProspect.probabiliteSucces"
+                    (ratingChange)="onProbabiliteSuccesChange($event, produitProspect)"></app-rating>
+            </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let produitProspect">
+                <button mat-icon-button (click)="openDeleteConfirmationDialog(produitProspect)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/prospects', row.prospect.id]"
+        class="clickable highlight-row"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>
+
+<app-loader *ngIf="isLoading"></app-loader>

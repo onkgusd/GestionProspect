@@ -9,5 +9,6 @@ namespace ProspectManagerWebApi.DTO.Response
         public string? Libelle { get; set; }
         public string? Description { get; set; }
         public bool Actif {  get; set; }
+        public ICollection<ProduitProspectForProduitResponseDTO>? ProduitProspects { get; set; }
     }
 }

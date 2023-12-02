@@ -9,7 +9,8 @@ public class MappingProfile : Profile
     {
         CreateMap<Prospect, ProspectResponseDTO>();
         CreateMap<Produit, ProduitResponseDTO>();
-        CreateMap<ProduitProspect, ProduitProspectResponseDTO>();
+        CreateMap<ProduitProspect, ProduitProspectForProspectResponseDTO>();
+        CreateMap<ProduitProspect, ProduitProspectForProduitResponseDTO>();
         CreateMap<Evenement, EvenementResponseDTO>();
         CreateMap<Utilisateur, UtilisateurResponseDTO>();
         CreateMap<Modification, ModificationResponseDTO>();

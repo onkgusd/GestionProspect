@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { Contact } from '../../../models/contact';
-import { Router } from '@angular/router';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { ContactService } from '../../../services/contact.service';
 import { Location } from '@angular/common';

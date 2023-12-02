@@ -254,6 +254,7 @@ namespace ProspectManagerWebApi.Enpoints
                 {
                     var existingProduitProspect = await db.ProduitProspect.Include(p => p.Prospect)
                                                                           .Include(p => p.Produit)
+                                                                          .Include(p => p.Modifications)
                                                                           .Where(pp => pp.Produit.Id == idProduit
                                                                                 && pp.Prospect.Id == idProspect).FirstOrDefaultAsync();
                     if (existingProduitProspect == null)
@@ -265,7 +266,7 @@ namespace ProspectManagerWebApi.Enpoints
                     {
                         AncienneValeur = $"Produit {existingProduitProspect.Produit.Libelle} (probabilité : {existingProduitProspect.ProbabiliteSucces})",
                         NouvelleValeur = "Supprimé",
-                        Champ = nameof(existingProduitProspect.ProbabiliteSucces),
+                        Champ = nameof(existingProduitProspect.Prospect.ProduitProspects),
                         DateModification = DateTime.UtcNow,
                         Utilisateur = await userService.GetCurrentUser()
                     });

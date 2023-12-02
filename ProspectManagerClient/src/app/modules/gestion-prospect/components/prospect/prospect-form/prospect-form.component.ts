@@ -9,6 +9,7 @@ import { TypeOrganisme } from '../../../models/type-organisme';
 import { TypeOrganismeService } from '../../../services/type-organisme.service';
 import { SecteurGeographique } from '../../../models/secteur-geographique';
 import { SecteurGeographiqueService } from '../../../services/secteur-geographique.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-prospect-form',
@@ -28,7 +29,8 @@ export class ProspectFormComponent implements OnInit {
     private snackbarService: SnackbarService,
     private statutService: StatutService,
     private typeOrganismeService: TypeOrganismeService,
-    private secteurGeographiqueService: SecteurGeographiqueService) { }
+    private secteurGeographiqueService: SecteurGeographiqueService,
+    private location: Location) { }
 
   ngOnInit(): void {
     this.statutService.getAll().subscribe(statuts =>
@@ -77,5 +79,9 @@ export class ProspectFormComponent implements OnInit {
 
   compareSecteursGeographiques(secteur1: TypeOrganisme, secteur2: TypeOrganisme): boolean {
     return secteur1 && secteur2 ? secteur1.id === secteur2.id : secteur1 === secteur2;
+  }
+
+  previousPage() {
+    this.location.back();
   }
 }

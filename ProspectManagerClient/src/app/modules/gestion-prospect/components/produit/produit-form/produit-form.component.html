@@ -18,7 +18,7 @@
           matTextareaAutosize matAutosizeMinRows="10" matAutosizeMinCols="10"></textarea>
       </mat-form-field>
       <div fxLayout="row" fxLayoutAlign="center">
-        <button mat-raised-button color="secondary" type="button" routerLink="..">Annuler</button>
+        <button mat-raised-button color="secondary" type="button" (click)="previousPage()">Annuler</button>
         <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting || !produitForm.form.valid">{{
           isAddForm ? "Ajouter" : "Enregistrer" }}</button>
       </div>

@@ -12,11 +12,11 @@ import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-con
 import { finalize } from 'rxjs';
 
 @Component({
-  selector: 'app-produit-prospect-list',
-  templateUrl: './produit-prospect-list.component.html',
-  styleUrls: ['./produit-prospect-list.component.scss']
+  selector: 'app-produit-prospect-for-prospect-list',
+  templateUrl: './produit-prospect-list-for-prospect.component.html',
+  styleUrls: ['./produit-prospect-list-for-prospect.component.scss']
 })
-export class ProduitProspectListComponent implements OnInit {
+export class ProduitProspectListForProspectComponent implements OnInit {
   produitProspects: MatTableDataSource<ProduitProspect>;
   displayedColumns: string[] = ['dateProposition', 'reference', 'libelle', 'description', 'probabiliteSucces', 'actions'];
   isLoading: boolean;
@@ -61,7 +61,8 @@ export class ProduitProspectListComponent implements OnInit {
 
   openProductDialog(): void {
     const dialogRef = this.dialog.open(ProduitProspectDialogComponent, {
-      width: '500px',
+      minWidth: '20em',
+      width: '50vw',
       data: { disabledProduits: this.produitProspectList?.map(pp => pp.produit.id) }
     });
 
@@ -75,6 +76,7 @@ export class ProduitProspectListComponent implements OnInit {
 
         this.prospectService.addProduit(newProduitProspect).subscribe({
           next: () => {
+            newProduitProspect.dateProposition = new Date();
             this.produitProspectList.push(newProduitProspect);
             this.produitProspects.data = this.produitProspectList;
             this.produitProspects._updateChangeSubscription();

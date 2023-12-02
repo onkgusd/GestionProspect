@@ -17,9 +17,9 @@ namespace ProspectManagerWebApi.Models
         public string? Description { get; set; }
         public bool? Actif { get; set; }
         [JsonIgnore]
-        public ICollection<ProduitProspect>? ProduitProspects { get; set; }
+        public ICollection<ProduitProspect> ProduitProspects { get; set; } = new List<ProduitProspect>();
         [JsonIgnore]
-        public ICollection<Evenement>? Evenements { get; set; }
+        public ICollection<Evenement> Evenements { get; set; } = new List<Evenement>();
         public ICollection<Modification> Modifications { get; set; } = new List<Modification>();
 
         public string GetLabel() => Libelle;

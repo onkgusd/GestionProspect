@@ -4,12 +4,13 @@ import { Observable, catchError, tap } from 'rxjs';
 import { Produit } from '../models/produit';
 import { environment } from 'src/environments/environment';
 import { DeleteResponseDto } from '../dto/delete-response-dto';
+import { ProduitProspect } from '../models/produitprospect';
+import { ProduitProspectDto } from '../dto/produitprospect-dto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProduitService {
-
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<Produit[]> {
@@ -64,4 +65,31 @@ export class ProduitService {
       })
     );
   }
+  
+  updateProspect(produitProspect: ProduitProspect){
+    const httpOptions = {
+      headers : new HttpHeaders({"Content-Type": "application/json"})
+    }
+
+    const produitProspectDto: ProduitProspectDto = {
+      probabiliteSucces: produitProspect.probabiliteSucces
+    }
+
+    return this.http.put(`${environment.webapiBaseUrl}/prospects/${produitProspect.prospect.id}/produits/${produitProspect.produit.id}`, produitProspectDto, httpOptions).pipe(
+      catchError((error) => {
+        console.error(error);
+        throw error;
+      })
+    )
+  }
+
+  deleteProspect(produitProspect: ProduitProspect){
+    return this.http.delete(`${environment.webapiBaseUrl}/prospects/${produitProspect.prospect.id}/produits/${produitProspect.produit.id}`).pipe(
+      catchError((error) => {
+        console.error(error);
+        throw error;
+      })
+    );
+  }
+
 }

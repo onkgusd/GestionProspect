@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProspectManagerWebApi.Data;
+using ProspectManagerWebApi.DTO.Response;
 using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
 using ProspectManagerWebApi.Services;
@@ -18,8 +19,18 @@ namespace ProspectManagerWebApi.Enpoints
                 await db.Produits.ToListAsync());
 
             app.MapGet("/produits/{idproduit:int}", [Authorize] async (int idProduit, ProspectManagerDbContext db) =>
-                await db.Produits.FindAsync(idProduit) is Produit produit ?
-                Results.Ok(produit) : Results.NotFound());
+                await db.Produits
+                    .Include(p => p.ProduitProspects)
+                        .ThenInclude(pp => pp.Prospect)
+                        .ThenInclude(p => p.Statut)
+                    .Include(p => p.ProduitProspects)
+                        .ThenInclude(pp => pp.Prospect)
+                        .ThenInclude(p => p.SecteurGeographique)
+                    .Include(p => p.ProduitProspects)
+                        .ThenInclude(pp => pp.Prospect)
+                        .ThenInclude(p => p.TypeOrganisme)
+                    .FirstOrDefaultAsync(p => p.Id == idProduit) is Produit produit ?
+                Results.Ok(mapper.Map<ProduitResponseDTO>(produit)) : Results.NotFound());
 
             app.MapPost("/produits", [Authorize(Policy = "Admin")] async ([FromBody] Produit produit, ProspectManagerDbContext db) =>
             {

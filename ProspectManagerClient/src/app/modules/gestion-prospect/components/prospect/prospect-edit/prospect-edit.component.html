@@ -3,7 +3,7 @@
         <app-prospect-form [isAddForm]="false" [prospect]="prospect" />
     </mat-tab>
     <mat-tab label="Produits proposés ({{prospect.produitProspects.length}})">
-        <app-produit-prospect-list [prospect]="prospect"></app-produit-prospect-list>
+        <app-produit-prospect-for-prospect-list [prospect]="prospect"></app-produit-prospect-for-prospect-list>
     </mat-tab>
     <mat-tab label="Evénements ({{prospect.evenements.length}})">
         <app-evenement-list [evenementList]="prospect.evenements"></app-evenement-list>
