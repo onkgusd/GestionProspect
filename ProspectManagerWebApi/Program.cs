@@ -4,6 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProspectManagerWebApi.Data;
 using ProspectManagerWebApi.Enpoints;
+using ProspectManagerWebApi.Helpers;
+using ProspectManagerWebApi.Models;
 using ProspectManagerWebApi.Services;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -111,6 +113,51 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseCors();
 
+#endregion
+
+#region Init data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ProspectManagerDbContext>();
+    if (context.Database.EnsureCreated())
+    {
+        context.Utilisateurs.AddRange(new Utilisateur
+        {
+            Login = "Admin",
+            Actif = true,
+            Empreinte = PasswordHelper.HashPassword("DefaultPassword"),
+            Email = "admin@admin.com"
+        });
+
+        context.Statuts.AddRange(
+            new Statut { Libelle = "Nouveau" },
+            new Statut { Libelle = "A contacter" },
+            new Statut { Libelle = "A relancer" },
+            new Statut { Libelle = "Signé" },
+            new Statut { Libelle = "Abandonné" }
+            );
+
+        context.TypesOrganisme.AddRange(
+         new TypeOrganisme { Libelle = "Association" },
+         new TypeOrganisme { Libelle = "Administration" },
+         new TypeOrganisme { Libelle = "Petite entreprise" },
+         new TypeOrganisme { Libelle = "PME" },
+         new TypeOrganisme { Libelle = "Grande entreprise" },
+         new TypeOrganisme { Libelle = "Multinationale" }
+         );
+
+        context.TypesEvenement.AddRange(
+         new TypeEvenement { Libelle = "Contact téléphonique" },
+         new TypeEvenement { Libelle = "Envoi de mail" },
+         new TypeEvenement { Libelle = "Réception de mail" },
+         new TypeEvenement { Libelle = "Rencontre physique" },
+         new TypeEvenement { Libelle = "Visio" }
+         );
+
+        context.SaveChanges();
+    }
+}
 #endregion
 
 if (app.Environment.IsDevelopment())
