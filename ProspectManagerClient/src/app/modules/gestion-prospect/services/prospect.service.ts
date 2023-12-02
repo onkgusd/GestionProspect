@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { ProduitProspect } from '../models/produitprospect';
 import { ProduitProspectDto } from '../dto/produitprospect-dto';
 import { Modification } from '../models/modification';
+import { ProspectSummaryResponseDto } from '../dto/prospect-summary-response-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +15,8 @@ export class ProspectService {
   
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<Prospect[]> {
-    return this.http.get<Prospect[]>(`${environment.webapiBaseUrl}/prospects`).pipe(
+  getAll(): Observable<ProspectSummaryResponseDto[]> {
+    return this.http.get<ProspectSummaryResponseDto[]>(`${environment.webapiBaseUrl}/prospects`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

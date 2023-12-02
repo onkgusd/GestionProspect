@@ -128,7 +128,7 @@ TypeEvenementEndpoints.Map(app);
 TypeOrganismeEndpoints.Map(app);
 StatutEndpoints.Map(app);
 UtilisateurEndpoints.Map(app, mapper);
-SearchEndpoints.Map(app);
+SearchEndpoints.Map(app, mapper);
 SecteurGeographiqueEndpoints.Map(app);
 
 app.Run();

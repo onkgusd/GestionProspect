@@ -3,7 +3,7 @@ import { SecteurGeographique } from "../models/secteur-geographique";
 import { Statut } from "../models/statut";
 import { TypeOrganisme } from "../models/type-organisme";
 
-export class ProspectSearchDto {
+export class ProspectSearchRequestDto {
     noms: string[] = [];
     statuts: Statut[] = [];
     secteursGeographiques: SecteurGeographique[] = [];

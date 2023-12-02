@@ -71,10 +71,13 @@
 <app-loader *ngIf="isLoading"></app-loader>
 
 <div class="floating-button" fxLayout="column">
-  <button mat-fab color="primary" (click)="printList()" *ngIf="isPrintable">
+  <button mat-fab color="primary" (click)="printList()" *ngIf="isPrintable" title="Imprimer la liste">
     <mat-icon>print</mat-icon>
   </button>
-  <button mat-fab color="primary" routerLink="/prospects/add">
+  <button mat-fab color="primary" (click)="exportToCsv('test.csv')" *ngIf="isPrintable" title="Exporter la liste">
+    <mat-icon>file_download</mat-icon>
+  </button>
+  <button mat-fab color="primary" routerLink="/prospects/add" title="Ajouter un prospect">
     <mat-icon>add</mat-icon>
   </button>
 </div>

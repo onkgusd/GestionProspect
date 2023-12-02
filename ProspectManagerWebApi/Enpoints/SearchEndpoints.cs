@@ -1,16 +1,18 @@
-﻿using LinqKit;
+﻿using AutoMapper;
+using LinqKit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProspectManagerWebApi.Data;
 using ProspectManagerWebApi.DTO.Request;
+using ProspectManagerWebApi.DTO.Response;
 using ProspectManagerWebApi.Models;
 
 namespace ProspectManagerWebApi.Enpoints
 {
     public static class SearchEndpoints
     {
-        public static void Map(WebApplication app)
+        public static void Map(WebApplication app, IMapper mapper)
         {
             app.MapPost("/prospects/search", [Authorize] async ([FromBody] ProspectSearchRequestDTO prospectSearch,
                                                                                 ProspectManagerDbContext db) =>
@@ -18,6 +20,10 @@ namespace ProspectManagerWebApi.Enpoints
                 var prospects = db.Prospects.Include(p => p.Statut)
                                             .Include(p => p.TypeOrganisme)
                                             .Include(p => p.SecteurGeographique)
+                                            .Include(p => p.Contacts)
+                                            .Include(p => p.ProduitProspects)
+                                            .Include(p => p.Evenements)
+                                            .Include(p => p.UtilisateurCreation)
                                             .AsQueryable();
 
                 if (prospectSearch.Noms?.Length > 0)
@@ -90,7 +96,7 @@ namespace ProspectManagerWebApi.Enpoints
                     prospects = prospects.Where(predicate);
                 }
 
-                return Results.Ok(await prospects.ToListAsync());
+                return Results.Ok(await prospects.Select(p => mapper.Map<ProspectSummaryResponseDto>(p)).ToListAsync());
             });
         }
     }

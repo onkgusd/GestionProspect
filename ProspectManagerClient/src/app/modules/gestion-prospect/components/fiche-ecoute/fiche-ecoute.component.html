@@ -1,11 +1,11 @@
-<div class="mat-elevation-z8" fxLayoutAlign="center center" fxLayout="column">
+<div class="mat-elevation-z8" fxLayoutAlign="center center" fxLayout="column" *ngIf="standalone">
     <h2>Imprimer une fiche "écoute"</h2>
     <section fxLayoutGap="20px">
-        <mat-form-field *ngIf="standalone">
+        <mat-form-field>
             <mat-label>Prospect</mat-label>
-            <mat-select [(ngModel)]="prospect">
-                <mat-option aria-selected="true" (onselect)="resetProspect()">Fiche écoute vierge</mat-option>
-                <mat-option *ngFor="let prospect of prospects" [value]="prospect">{{ prospect.nom
+            <mat-select [(ngModel)]="idProspect">
+                <mat-option aria-selected="true" [value]="null">Fiche écoute vierge</mat-option>
+                <mat-option *ngFor="let prospect of prospects" [value]="prospect.id">{{ prospect.nom
                     }}</mat-option>
             </mat-select>
         </mat-form-field>
@@ -16,7 +16,7 @@
     </section>
 </div>
 
-<section class="print-section only-for-printing" *ngIf="!isLoading">
+<section class="print-section only-for-printing">
     <!-- En-tête -->
     <h1>Fiche écoute</h1>
     <section>

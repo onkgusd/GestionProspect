@@ -22,5 +22,5 @@
 </button>
 
 
-<app-fiche-ecoute #printContainer [prospect]="prospect" hidden="true" *ngIf="!isLoading"></app-fiche-ecoute>
+<app-fiche-ecoute #printContainer [prospect]="prospect" [standalone]="false" *ngIf="!isLoading"></app-fiche-ecoute>
 <app-loader *ngIf="isLoading"></app-loader>

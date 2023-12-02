@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Observable, catchError, of, tap } from 'rxjs';
-import { Prospect } from '../models/prospect';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { ProspectSearchDto } from '../dto/prospect-search-dto';
+import { ProspectSearchRequestDto } from '../dto/prospect-search-request-dto';
+import { ProspectSummaryResponseDto } from '../dto/prospect-summary-response-dto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
 
-  private prospectSearchDto: ProspectSearchDto = new ProspectSearchDto();
-  private searchResult: Prospect[] = [];
+  private prospectSearchDto: ProspectSearchRequestDto = new ProspectSearchRequestDto();
+  private searchResult: ProspectSummaryResponseDto[] = [];
   private launched: boolean;
 
   constructor(private http: HttpClient) { }
 
-  searchProspect(prospectSearchDto: ProspectSearchDto): Observable<Prospect[]> {
+  searchProspect(prospectSearchDto: ProspectSearchRequestDto): Observable<ProspectSummaryResponseDto[]> {
     this.prospectSearchDto = prospectSearchDto;
     this.searchResult = [];
     this.launched = true;
@@ -25,7 +25,7 @@ export class SearchService {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     }
 
-    return this.http.post<Prospect[]>(`${environment.webapiBaseUrl}/prospects/search/`, prospectSearchDto, httpOptions).pipe(
+    return this.http.post<ProspectSummaryResponseDto[]>(`${environment.webapiBaseUrl}/prospects/search/`, prospectSearchDto, httpOptions).pipe(
       tap(result => this.searchResult = result),
       catchError((error) => {
         console.log(error);
@@ -44,13 +44,5 @@ export class SearchService {
 
   hasBeenLaunched(){
     return this.launched;
-  }
-
-  private saveSearch(prospectSearchDto: ProspectSearchDto){
-    this.prospectSearchDto = prospectSearchDto;
-  }
-
-  private saveResult(searchResult: Prospect[]){
-    this.searchResult = searchResult;
   }
 }

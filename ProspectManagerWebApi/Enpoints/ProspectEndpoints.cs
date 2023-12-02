@@ -23,7 +23,7 @@ namespace ProspectManagerWebApi.Enpoints
                                   .Include(p => p.ProduitProspects)
                                     .ThenInclude(pp => pp.Produit)
                                   .Include(p => p.SecteurGeographique)
-                                  .Select(p => mapper.Map<ProspectResponseDTO>(p)).ToListAsync());
+                                  .Select(p => mapper.Map<ProspectSummaryResponseDto>(p)).ToListAsync());
 
             app.MapGet("/prospects/{idprospect:int}", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
             {

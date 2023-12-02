@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { Prospect } from '../../models/prospect';
 import { ProspectService } from '../../services/prospect.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { finalize } from 'rxjs';
+import { ProspectSummaryResponseDto } from '../../dto/prospect-summary-response-dto';
 
 @Component({
   selector: 'app-fiche-ecoute',
@@ -10,48 +11,34 @@ import { finalize } from 'rxjs';
   styleUrls: ['./fiche-ecoute.component.scss']
 })
 export class FicheEcouteComponent implements OnInit {
-  @Input() idProspect: number;
   @Input() prospect: Prospect = new Prospect();
-  prospects: Prospect[] = [];
-  standalone: boolean;
+  @Input() standalone: boolean = true;
+  prospects: ProspectSummaryResponseDto[] = [];
   isLoading: boolean;
+  idProspect: number;
 
-  constructor(private prospectService: ProspectService, private snackbarService: SnackbarService) { }
+  constructor(private prospectService: ProspectService,
+    private snackbarService: SnackbarService,
+    private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.standalone = !(this.idProspect && this.prospect);
-
-    if (this.idProspect)
-    {
-      this.prospectService.get(this.idProspect)
+    if (this.standalone) {
+      this.prospectService.getAll()
         .pipe(finalize(() => this.isLoading = false))
         .subscribe(
           {
-            next: prospect => {
-              this.prospect = prospect;
+            next: prospects => {
+              this.prospects = prospects;
               this.isLoading = false;
             },
             error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement du prospect.")
           }
         );
     }
-    else if (this.standalone) {
-      this.prospectService.getAll()
-      .pipe(finalize(() => this.isLoading = false))
-      .subscribe(
-        {
-          next: prospects => {
-            this.prospects = prospects;
-            this.isLoading = false;
-          },
-          error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement du prospect.")
-        }
-      );
-    }
   }
 
   getFilledArray<T>(array: T[] = [], minLength: number): T[] {
-      return [...array ?? [], ...Array(minLength).fill({})];
+    return [...array ?? [], ...Array(minLength).fill({})];
   }
 
   completeStringWithDots(inputString: string, targetLength: number): string {
@@ -62,12 +49,27 @@ export class FicheEcouteComponent implements OnInit {
     return completedString;
   }
 
-  resetProspect() {
-    this.prospect = new Prospect();
-  }
-
   printFicheRencontre(): void {
-    window.print();
+    if (this.idProspect) {
+      this.isLoading = true;
+      this.prospectService.get(this.idProspect)
+        .pipe(finalize(() => this.isLoading = false))
+        .subscribe(
+          {
+            next: prospect => {
+              this.prospect = prospect;
+              this.changeDetectorRef.detectChanges();
+              setTimeout(() => window.print(), 0);
+            },
+            error: error => this.snackbarService.openErrorSnackBar("😟 Une erreur est survenue lors du chargement du prospect.")
+          }
+        )
+    }
+    else {
+      this.prospect = new Prospect();
+      this.changeDetectorRef.detectChanges();
+      setTimeout(() => window.print(), 0);
+    }
   }
 }
 

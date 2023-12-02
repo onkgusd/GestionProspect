@@ -14,6 +14,7 @@ public class MappingProfile : Profile
         CreateMap<Utilisateur, UtilisateurResponseDTO>();
         CreateMap<Modification, ModificationResponseDTO>();
         CreateMap<Contact, ContactResponseDTO>();
+        CreateMap<Prospect, ProspectSummaryResponseDto>();
 
         CreateMap<UtilisateurRequestDTO, Utilisateur>();
         CreateMap<ProspectRequestDTO, Prospect>();

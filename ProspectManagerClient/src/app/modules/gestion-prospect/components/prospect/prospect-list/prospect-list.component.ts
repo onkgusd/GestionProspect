@@ -6,6 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { finalize } from 'rxjs';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { ProspectSummaryResponseDto } from '../../../dto/prospect-summary-response-dto';
 
 @Component({
   selector: 'app-prospect-list',
@@ -15,9 +16,9 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 
 export class ProspectListComponent implements OnInit {
   @Input() isPrintable: boolean;
-  @Input() prospectList: Prospect[];
+  @Input() prospectList: ProspectSummaryResponseDto[] ;
 
-  prospects: MatTableDataSource<Prospect>;
+  prospects: MatTableDataSource<ProspectSummaryResponseDto>;
   displayedColumns: string[] = ['type-organisme', 'nom', 'statut', 'secteurGeographique', 'secteurActivite', 'telephone', 'mail', 'dateCreation'];
   isLoading: boolean = true;
 
@@ -47,7 +48,7 @@ export class ProspectListComponent implements OnInit {
         .pipe(finalize(() => this.isLoading = false))
         .subscribe(
           {
-            next: (prospects: Prospect[]) => {
+            next: (prospects: ProspectSummaryResponseDto[]) => {
               this.prospects = new MatTableDataSource(prospects);
               this.isLoading = false;
             },
@@ -58,5 +59,37 @@ export class ProspectListComponent implements OnInit {
 
   printList() {
     window.print();
+  }
+
+  exportToCsv(filename: string) {
+    const headers = Object.keys(this.prospectList[0]);
+    const BOM = '\uFEFF';
+    const csvContent = [headers.join(';')].concat(this.prospectList.map(row => {
+      return Object.values(row).map(value => {
+        if (value instanceof Date) {
+          return value.toLocaleDateString();
+        }
+        if (value instanceof Object) {
+          if (Array.isArray(value)) {
+            return value.length;
+          }
+          return value.libelle || value.login || "";
+        }
+
+        return value ? `"${value}"` : "";
+      }).join(';');
+    })).join('\n');
+
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   }
 }

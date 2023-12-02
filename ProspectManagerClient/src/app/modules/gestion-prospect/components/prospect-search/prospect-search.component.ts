@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { ProspectSearchDto } from '../../dto/prospect-search-dto';
+import { ProspectSearchRequestDto } from '../../dto/prospect-search-request-dto';
 import { Produit } from '../../models/produit';
 import { Observable, finalize, map, startWith } from 'rxjs';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -13,9 +13,9 @@ import { Statut } from '../../models/statut';
 import { TypeOrganisme } from '../../models/type-organisme';
 import { TypeOrganismeService } from '../../services/type-organisme.service';
 import { SearchService } from '../../services/search.service';
-import { Prospect } from '../../models/prospect';
 import { SecteurGeographiqueService } from '../../services/secteur-geographique.service';
 import { SecteurGeographique } from '../../models/secteur-geographique';
+import { ProspectSummaryResponseDto } from '../../dto/prospect-summary-response-dto';
 
 @Component({
   selector: 'app-prospect-search',
@@ -28,8 +28,8 @@ export class ProspectSearchComponent implements OnInit {
   searchForm: FormGroup;
   isLoading: boolean;
   hasBeenLaunched: boolean;
-  prospectSearchResult: Prospect[] = [];
-  prospectSearchDto: ProspectSearchDto = new ProspectSearchDto();
+  prospectSearchResult: ProspectSummaryResponseDto[] = [];
+  prospectSearchDto: ProspectSearchRequestDto = new ProspectSearchRequestDto();
   searchCriteria: string[] = [];
 
   @ViewChild('produitsInput') produitsInput: ElementRef<HTMLInputElement>;
