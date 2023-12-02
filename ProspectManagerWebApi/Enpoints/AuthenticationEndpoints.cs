@@ -16,7 +16,7 @@ namespace ProspectManagerWebApi.Enpoints
 {
     public class AuthenticationEndPoints
     {
-        public static void Map(WebApplication app, IMapper map, WebApplicationBuilder builder)
+        public static void Map(WebApplication app, IMapper mapper, WebApplicationBuilder builder)
         {
             app.MapPost("/authentication/getToken",
             [AllowAnonymous] async (LoginRequestDTO user, ProspectManagerDbContext db) =>
@@ -37,7 +37,7 @@ namespace ProspectManagerWebApi.Enpoints
                 var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new Exception("Jwt key is not set.")));
                 var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
 
-                var expirationDate = DateTime.UtcNow.AddHours(24);
+                var expirationDate = DateTime.UtcNow.AddHours(Convert.ToDouble(builder.Configuration["Jwt:TokenDurationInHours"]));
                 var token = new JwtSecurityToken(issuer: issuer,
                     audience: audience,
                     signingCredentials: credentials,
@@ -51,7 +51,7 @@ namespace ProspectManagerWebApi.Enpoints
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var stringToken = tokenHandler.WriteToken(token);
 
-                return Results.Ok(new LoginResponseDTO() { Token = stringToken, ExpirationDate = expirationDate });
+                return Results.Ok(new LoginResponseDTO() { Token = stringToken, ExpirationDate = expirationDate, Utilisateur = mapper.Map<UtilisateurResponseDTO>(utilisateur) });
             });
 
             app.MapPost("/authentication/demande-reinitialisation", async (HttpContext http, PasswordManagerService resetService, [FromBody] PasswordResetLinkRequestDTO passwordResetLinkRequest) =>

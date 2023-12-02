@@ -4,10 +4,12 @@ import { BehaviorSubject, Observable, catchError, map, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { jwtDecode } from "jwt-decode";
 import { ReinitMotDePasseDto } from '../modules/gestion-prospect/dto/reinit-motdepasse-dto';
+import { Utilisateur } from '../modules/gestion-prospect/models/utilisateur';
 
 interface AuthResponse {
   token: string;
   expirationDate: Date;
+  utilisateur: Utilisateur;
 }
 
 @Injectable({
@@ -33,7 +35,7 @@ export class AuthService {
       this.readToken(this.token);
   }
 
-  login(login: string, password: string): Observable<boolean> {
+  login(login: string, password: string): Observable<Utilisateur | boolean> {
     const httpOptions = {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     }
@@ -44,7 +46,7 @@ export class AuthService {
         localStorage.setItem("expires_at", response.expirationDate.toString());
         this.token = response.token;
         this.readToken(response.token);
-        return true;
+        return response.utilisateur;
       }),
       catchError((error) => {
         console.log(error);
@@ -65,7 +67,16 @@ export class AuthService {
   }
 
   getToken(): string | undefined {
-    return this.token;
+    let tokenExpiry = localStorage.getItem("expires_at");
+
+    if (tokenExpiry) {
+      let expiryDate = new Date(tokenExpiry);
+      if (expiryDate > new Date()) {
+        return this.token;
+      }
+    }
+
+    return void 0;
   }
 
   isAdmin(): boolean {

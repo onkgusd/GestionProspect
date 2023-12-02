@@ -34,7 +34,7 @@ import { DeleteConfirmationDialogComponent } from './components/delete-confirmat
 import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 import { MotDePasseOublieComponent } from './components/mot-de-passe-oublie/mot-de-passe-oublie.component';
 import { ReinitMotDePasseComponent } from './components/reinit-mot-de-passe/reinit-mot-de-passe.component';
-import { registerLocaleData } from '@angular/common';
+import { DatePipe, registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 
 registerLocaleData(localeFr);
@@ -89,7 +89,8 @@ const routes: Routes = [
     useClass: AuthInterceptorService,
     multi: true
   } as Provider,
-  { provide: LOCALE_ID, useValue: 'fr-FR' }],
+    { provide: LOCALE_ID, useValue: 'fr-FR' },
+    DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
