@@ -15,6 +15,7 @@ namespace ProspectManagerWebApi.Models
 
         public Prospect Prospect { get; set; } = new Prospect();
         public int ProbabiliteSucces { get; set; }
+        public DateTimeOffset DateProposition { get; set; }
         [JsonIgnore]
         public ICollection<Modification> Modifications { get; set; } = new List<Modification>();
     }

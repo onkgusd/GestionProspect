@@ -174,7 +174,8 @@ namespace ProspectManagerWebApi.Enpoints
                 {
                     Produit = produit,
                     Prospect = prospect,
-                    ProbabiliteSucces = produitProspect.ProbabiliteSucces
+                    ProbabiliteSucces = produitProspect.ProbabiliteSucces,
+                    DateProposition = DateTimeOffset.UtcNow
                 });
 
                 await db.SaveChangesAsync();

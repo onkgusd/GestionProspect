@@ -33,6 +33,14 @@
       <td mat-cell *matCellDef="let produitProspect"> {{produitProspect.produit.description}} </td>
     </ng-container>
 
+    <!-- Date proposition Column -->
+    <ng-container matColumnDef="dateProposition">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Date de proposition
+      </th>
+      <td mat-cell *matCellDef="let produitProspect"> {{ produitProspect.dateProposition ? (produitProspect.dateProposition | date: 'dd/MM/yyyy') : '' }} </td>
+    </ng-container>
+
     <!-- ProbabiliteSucces Column -->
     <ng-container matColumnDef="probabiliteSucces">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>

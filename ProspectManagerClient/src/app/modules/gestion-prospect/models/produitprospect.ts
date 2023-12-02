@@ -7,4 +7,5 @@ export class ProduitProspect{
     prospect: Prospect;
     probabiliteSucces: number;
     modifications?: Modification[];
+    dateProposition?: Date;
 }

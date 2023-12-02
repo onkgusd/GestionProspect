@@ -1,6 +1,6 @@
 <mat-tab-group *ngIf="!isLoading && prospect" (selectedIndexChange)="onTabChange($event)">
     <mat-tab label="Prospect">
-        <app-prospect-form [isAddForm]="false" [prospect]="prospect"/>
+        <app-prospect-form [isAddForm]="false" [prospect]="prospect" />
     </mat-tab>
     <mat-tab label="Produits proposés ({{prospect.produitProspects.length}})">
         <app-produit-prospect-list [prospect]="prospect"></app-produit-prospect-list>
@@ -12,13 +12,13 @@
         <app-contact-list [contactList]="prospect.contacts"></app-contact-list>
     </mat-tab>
     <mat-tab label="Historique">
-        <app-modification-list [isVisible]="onModificationsTab" [idProspect]="prospect.id"/>
+        <app-modification-list [isVisible]="isOnModificationsTab" [idProspect]="prospect.id" />
     </mat-tab>
 </mat-tab-group>
 
-<button mat-fab class="floating-button" *ngIf="!isLoading" color="primary" (click)="printFicheRencontre()"
-  title="Imprimer la fiche écoute">
-  <mat-icon>print</mat-icon>
+<button mat-fab class="floating-button" *ngIf="!isLoading && tabIndex == 0" color="primary"
+    (click)="printFicheRencontre()" title="Imprimer la fiche écoute">
+    <mat-icon>print</mat-icon>
 </button>
 
 

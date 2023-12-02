@@ -17,7 +17,8 @@ export class ProspectEditComponent implements OnInit {
   prospect: Prospect;
   isLoading: boolean = true;
   modifications: Modification[];
-  onModificationsTab: boolean;
+  isOnModificationsTab: boolean;
+  tabIndex: number = 0;
 
   @ViewChild('printContainer', { read: ElementRef }) printContainer: ElementRef;
 
@@ -43,7 +44,8 @@ export class ProspectEditComponent implements OnInit {
   }
 
   onTabChange(index: number) {
-    this.onModificationsTab = index === 4;
+    this.isOnModificationsTab = index === 4;
+    this.tabIndex = index;
   }
 
   printFicheRencontre(): void {

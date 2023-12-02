@@ -18,7 +18,7 @@ import { finalize } from 'rxjs';
 })
 export class ProduitProspectListComponent implements OnInit {
   produitProspects: MatTableDataSource<ProduitProspect>;
-  displayedColumns: string[] = ['reference', 'libelle', 'description', 'probabiliteSucces', 'actions'];
+  displayedColumns: string[] = ['dateProposition', 'reference', 'libelle', 'description', 'probabiliteSucces', 'actions'];
   isLoading: boolean;
 
   @ViewChild(MatSort)
