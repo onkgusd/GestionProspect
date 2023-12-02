@@ -10,6 +10,7 @@ import { Utilisateur } from "./utilisateur";
 export class Prospect {
     id: number;
     nom: string = "";
+    actif: boolean = true;
     secteurGeographique?: SecteurGeographique;
     adresse: string = "";
     telephone: string = "";

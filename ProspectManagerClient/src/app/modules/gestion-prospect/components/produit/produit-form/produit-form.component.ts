@@ -28,9 +28,9 @@ export class ProduitFormComponent {
       this.produitService.add(this.produit).subscribe({
         next: produit => {
           this.previousPage()
-          this.snackbarService.openErrorSnackBar(`Ajout de "${produit.libelle}" réussie !`);
+          this.snackbarService.openSuccessSnackBar(`👌 Ajout de "${produit.libelle}" réussie !`);
         },
-        error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue l'ajout :(`),
+        error: error => this.snackbarService.openErrorSnackBar(`😵 Oupsss, une erreur technique est survenue l'ajout.`),
         complete: () => this.isSubmitting = false
       });
     }
@@ -38,9 +38,9 @@ export class ProduitFormComponent {
       this.produitService.update(this.produit).subscribe({
         next: produit => {
           this.previousPage()
-          this.snackbarService.openErrorSnackBar(`Mise à jour de "${produit.libelle}" réussie !`);
+          this.snackbarService.openSuccessSnackBar(`👍 Mise à jour de "${produit.libelle}" réussie !`);
         },
-        error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue lors de la sauvegarde :(`),
+        error: error => this.snackbarService.openErrorSnackBar(`😖 Oupsss, une erreur technique est survenue lors de la sauvegarde.`),
         complete: () => this.isSubmitting = false
       })
     }

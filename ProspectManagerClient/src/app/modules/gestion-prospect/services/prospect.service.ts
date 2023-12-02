@@ -7,6 +7,7 @@ import { ProduitProspect } from '../models/produitprospect';
 import { ProduitProspectDto } from '../dto/produitprospect-dto';
 import { Modification } from '../models/modification';
 import { ProspectSummaryResponseDto } from '../dto/prospect-summary-response-dto';
+import { DeleteResponseDto } from '../dto/delete-response-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -59,8 +60,8 @@ export class ProspectService {
     );
   }
 
-  delete(prospect: Prospect) {
-    return this.http.delete<Prospect>(`${environment.webapiBaseUrl}/produits/${prospect.id}`).pipe(
+  delete(idProspect: number) {
+    return this.http.delete<DeleteResponseDto>(`${environment.webapiBaseUrl}/prospects/${idProspect}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

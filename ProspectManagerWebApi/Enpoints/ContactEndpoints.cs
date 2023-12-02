@@ -8,6 +8,7 @@ using ProspectManagerWebApi.DTO.Response;
 using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
 using ProspectManagerWebApi.Services;
+using System.Text.Json;
 
 namespace ProspectManagerWebApi.Enpoints
 {
@@ -95,11 +96,12 @@ namespace ProspectManagerWebApi.Enpoints
                 {
                     existingContact.Prospect.Modifications.Add(new Modification
                     {
-                        AncienneValeur = $"Contact {existingContact.Nom} ({existingContact.Fonction})",
+                        AncienneValeur = $"Contact {existingContact.Nom}",
                         NouvelleValeur = "Supprimé",
                         Champ = nameof(existingContact.Prospect.Contacts),
                         DateModification = DateTime.UtcNow,
-                        Utilisateur = await userService.GetCurrentUser()
+                        Utilisateur = await userService.GetCurrentUser(),
+                        JsonObjectBackup = JsonSerializer.Serialize(existingContact)
                     });
 
                     existingContact.Modifications.Clear();

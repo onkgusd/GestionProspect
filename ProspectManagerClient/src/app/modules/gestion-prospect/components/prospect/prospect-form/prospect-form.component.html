@@ -18,7 +18,8 @@
       </mat-form-field>
       <mat-form-field>
         <mat-label>Statut</mat-label>
-        <mat-select [(ngModel)]="prospect.statut" [ngModelOptions]="{standalone: true}" [compareWith]="compareStatuts">
+        <mat-select required [(ngModel)]="prospect.statut" [ngModelOptions]="{standalone: true}"
+          [compareWith]="compareStatuts">
           <mat-option *ngFor="let statut of statuts" [value]="statut">{{ statut.libelle }}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -48,8 +49,10 @@
       <br />
       <mat-form-field class="full-width">
         <mat-label>E-mail</mat-label>
-        <input matInput placeholder="E-mail" name="mail" [(ngModel)]="prospect.mail" required>
+        <input matInput placeholder="E-mail" name="mail" [(ngModel)]="prospect.mail">
       </mat-form-field>
+      <br />
+      <mat-checkbox name="actif" [(ngModel)]="prospect.actif">Actif</mat-checkbox>
 
       <div fxLayout="row" fxLayoutAlign="center">
         <button mat-raised-button color="secondary" type="button" (click)="previousPage()">Annuler</button>

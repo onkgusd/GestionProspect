@@ -8,7 +8,7 @@ using ProspectManagerWebApi.DTO.Response;
 using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
 using ProspectManagerWebApi.Services;
-using System.Reflection.Metadata.Ecma335;
+using System.Text.Json;
 
 namespace ProspectManagerWebApi.Enpoints
 {
@@ -221,7 +221,7 @@ namespace ProspectManagerWebApi.Enpoints
                     return Results.Ok(produitProspect);
                 });
 
-            app.MapDelete("/prospects/{idprospect:int}", [Authorize(Policy = "Admin")] async (int idProspect, ProspectManagerDbContext db) =>
+            app.MapDelete("/prospects/{idprospect:int}", [Authorize(Policy = "Admin")] async (int idProspect, ProspectManagerDbContext db, UserService userService) =>
             {
                 var existingProspect = await db.Prospects
                                                .Include(p => p.Contacts)
@@ -234,15 +234,38 @@ namespace ProspectManagerWebApi.Enpoints
                 var nbContact = existingProspect.Contacts?.Count();
                 var nbEvenement = existingProspect.Evenements?.Count();
                 var nbProduitProspect = existingProspect.ProduitProspects?.Count();
+                var canBeDeleted = nbContact + nbEvenement + nbProduitProspect == 0;
 
-                if (nbContact + nbEvenement + nbProduitProspect == 0)
+                if (canBeDeleted)
+                {
+                    db.Modifications.Add(new Modification
+                    {
+                        AncienneValeur = $"Prospect {existingProspect.Nom}",
+                        NouvelleValeur = "Prospect supprimé",
+                        DateModification = DateTime.UtcNow,
+                        Utilisateur = await userService.GetCurrentUser(),
+                        JsonObjectBackup = JsonSerializer.Serialize(existingProspect)
+                    });
+
+                    existingProspect.Modifications.Clear();
                     db.Prospects.Remove(existingProspect);
+                }
                 else
+                {
+                    existingProspect.Modifications.Add(new Modification
+                    {
+                        AncienneValeur = $"Actif",
+                        NouvelleValeur = "Desactivé (suite tentative de suppression)",
+                        DateModification = DateTime.UtcNow,
+                        Utilisateur = await userService.GetCurrentUser()
+                    });
+
                     existingProspect.Actif = false;
+                }
 
                 await db.SaveChangesAsync();
 
-                return Results.Ok(new { Statut = nbContact + nbEvenement + nbProduitProspect == 0 ? "Deleted" : "Disabled" });
+                return Results.Ok(new { Statut = canBeDeleted ? "Deleted" : "Disabled" });
             });
 
             app.MapDelete("/prospects/{idprospect:int}/produits/{idproduit:int}",

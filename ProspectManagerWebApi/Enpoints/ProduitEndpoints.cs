@@ -100,8 +100,7 @@ namespace ProspectManagerWebApi.Enpoints
                         AncienneValeur = $"Actif",
                         NouvelleValeur = "Desactivé (suite tentative de suppression)",
                         DateModification = DateTime.UtcNow,
-                        Utilisateur = await userService.GetCurrentUser(),
-                        JsonObjectBackup = JsonSerializer.Serialize(existingProduit)
+                        Utilisateur = await userService.GetCurrentUser()
                     });
 
                     existingProduit.Actif = false;

@@ -7,6 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { finalize } from 'rxjs';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { ProspectSummaryResponseDto } from '../../../dto/prospect-summary-response-dto';
+import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-prospect-list',
@@ -16,10 +18,10 @@ import { ProspectSummaryResponseDto } from '../../../dto/prospect-summary-respon
 
 export class ProspectListComponent implements OnInit {
   @Input() isPrintable: boolean;
-  @Input() prospectList: ProspectSummaryResponseDto[] ;
+  @Input() prospectList: ProspectSummaryResponseDto[];
 
   prospects: MatTableDataSource<ProspectSummaryResponseDto>;
-  displayedColumns: string[] = ['type-organisme', 'nom', 'statut', 'secteurGeographique', 'secteurActivite', 'telephone', 'mail', 'dateCreation'];
+  displayedColumns: string[] = ['type-organisme', 'nom', 'statut', 'secteurGeographique', 'secteurActivite', 'telephone', 'mail', 'dateCreation', 'actions'];
   isLoading: boolean = true;
 
   @ViewChild(MatSort)
@@ -36,7 +38,9 @@ export class ProspectListComponent implements OnInit {
     }
   }
 
-  constructor(private prospectService: ProspectService, private snackbarService: SnackbarService) { }
+  constructor(private prospectService: ProspectService,
+    private snackbarService: SnackbarService,
+    public dialog: MatDialog) { }
 
   ngOnInit(): void {
     if (this.prospectList !== void 0) {
@@ -82,6 +86,7 @@ export class ProspectListComponent implements OnInit {
 
     const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
+
     if (link.download !== undefined) {
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
@@ -91,5 +96,57 @@ export class ProspectListComponent implements OnInit {
       link.click();
       document.body.removeChild(link);
     }
+  }
+
+  openDeleteConfirmationDialog(prospect: Prospect): void {
+    const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+      data: { message: "Voulez-vous vraiment supprimer ce produit ?" }
+    });
+
+    dialogRef.afterClosed()
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe((result) => {
+        if (result) {
+          this.deleteEvenement(prospect);
+        }
+      });
+  }
+
+  private deleteEvenement(prospect: Prospect): void {
+    this.prospectService.delete(prospect.id).subscribe(
+      {
+        next: (deleteResponse) => {
+          if (deleteResponse.statut === "Deleted") {
+            const data = this.prospects.data;
+            const index = data.findIndex((p) => p.id === prospect.id);
+
+            if (index !== -1) {
+              data.splice(index, 1);
+              this.prospects.data = data;
+            }
+
+            this.snackbarService.openSuccessSnackBar("🗑️ Suppression réussie !");
+          }
+          else {
+            prospect.actif = false;
+            this.snackbarService.openWarningSnackBar("💤 Ce produit est utilisé, il a été marqué comme inactif.");
+          }
+        },
+        error: () => this.snackbarService.openErrorSnackBar("🙄 Erreur lors de la suppression.")
+      }
+    );
+  }
+
+  switchStatus(prospect: Prospect, actif: boolean): void {
+
+    this.prospectService.update({ ...prospect, actif }).subscribe(
+      {
+        next: () => {
+          this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);
+          prospect.actif = actif;
+        },
+        error: () => this.snackbarService.openErrorSnackBar(`🙄 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation"}.`),
+      }
+    );
   }
 }
