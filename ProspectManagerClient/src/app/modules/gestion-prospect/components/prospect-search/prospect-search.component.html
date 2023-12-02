@@ -88,32 +88,43 @@
             <mat-form-field class="chip-list" class="full-width">
                 <mat-label>Secteurs d'activité</mat-label>
                 <mat-chip-grid #chipGridSecteurActivite aria-label="Liste de secteurs d'activité">
-                    <mat-chip-row *ngFor="let secteurActivite of prospectSearchDto.secteursActivite" (removed)="removeSecteurActivite(secteurActivite)"
-                        [editable]="true" (edited)="editSecteurActivite(secteurActivite, $event)">
+                    <mat-chip-row *ngFor="let secteurActivite of prospectSearchDto.secteursActivite"
+                        (removed)="removeSecteurActivite(secteurActivite)" [editable]="true"
+                        (edited)="editSecteurActivite(secteurActivite, $event)">
                         {{ secteurActivite }}
                         <button matChipRemove [attr.aria-label]="'Enlever ' + secteurActivite">
                             <mat-icon>cancel</mat-icon>
                         </button>
                     </mat-chip-row>
                     <input placeholder="Nouveau secteur d'activité..." [matChipInputFor]="chipGridSecteurActivite"
-                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="addSecteurActivite($event)" />
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        (matChipInputTokenEnd)="addSecteurActivite($event)" />
                 </mat-chip-grid>
             </mat-form-field>
 
             <!-- Découpage géographique -->
-            <mat-form-field class="chip-list" class="full-width">
-                <mat-label>Secteurs géographiques</mat-label>
-                <mat-chip-grid #chipGridSecteurGeographique aria-label="Liste de secteurs géographiques">
-                    <mat-chip-row *ngFor="let secteurGeographique of prospectSearchDto.departements" (removed)="removeSecteurGeographique(secteurGeographique)"
-                        [editable]="true" (edited)="editSecteurGeographique(secteurGeographique, $event)">
-                        {{ secteurGeographique }}
-                        <button matChipRemove [attr.aria-label]="'Enlever ' + secteurGeographique">
+            <mat-form-field class="full-width">
+                <mat-label>Secteur géographique</mat-label>
+                <mat-chip-grid #chipGridSecteursGeographiques aria-label="Sélection de secteurs géographiques">
+                    <mat-chip-row *ngFor="let secteurGeographique of prospectSearchDto.secteursGeographiques"
+                        (removed)="removeSecteurGeographique(secteurGeographique)">
+                        {{secteurGeographique.libelle}}
+                        <button matChipRemove [attr.aria-label]="'Supprimer ' + secteurGeographique.libelle">
                             <mat-icon>cancel</mat-icon>
                         </button>
                     </mat-chip-row>
-                    <input placeholder="Nouveau secteur géographique..." [matChipInputFor]="chipGridSecteurGeographique"
-                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="addSecteurGeographique($event)" />
                 </mat-chip-grid>
+                <input placeholder="Saisissez le libellé d'un secteur géographique..." #secteursGeographiquesInput
+                    [formControl]="secteursGeographiquesCtrl" [matChipInputFor]="chipGridSecteursGeographiques"
+                    [matAutocomplete]="secteursGeographiquesAuto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="addSecteurGeographique($event)" />
+                <mat-autocomplete #secteursGeographiquesAuto="matAutocomplete"
+                    (optionSelected)="selectedSecteurGeographique($event)">
+                    <mat-option *ngFor="let secteurGeographique of filteredSecteursGeographiques | async"
+                        [value]="secteurGeographique.libelle">
+                        {{secteurGeographique.libelle}}
+                    </mat-option>
+                </mat-autocomplete>
             </mat-form-field>
         </div>
 
@@ -135,8 +146,7 @@
         </ng-template>
     </div>
 
-    <app-prospect-list [prospectList]="prospectSearchResult"
-        *ngIf="!isLoading && prospectSearchResult.length > 0"
+    <app-prospect-list [prospectList]="prospectSearchResult" *ngIf="!isLoading && prospectSearchResult.length > 0"
         [isPrintable]="true"></app-prospect-list>
 
     <div *ngIf="hasBeenLaunched && !isLoading && prospectSearchResult.length === 0" class="no-result">

@@ -22,7 +22,7 @@ namespace ProspectManagerWebApi.Enpoints
                 db.TypesOrganisme.Add(typeOrganisme);
                 await db.SaveChangesAsync();
 
-                return Results.Created($"/produits/{typeOrganisme.Id}", typeOrganisme);
+                return Results.Created($"/types-organisme/{typeOrganisme.Id}", typeOrganisme);
             });
 
             app.MapPut("/types-organisme/{idtypeorganisme:int}", [Authorize(Policy = "Admin")] async ([FromBody] TypeOrganisme updatedTypeOrganisme, int idTypeOrganisme, ProspectManagerDbContext db) =>

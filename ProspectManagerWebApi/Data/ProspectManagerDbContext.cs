@@ -29,5 +29,6 @@ namespace ProspectManagerWebApi.Data
         public virtual DbSet<TypeOrganisme> TypesOrganisme { get; set; }
         public virtual DbSet<Utilisateur> Utilisateurs { get; set; }
         public virtual DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+        public virtual DbSet<SecteurGeographique> SecteursGeographiques { get; set; }
     }
 }

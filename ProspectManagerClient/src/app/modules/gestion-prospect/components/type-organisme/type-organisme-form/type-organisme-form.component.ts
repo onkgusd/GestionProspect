@@ -24,7 +24,7 @@ export class TypeOrganismeFormComponent {
       this.typeOrganismeService.add(this.typeOrganisme).subscribe({
         next: typeOrganisme => {
           this.router.navigate(['types-organisme']);
-          this.snackbarService.openErrorSnackBar(`😊 Ajout de "${typeOrganisme.libelle}" réussie !`);
+          this.snackbarService.openSuccessSnackBar(`😊 Ajout de "${typeOrganisme.libelle}" réussie !`);
         },
         error: error => this.snackbarService.openErrorSnackBar(`😔 Oupsss, une erreur technique est survenue l'ajout.`),
         complete: () => this.isSubmitting = false
@@ -34,7 +34,7 @@ export class TypeOrganismeFormComponent {
       this.typeOrganismeService.update(this.typeOrganisme).subscribe({
         next: typeOrganisme => {
           this.router.navigate(['types-organisme']);
-          this.snackbarService.openErrorSnackBar(`👌 Mise à jour de "${typeOrganisme.libelle}" réussie !`);
+          this.snackbarService.openSuccessSnackBar(`👌 Mise à jour de "${typeOrganisme.libelle}" réussie !`);
         },
         error: error => this.snackbarService.openErrorSnackBar(`😥 Oupsss, une erreur technique est survenue lors de la sauvegarde.`),
         complete: () => this.isSubmitting = false

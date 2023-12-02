@@ -25,10 +25,10 @@
       <td mat-cell *matCellDef="let prospect">{{ prospect.statut.libelle }}</td>
     </ng-container>
 
-    <!-- Departement Column -->
-    <ng-container matColumnDef="departement">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Departement</th>
-      <td mat-cell *matCellDef="let prospect">{{ prospect.departement }}</td>
+    <!-- Secteur Geographique Column -->
+    <ng-container matColumnDef="secteurGeographique">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Secteur géographique</th>
+      <td mat-cell *matCellDef="let prospect">{{ prospect.secteurGeographique.libelle }}</td>
     </ng-container>
 
     <!-- Adresse Column -->

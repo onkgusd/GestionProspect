@@ -22,7 +22,7 @@ namespace ProspectManagerWebApi.Enpoints
                 db.TypesEvenement.Add(typeEvenement);
                 await db.SaveChangesAsync();
 
-                return Results.Created($"/produits/{typeEvenement.Id}", typeEvenement);
+                return Results.Created($"/types-evenement/{typeEvenement.Id}", typeEvenement);
             });
 
             app.MapPut("/types-evenement/{idtypeevenement:int}", [Authorize(Policy = "Admin")] async ([FromBody] TypeEvenement updatedTypeEvenement, int idTypeEvenement, ProspectManagerDbContext db) =>

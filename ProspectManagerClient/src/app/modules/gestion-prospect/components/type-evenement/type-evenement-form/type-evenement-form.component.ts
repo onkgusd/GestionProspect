@@ -24,7 +24,7 @@ export class TypeEvenementFormComponent {
       this.typeEvenementService.add(this.typeEvenement).subscribe({
         next: typeEvenement => {
           this.router.navigate(['types-evenement']);
-          this.snackbarService.openErrorSnackBar(`Ajout de "${typeEvenement.libelle}" réussie !`);
+          this.snackbarService.openSuccessSnackBar(`Ajout de "${typeEvenement.libelle}" réussie !`);
         },
         error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue l'ajout :(`),
         complete: () => this.isSubmitting = false
@@ -34,7 +34,7 @@ export class TypeEvenementFormComponent {
       this.typeEvenementService.update(this.typeEvenement).subscribe({
         next: typeEvenement => {
           this.router.navigate(['types-evenement']);
-          this.snackbarService.openErrorSnackBar(`Mise à jour de "${typeEvenement.libelle}" réussie !`);
+          this.snackbarService.openSuccessSnackBar(`Mise à jour de "${typeEvenement.libelle}" réussie !`);
         },
         error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue lors de la sauvegarde :(`),
         complete: () => this.isSubmitting = false

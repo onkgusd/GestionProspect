@@ -24,7 +24,7 @@ export class StatutFormComponent {
       this.statutService.add(this.statut).subscribe({
         next: statut => {
           this.router.navigate(['statuts']);
-          this.snackbarService.openErrorSnackBar(`Ajout de "${statut.libelle}" réussi !`);
+          this.snackbarService.openSuccessSnackBar(`Ajout de "${statut.libelle}" réussi !`);
         },
         error: error => this.snackbarService.openErrorSnackBar(`Oups, une erreur technique est survenue lors de l'ajout :(`),
         complete: () => this.isSubmitting = false
@@ -34,7 +34,7 @@ export class StatutFormComponent {
       this.statutService.update(this.statut).subscribe({
         next: statut => {
           this.router.navigate(['statuts']);
-          this.snackbarService.openErrorSnackBar(`Mise à jour de "${statut.libelle}" réussie !`);
+          this.snackbarService.openSuccessSnackBar(`Mise à jour de "${statut.libelle}" réussie !`);
         },
         error: error => this.snackbarService.openErrorSnackBar(`Oups, une erreur technique est survenue lors de la sauvegarde :(`),
         complete: () => this.isSubmitting = false

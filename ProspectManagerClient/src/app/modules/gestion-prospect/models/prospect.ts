@@ -2,6 +2,7 @@ import { Contact } from "./contact";
 import { Evenement } from "./evenement";
 import { Modification } from "./modification";
 import { ProduitProspect } from "./produitprospect";
+import { SecteurGeographique } from "./secteur-geographique";
 import { Statut } from "./statut";
 import { TypeOrganisme } from "./type-organisme";
 import { Utilisateur } from "./utilisateur";
@@ -9,7 +10,7 @@ import { Utilisateur } from "./utilisateur";
 export class Prospect {
     id: number;
     nom: string = "";
-    departement: string = "";
+    secteurGeographique?: SecteurGeographique;
     adresse: string = "";
     telephone: string = "";
     mail: string = "";

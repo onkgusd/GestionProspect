@@ -22,6 +22,7 @@ namespace ProspectManagerWebApi.Enpoints
                                   .Include(p => p.Contacts)
                                   .Include(p => p.ProduitProspects)
                                     .ThenInclude(pp => pp.Produit)
+                                  .Include(p => p.SecteurGeographique)
                                   .Select(p => mapper.Map<ProspectResponseDTO>(p)).ToListAsync());
 
             app.MapGet("/prospects/{idprospect:int}", [Authorize] async (int idprospect, ProspectManagerDbContext db) =>
@@ -46,6 +47,7 @@ namespace ProspectManagerWebApi.Enpoints
                                .Include(p => p.UtilisateurCreation)
                                .Include(p => p.TypeOrganisme)
                                .Include(p => p.Modifications)
+                               .Include(p => p.SecteurGeographique)
                                .FirstOrDefaultAsync(p => p.Id == idprospect);
 
                 if (prospect == null) return Results.NotFound();
@@ -145,6 +147,9 @@ namespace ProspectManagerWebApi.Enpoints
 
                 if (updatedProspect.TypeOrganisme.Id != existingProspect.TypeOrganisme.Id)
                     existingProspect.TypeOrganisme = await db.TypesOrganisme.FindAsync(updatedProspect.TypeOrganisme.Id);
+
+                if (updatedProspect.SecteurGeographique.Id != existingProspect.SecteurGeographique.Id)
+                    existingProspect.SecteurGeographique = await db.SecteursGeographiques.FindAsync(updatedProspect.SecteurGeographique.Id);
 
                 await db.SaveChangesAsync();
 

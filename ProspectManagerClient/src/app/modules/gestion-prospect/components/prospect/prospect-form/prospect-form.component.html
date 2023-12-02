@@ -34,8 +34,11 @@
       </mat-form-field>
       <br />
       <mat-form-field>
-        <mat-label>Département</mat-label>
-        <input matInput placeholder="Département" name="departement" [(ngModel)]="prospect.departement">
+        <mat-label>Secteur géographique</mat-label>
+        <mat-select [(ngModel)]="prospect.secteurGeographique" [ngModelOptions]="{standalone: true}"
+          [compareWith]="compareSecteursGeographiques">
+          <mat-option *ngFor="let secteur of secteursGeographiques" [value]="secteur">{{ secteur.libelle }}</mat-option>
+        </mat-select>
       </mat-form-field>
       <br />
       <mat-form-field>

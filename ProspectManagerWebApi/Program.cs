@@ -129,6 +129,7 @@ TypeOrganismeEndpoints.Map(app);
 StatutEndpoints.Map(app);
 UtilisateurEndpoints.Map(app, mapper);
 SearchEndpoints.Map(app);
+SecteurGeographiqueEndpoints.Map(app);
 
 app.Run();
 

@@ -17,6 +17,7 @@ namespace ProspectManagerWebApi.Enpoints
             {
                 var prospects = db.Prospects.Include(p => p.Statut)
                                             .Include(p => p.TypeOrganisme)
+                                            .Include(p => p.SecteurGeographique)
                                             .AsQueryable();
 
                 if (prospectSearch.Noms?.Length > 0)
@@ -36,7 +37,7 @@ namespace ProspectManagerWebApi.Enpoints
                     var statutPredicate = PredicateBuilder.New<Prospect>(false);
                     foreach (var statut in prospectSearch.Statuts)
                     {
-                        int tempStatutId = statut.Id; // Variable temporaire pour éviter la fermeture sur la variable de boucle
+                        int tempStatutId = statut.Id;
                         statutPredicate = statutPredicate.Or(p => p.Statut.Id == tempStatutId);
                     }
                     prospects = prospects.Where(statutPredicate);
@@ -71,20 +72,19 @@ namespace ProspectManagerWebApi.Enpoints
                     foreach (var secteurActivite in prospectSearch.SecteursActivite)
                     {
                         predicate = predicate.Or(p => p.SecteurActivite != null
-                                                      && p.SecteurActivite.Contains(secteurActivite));
+                                                      && p.SecteurActivite == (secteurActivite));
                     }
 
                     prospects = prospects.Where(predicate);
                 }
 
-                if (prospectSearch.Departements?.Length > 0)
+                if (prospectSearch.SecteursGeographiques?.Length > 0)
                 {
                     var predicate = PredicateBuilder.New<Prospect>(false);
 
-                    foreach (var secteurGeographique in prospectSearch.Departements)
+                    foreach (var secteurGeographique in prospectSearch.SecteursGeographiques)
                     {
-                        predicate = predicate.Or(p => p.Departement != null
-                                                      && p.Departement.Contains(secteurGeographique));
+                        predicate = predicate.Or(p => p.SecteurGeographique.Id == secteurGeographique.Id);
                     }
 
                     prospects = prospects.Where(predicate);

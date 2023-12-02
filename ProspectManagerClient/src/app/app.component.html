@@ -56,6 +56,11 @@
                     <span>Statut des prospects</span>
                     <mat-icon>{{ isAdmin ? 'lock_open' : 'lock' }}</mat-icon>
                 </a>
+                <a mat-list-item [routerLink]="isAdmin ? 'secteurs-geographiques' : null" [disabled]="!isAdmin">
+                    <mat-icon matListIcon>map</mat-icon>
+                    <span>Secteurs géographiques</span>
+                    <mat-icon>{{ isAdmin ? 'lock_open' : 'lock' }}</mat-icon>
+                </a>
             </mat-nav-list>
         </mat-sidenav>
         <mat-sidenav-content>

@@ -18,7 +18,7 @@ export class ProspectListComponent implements OnInit {
   @Input() prospectList: Prospect[];
 
   prospects: MatTableDataSource<Prospect>;
-  displayedColumns: string[] = ['type-organisme', 'nom', 'statut', 'departement', 'secteurActivite', 'telephone', 'mail', 'dateCreation'];
+  displayedColumns: string[] = ['type-organisme', 'nom', 'statut', 'secteurGeographique', 'secteurActivite', 'telephone', 'mail', 'dateCreation'];
   isLoading: boolean = true;
 
   @ViewChild(MatSort)

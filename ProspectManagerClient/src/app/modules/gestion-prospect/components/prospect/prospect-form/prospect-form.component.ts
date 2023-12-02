@@ -7,7 +7,8 @@ import { Statut } from '../../../models/statut';
 import { StatutService } from '../../../services/statut.service';
 import { TypeOrganisme } from '../../../models/type-organisme';
 import { TypeOrganismeService } from '../../../services/type-organisme.service';
-import { PrintService } from 'src/app/services/print.service';
+import { SecteurGeographique } from '../../../models/secteur-geographique';
+import { SecteurGeographiqueService } from '../../../services/secteur-geographique.service';
 
 @Component({
   selector: 'app-prospect-form',
@@ -19,6 +20,7 @@ export class ProspectFormComponent implements OnInit {
   @Input() isAddForm: boolean = false;
   isSubmitting: boolean = false;
   statuts: Statut[];
+  secteursGeographiques: SecteurGeographique[];
   typesOrganisme: TypeOrganisme[];
 
   constructor(private prospectService: ProspectService,
@@ -26,15 +28,18 @@ export class ProspectFormComponent implements OnInit {
     private snackbarService: SnackbarService,
     private statutService: StatutService,
     private typeOrganismeService: TypeOrganismeService,
-    private printService: PrintService) { }
+    private secteurGeographiqueService: SecteurGeographiqueService) { }
 
   ngOnInit(): void {
     this.statutService.getAll().subscribe(statuts =>
-        this.statuts = statuts
+      this.statuts = statuts
     );
     this.typeOrganismeService.getAll().subscribe(typesOrganisme =>
       this.typesOrganisme = typesOrganisme
-  );
+    );
+    this.secteurGeographiqueService.getAll().subscribe(secteursGeographiques =>
+      this.secteursGeographiques = secteursGeographiques
+    );
   }
 
   onSubmit() {
@@ -61,12 +66,16 @@ export class ProspectFormComponent implements OnInit {
       });
     }
   }
-  
+
   compareStatuts(statut1: Statut, statut2: Statut): boolean {
     return statut1 && statut2 ? statut1.id === statut2.id : statut1 === statut2;
   }
 
   compareTypesOrganisme(typeOrganisme1: TypeOrganisme, typeOrganisme2: TypeOrganisme): boolean {
     return typeOrganisme1 && typeOrganisme2 ? typeOrganisme1.id === typeOrganisme2.id : typeOrganisme1 === typeOrganisme2;
+  }
+
+  compareSecteursGeographiques(secteur1: TypeOrganisme, secteur2: TypeOrganisme): boolean {
+    return secteur1 && secteur2 ? secteur1.id === secteur2.id : secteur1 === secteur2;
   }
 }

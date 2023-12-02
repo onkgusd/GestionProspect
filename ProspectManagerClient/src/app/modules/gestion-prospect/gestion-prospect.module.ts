@@ -69,6 +69,10 @@ import { TypeOrganismeFormComponent } from './components/type-organisme/type-org
 import { ProspectSearchComponent } from './components/prospect-search/prospect-search.component';
 import { ModificationListComponent } from './components/modification/modification-list/modification-list.component';
 import { FicheEcouteComponent } from './components/fiche-ecoute/fiche-ecoute.component';
+import { SecteurGeographiqueFormComponent } from './components/secteur-geographique/secteur-geographique-form/secteur-geographique-form.component';
+import { SecteurGeographiqueAddComponent } from './components/secteur-geographique/secteur-geographique-add/secteur-geographique-add.component';
+import { SecteurGeographiqueEditComponent } from './components/secteur-geographique/secteur-geographique-edit/secteur-geographique-edit.component';
+import { SecteurGeographiqueListComponent } from './components/secteur-geographique/secteur-geographique-list/secteur-geographique-list.component';
 
 const gestionProspectRoutes: Routes = [
   // Produit
@@ -101,6 +105,10 @@ const gestionProspectRoutes: Routes = [
   { path: "utilisateurs", component: UtilisateurListComponent, canActivate: [AdminGuard] },
   { path: "utilisateurs/add", component: UtilisateurAddComponent, canActivate: [AdminGuard] },
   { path: "utilisateurs/:id", component: UtilisateurEditComponent, canActivate: [AdminGuard] },
+  // Type d'organisme
+  { path: "secteurs-geographiques", component: SecteurGeographiqueListComponent, canActivate: [AdminGuard] },
+  { path: "secteurs-geographiques/add", component: SecteurGeographiqueAddComponent, canActivate: [AdminGuard] },
+  { path: "secteurs-geographiques/:id", component: SecteurGeographiqueEditComponent, canActivate: [AdminGuard] },
 
   // Search
   { path: "search", component: ProspectSearchComponent, canActivate: [AuthGuard] },
@@ -122,7 +130,11 @@ const gestionProspectRoutes: Routes = [
     TypeOrganismeListComponent, TypeOrganismeEditComponent, TypeOrganismeAddComponent, TypeOrganismeFormComponent,
     ProspectSearchComponent,
     ModificationListComponent,
-    FicheEcouteComponent
+    FicheEcouteComponent,
+    SecteurGeographiqueFormComponent,
+    SecteurGeographiqueAddComponent,
+    SecteurGeographiqueEditComponent,
+    SecteurGeographiqueListComponent
   ],
   imports: [
     CommonModule,

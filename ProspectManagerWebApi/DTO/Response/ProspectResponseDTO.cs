@@ -6,8 +6,8 @@ namespace ProspectManagerWebApi.DTO.Response
     public class ProspectResponseDTO
     {
         public int Id { get; set; }
-        public string Nom { get; set; }
-        public string? Departement { get; set; }
+        public string? Nom { get; set; }
+        public SecteurGeographique? SecteurGeographique { get; set; }
         public string? Adresse { get; set; }
         public string? Telephone { get; set; }
         public string? Mail { get; set; }

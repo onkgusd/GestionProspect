@@ -14,6 +14,8 @@ import { TypeOrganisme } from '../../models/type-organisme';
 import { TypeOrganismeService } from '../../services/type-organisme.service';
 import { SearchService } from '../../services/search.service';
 import { Prospect } from '../../models/prospect';
+import { SecteurGeographiqueService } from '../../services/secteur-geographique.service';
+import { SecteurGeographique } from '../../models/secteur-geographique';
 
 @Component({
   selector: 'app-prospect-search',
@@ -42,12 +44,18 @@ export class ProspectSearchComponent implements OnInit {
 
   @ViewChild('typesOrganismeInput') typesOrganismeInput: ElementRef<HTMLInputElement>;
   typesOrganismeCtrl = new FormControl('');
-  typesOrganisme: Statut[];
+  typesOrganisme: TypeOrganisme[];
   filteredTypesOrganisme: Observable<TypeOrganisme[]>;
+
+  @ViewChild('typesOrganismeInput') secteursGeographiquesInput: ElementRef<HTMLInputElement>;
+  secteursGeographiquesCtrl = new FormControl('');
+  secteursGeographiques: SecteurGeographique[];
+  filteredSecteursGeographiques: Observable<SecteurGeographique[]>;
 
   constructor(private produitService: ProduitService,
     private statutService: StatutService,
     private typeOrganismeService: TypeOrganismeService,
+    private secteurGeographiqueService: SecteurGeographiqueService,
     private searchService: SearchService,
     private snackbarService: SnackbarService) { }
 
@@ -107,6 +115,25 @@ export class ProspectSearchComponent implements OnInit {
         }
       },
       error: () => this.snackbarService.openErrorSnackBar("😒 Impossible de lister les types d'organisme...")
+    });
+
+    this.secteurGeographiqueService.getAll().subscribe({
+      next: (secteursGeographiques) => {
+        this.secteursGeographiques = secteursGeographiques;
+        this.filteredSecteursGeographiques = this.secteursGeographiquesCtrl.valueChanges.pipe(
+          startWith(null),
+          map((secteurGeographiqueLibelle: string | null) => this._filterSecteurGeographique(secteurGeographiqueLibelle ?? "")
+          )
+        );
+        if (this.prospectSearchDto.secteursGeographiques && this.prospectSearchDto.secteursGeographiques.length > 0) {
+          const secteursGeographiques = this.prospectSearchDto.secteursGeographiques.map(secteurGeographique => secteurGeographique.libelle).join(', ');
+          this.secteursGeographiquesCtrl.setValue(secteursGeographiques);
+        }
+        else {
+          this.secteursGeographiquesCtrl.setValue(null);
+        }
+      },
+      error: () => this.snackbarService.openErrorSnackBar("😒 Impossible de lister les secteurs géographiques...")
     });
 
     this.prospectSearchResult = this.searchService.getStoredResult();
@@ -178,38 +205,6 @@ export class ProspectSearchComponent implements OnInit {
     }
   }
 
-  addSecteurGeographique(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-
-    if (value) {
-      this.prospectSearchDto.departements.push(value);
-    }
-
-    event.chipInput!.clear();
-  }
-
-  removeSecteurGeographique(secteurGeographique: string): void {
-    const index = this.prospectSearchDto.departements.indexOf(secteurGeographique);
-
-    if (index >= 0) {
-      this.prospectSearchDto.departements.splice(index, 1);
-    }
-  }
-
-  editSecteurGeographique(secteurGeographique: string, event: MatChipEditedEvent) {
-    const value = event.value.trim();
-
-    if (!value) {
-      this.removeSecteurGeographique(secteurGeographique);
-      return;
-    }
-
-    const index = this.prospectSearchDto.departements.indexOf(secteurGeographique);
-    if (index >= 0) {
-      this.prospectSearchDto.departements[index] = value;
-    }
-  }
-
   addProduit(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
@@ -228,6 +223,7 @@ export class ProspectSearchComponent implements OnInit {
 
   removeProduit(produit: Produit): void {
     this.prospectSearchDto.produits = this.prospectSearchDto.produits.filter(p => p.id !== produit.id);
+    this.produitsCtrl.setValue(null);
   }
 
   selectedProduit(event: MatAutocompleteSelectedEvent): void {
@@ -268,6 +264,7 @@ export class ProspectSearchComponent implements OnInit {
 
   removeStatut(statut: Statut): void {
     this.prospectSearchDto.statuts = this.prospectSearchDto.statuts.filter(p => p.id !== statut.id);
+    this.statutsCtrl.setValue(null);
   }
 
   selectedStatut(event: MatAutocompleteSelectedEvent): void {
@@ -290,6 +287,47 @@ export class ProspectSearchComponent implements OnInit {
     );
   }
 
+  addSecteurGeographique(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (!value) {
+      return;
+    }
+
+    const existingSecteurGeographique = this.prospectSearchDto.secteursGeographiques.find(p => p.libelle === value);
+    if (existingSecteurGeographique) {
+      this.prospectSearchDto.secteursGeographiques.push(existingSecteurGeographique);
+    }
+
+    event.chipInput!.clear();
+    this.secteursGeographiquesCtrl.setValue(null);
+  }
+
+  removeSecteurGeographique(secteurGeographique: SecteurGeographique): void {
+    this.prospectSearchDto.secteursGeographiques = this.prospectSearchDto.secteursGeographiques.filter(p => p.id !== secteurGeographique.id);
+    this.secteursGeographiquesCtrl.setValue(null);
+  }
+
+  selectedSecteurGeographique(event: MatAutocompleteSelectedEvent): void {
+    const selectedSecteurGeographique = this.secteursGeographiques.find(p => p.libelle === event.option.viewValue);
+
+    if (selectedSecteurGeographique) {
+      this.prospectSearchDto.secteursGeographiques.push(selectedSecteurGeographique);
+    }
+
+    this.secteursGeographiquesInput.nativeElement.value = '';
+    this.secteursGeographiquesCtrl.setValue(null);
+  }
+
+  private _filterSecteurGeographique(value: string): SecteurGeographique[] {
+    const filterValue = value.toLowerCase();
+
+    return this.secteursGeographiques.filter(secteurGeographique =>
+      secteurGeographique.libelle.toLowerCase().includes(filterValue) &&
+      !this.prospectSearchDto.secteursGeographiques.some(selectedSecteurGeographique => selectedSecteurGeographique.id === secteurGeographique.id)
+    );
+  }
+
   addTypeOrganisme(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
@@ -306,8 +344,9 @@ export class ProspectSearchComponent implements OnInit {
     this.typesOrganismeCtrl.setValue(null);
   }
 
-  removeTypeOrganisme(typeOrganisme: TypeOrganisme): void {
+  removeTypeOrganisme(typeOrganisme: SecteurGeographique): void {
     this.prospectSearchDto.typesOrganisme = this.prospectSearchDto.typesOrganisme.filter(p => p.id !== typeOrganisme.id);
+    this.typesOrganismeCtrl.setValue(null);
   }
 
   selectedTypeOrganisme(event: MatAutocompleteSelectedEvent): void {
@@ -321,7 +360,7 @@ export class ProspectSearchComponent implements OnInit {
     this.typesOrganismeCtrl.setValue(null);
   }
 
-  private _filterTypeOrganisme(value: string): TypeOrganisme[] {
+  private _filterTypeOrganisme(value: string): SecteurGeographique[] {
     const filterValue = value.toLowerCase();
 
     return this.typesOrganisme.filter(typeOrganisme =>
@@ -353,8 +392,8 @@ export class ProspectSearchComponent implements OnInit {
       this.searchCriteria.push(`Nom : ${this.prospectSearchDto.noms.join(", ")}`);
     }
 
-    if (this.prospectSearchDto.departements?.length > 0) {
-      this.searchCriteria.push(`Zone géographique : ${this.prospectSearchDto.departements.join(", ")}`);
+    if (this.prospectSearchDto.secteursGeographiques?.length > 0) {
+      this.searchCriteria.push(`Secteur géographique : ${this.prospectSearchDto.secteursGeographiques.map(s => s.libelle).join(", ")}`);
     }
 
     if (this.prospectSearchDto.secteursActivite?.length > 0) {

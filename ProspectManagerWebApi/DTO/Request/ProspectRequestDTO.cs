@@ -7,7 +7,7 @@ namespace ProspectManagerWebApi.DTO.Request
     {
         [Required]
         public string? Nom { get; set; } = "";
-        public string? Departement { get; set; }
+        public SecteurGeographique SecteurGeographique { get; set; } = new SecteurGeographique();
         public string? Adresse { get; set; }
         public string? Telephone { get; set; }
         public string? Mail { get; set; }
