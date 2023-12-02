@@ -1,15 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
-using System.Reflection.Metadata;
 
 namespace ProspectManagerWebApi.Data
 {
     public class ProspectManagerDbContext : DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public ProspectManagerDbContext(DbContextOptions<ProspectManagerDbContext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ProspectManager_test;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+        
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

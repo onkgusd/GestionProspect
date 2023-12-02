@@ -1,5 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProspectManagerWebApi.Data;
@@ -7,6 +9,7 @@ using ProspectManagerWebApi.Enpoints;
 using ProspectManagerWebApi.Helpers;
 using ProspectManagerWebApi.Models;
 using ProspectManagerWebApi.Services;
+using System.Configuration;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -50,7 +53,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<PasswordManagerService>();
-builder.Services.AddDbContext<ProspectManagerDbContext>();
+builder.Services.AddDbContext<ProspectManagerDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:Default"])) ;
 builder.Services.AddScoped<UserService>();
 
 // Configuration de l'authentification JWT
@@ -124,10 +127,11 @@ using (var scope = app.Services.CreateScope())
     {
         context.Utilisateurs.AddRange(new Utilisateur
         {
-            Login = "Admin",
+            Login = builder.Configuration["InitData:DefaultLogin"] ?? throw new Exception("Login de l'administrateur non fourni !"),
             Actif = true,
-            Empreinte = PasswordHelper.HashPassword("DefaultPassword"),
-            Email = "admin@admin.com"
+            Role = "Admin",
+            Empreinte = PasswordHelper.HashPassword(builder.Configuration["InitData:DefaultPassword"] ?? throw new Exception("Password de l'administrateur non fourni !")),
+            Email = builder.Configuration["InitData:DefaultEmail"] ?? throw new Exception("Email de l'administrateur non fourni !")
         });
 
         context.Statuts.AddRange(
@@ -153,6 +157,14 @@ using (var scope = app.Services.CreateScope())
          new TypeEvenement { Libelle = "Réception de mail" },
          new TypeEvenement { Libelle = "Rencontre physique" },
          new TypeEvenement { Libelle = "Visio" }
+         );
+
+        context.SecteursGeographiques.AddRange(
+         new SecteurGeographique { Libelle = "Sud" },
+         new SecteurGeographique { Libelle = "Nord" },
+         new SecteurGeographique { Libelle = "Est" },
+         new SecteurGeographique { Libelle = "Ouest" },
+         new SecteurGeographique { Libelle = "Centre" }
          );
 
         context.SaveChanges();

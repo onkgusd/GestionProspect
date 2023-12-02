@@ -6,7 +6,7 @@ export class Produit {
     reference: string;
     libelle: string;
     description: string;
-    actif: boolean;
+    actif: boolean = true;
     modifications: Modification[] = [];
     produitProspects: ProduitProspect[] = [];
 }

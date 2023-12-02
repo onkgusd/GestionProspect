@@ -10,6 +10,7 @@ import { TypeOrganismeService } from '../../../services/type-organisme.service';
 import { SecteurGeographique } from '../../../models/secteur-geographique';
 import { SecteurGeographiqueService } from '../../../services/secteur-geographique.service';
 import { Location } from '@angular/common';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-prospect-form',
@@ -48,23 +49,25 @@ export class ProspectFormComponent implements OnInit {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.prospectService.add(this.prospect).subscribe({
+      this.prospectService.add(this.prospect)
+      .pipe(finalize(() => this.isSubmitting = false))
+      .subscribe({
         next: prospect => {
           this.router.navigate(['prospects']);
           this.snackbarService.openSuccessSnackBar(`😊 Ajout de "${prospect.nom}" réussi !`);
         },
         error: error => this.snackbarService.openErrorSnackBar(`😖 Oups, une erreur technique est survenue lors de l'ajout.`),
-        complete: () => (this.isSubmitting = false)
       });
     } else {
-      this.prospectService.update(this.prospect).subscribe({
+      this.prospectService.update(this.prospect)
+      .pipe(finalize(() => this.isSubmitting = false))
+      .subscribe({
         next: prospect => {
           this.router.navigate(['prospects']);
           this.snackbarService.openSuccessSnackBar(`👌 Mise à jour de "${prospect.nom}" réussie !`);
         },
         error: error =>
           this.snackbarService.openErrorSnackBar(`🙄 Oups, une erreur technique est survenue lors de la sauvegarde.`),
-        complete: () => (this.isSubmitting = false)
       });
     }
   }

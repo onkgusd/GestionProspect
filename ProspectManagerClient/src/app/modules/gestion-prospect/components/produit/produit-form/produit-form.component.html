@@ -17,6 +17,7 @@
         <textarea matInput placeholder="Description" [(ngModel)]="produit.description" name="description"
           matTextareaAutosize matAutosizeMinRows="10" matAutosizeMinCols="10"></textarea>
       </mat-form-field>
+      <mat-checkbox name="actif" [(ngModel)]="produit.actif">Actif</mat-checkbox>
       <div fxLayout="row" fxLayoutAlign="center">
         <button mat-raised-button color="secondary" type="button" (click)="previousPage()">Annuler</button>
         <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting || !produitForm.form.valid">{{
