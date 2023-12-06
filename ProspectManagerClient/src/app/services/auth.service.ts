@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { jwtDecode } from "jwt-decode";
 import { ReinitMotDePasseDto } from '../modules/gestion-prospect/dto/reinit-motdepasse-dto';
 import { Utilisateur } from '../modules/gestion-prospect/models/utilisateur';
+import { SnackbarService } from './snackbar.service';
 
 interface AuthResponse {
   token: string;
@@ -30,7 +31,7 @@ export class AuthService {
   private _isAdmin = new BehaviorSubject<boolean>(false);
   isAdmin$ = this._isAdmin.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private snackbarService: SnackbarService) {
     if (this.token)
       this.readToken(this.token);
   }
@@ -73,6 +74,10 @@ export class AuthService {
       let expiryDate = new Date(tokenExpiry);
       if (expiryDate > new Date()) {
         return this.token;
+      }
+      else {
+        this.logout()
+        this.snackbarService.openWarningSnackBar("😶‍🌫️ Votre session a expiré, vous devez vous réauthentifier.");
       }
     }
 

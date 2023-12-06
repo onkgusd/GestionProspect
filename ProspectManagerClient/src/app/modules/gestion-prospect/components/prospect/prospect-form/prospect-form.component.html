@@ -55,9 +55,9 @@
       <mat-checkbox name="actif" [(ngModel)]="prospect.actif">Actif</mat-checkbox>
 
       <div fxLayout="row" fxLayoutAlign="center">
-        <button mat-raised-button color="secondary" type="button" (click)="previousPage()">Annuler</button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="!prospectForm.form.valid">
-          Enregistrer
+        <button mat-raised-button color="secondary" type="button" (click)="previousPage()" title="Annuler">Annuler</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!prospectForm.form.valid" [title]="isAddForm ? 'Ajouter' : 'Enregistrer'">
+          {{isAddForm ? 'Ajouter' : 'Enregistrer'}}
         </button>
       </div>
     </form>

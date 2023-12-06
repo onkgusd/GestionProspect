@@ -11,7 +11,8 @@
       <br />
       <mat-form-field class="full-width">
         <mat-label>Email</mat-label>
-        <input matInput placeholder="exemple@exemple.fr" name="email" [(ngModel)]="utilisateur.email" required type="email">
+        <input matInput placeholder="exemple@exemple.fr" name="email" [(ngModel)]="utilisateur.email" required
+          type="email">
       </mat-form-field>
       <br />
       <mat-form-field class="full-width">
@@ -29,11 +30,13 @@
       <mat-form-field class="full-width" *ngIf="!isAddForm">
         <mat-label>Mot de passe</mat-label>
         <input matInput placeholder="Mot de passe" #passwordInput name="motdepasse" [(ngModel)]="utilisateur.motdepasse"
-          [required]="isAddForm" [type]="showPassword ? 'text' : 'password'" (input)="setPasswordHasBeenChanged()" minlength="12">
+          [required]="isAddForm" [type]="showPassword ? 'text' : 'password'" (input)="setPasswordHasBeenChanged()"
+          minlength="12">
         <mat-icon matSuffix *ngIf="passwordHasBeenChanged" (click)="showPassword = !showPassword">{{showPassword ?
           'visibility' : 'visibility_off'}}</mat-icon>
         <mat-icon matSuffix (click)="generatePassword()">refresh</mat-icon>
-        <mat-hint *ngIf="passwordHasBeenChanged">Laissez ce champ vide si vous ne souhaitez pas redéfinir le mot de passe</mat-hint>
+        <mat-hint *ngIf="passwordHasBeenChanged">Laissez ce champ vide si vous ne souhaitez pas redéfinir le mot de
+          passe</mat-hint>
       </mat-form-field>
       <br />
       <mat-form-field class="full-width" *ngIf="!isAddForm">
@@ -47,9 +50,10 @@
       </mat-form-field>
       <br />
       <div fxLayout="row" fxLayoutAlign="center">
-        <button mat-raised-button color="secondary" type="button" (click)="previousPage()">Annuler</button>
-        <button mat-raised-button color="primary" type="submit"
-          [disabled]="isSubmitting || !utilisateurForm.form.valid">Enregistrer</button>
+        <button mat-raised-button color="secondary" type="button" (click)="previousPage()"
+          title="Annuler">Annuler</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting || !utilisateurForm.form.valid"
+          [title]="isAddForm ? 'Ajouter' : 'Enregistrer'">{{isAddForm ? 'Ajouter' : 'Enregistrer'}}</button>
       </div>
     </form>
   </mat-card-content>

@@ -73,7 +73,8 @@
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let produitProspect">
-                <button mat-icon-button (click)="openDeleteConfirmationDialog(produitProspect)">
+                <button mat-icon-button (click)="openDeleteConfirmationDialog(produitProspect)"
+                title="Supprimer la proposition">
                     <mat-icon>delete</mat-icon>
                 </button>
             </td>

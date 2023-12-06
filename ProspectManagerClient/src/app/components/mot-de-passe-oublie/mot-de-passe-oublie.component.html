@@ -23,9 +23,10 @@
             </mat-form-field>
             <br>
             <div fxLayout="row" fxLayoutAlign="center">
-              <button mat-raised-button color="secondary" type="button" routerLink="..">Annuler</button>
+              <button mat-raised-button color="secondary" type="button" routerLink=".." title="Annuler">Annuler</button>
               <button mat-raised-button color="primary"
-                type="submit" [disabled]="!motdepasseoublieForm.form.valid || isSubmitting">Lancer la procédure</button>
+                type="submit" [disabled]="!motdepasseoublieForm.form.valid || isSubmitting"
+                title="Lancer la procédure">Lancer la procédure</button>
             </div>
           </form>
         </mat-card-content>

@@ -24,9 +24,10 @@
             (change)="contact.actif = !contact.actif">Actif</mat-checkbox>
             <br />
             <div fxLayout="row" fxLayoutAlign="center">
-                <button mat-raised-button color="secondary" type="button" (click)="previousPage()">Annuler</button>
+                <button mat-raised-button color="secondary" type="button" (click)="previousPage()" title="Annuler">Annuler</button>
                 <button mat-raised-button color="primary" type="submit"
-                    [disabled]="isSubmitting || !contactForm.form.valid">Enregistrer</button>
+                    [disabled]="isSubmitting || !contactForm.form.valid"
+                    title="isAddForm ? 'Ajouter' : 'Enregistrer'">{{isAddForm ? 'Ajouter' : 'Enregistrer'}}</button>
             </div>
         </form>
     </mat-card-content>

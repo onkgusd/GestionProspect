@@ -9,8 +9,9 @@
         <input matInput placeholder="Libellé" [(ngModel)]="statut.libelle" name="libelle" required>
       </mat-form-field>
       <div fxLayout="row" fxLayoutAlign="center">
-        <button mat-raised-button color="secondary" type="button" routerLink="..">Annuler</button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting || !statutForm.form.valid">{{
+        <button mat-raised-button color="secondary" type="button" routerLink=".." title="Annuler">Annuler</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting || !statutForm.form.valid"
+          [title]="isAddForm ? 'Ajouter' : 'Enregistrer'">{{
           isAddForm ? "Ajouter" : "Enregistrer" }}</button>
       </div>
     </form>

@@ -31,8 +31,9 @@
                         </mat-form-field>
                         <br>
                         <div fxLayout="row" fxLayoutAlign="center">
-                            <button mat-raised-button color="secondary" type="button" routerLink="..">Annuler</button>
+                            <button mat-raised-button color="secondary" type="button" routerLink=".." title="Annuler">Annuler</button>
                             <button mat-raised-button color="primary" type="submit"
+                                title="Définir le mot de passe"
                                 [disabled]="!reinitMotdepasseForm.form.valid || isSubmitting">Définir le mot de passe</button>
                         </div>
                     </form>
