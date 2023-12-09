@@ -16,7 +16,7 @@ export class UtilisateurFormComponent implements OnInit {
   @Input() isAddForm: boolean;
 
   isSubmitting: boolean;
-  passwordPlaceholder: string = environment.defaultPasswordInputValue;
+  passwordPlaceholder: string;
   showPassword: boolean;
   passwordHasBeenChanged: boolean;
   roles: string[] = ['Admin', 'Utilisateur'];

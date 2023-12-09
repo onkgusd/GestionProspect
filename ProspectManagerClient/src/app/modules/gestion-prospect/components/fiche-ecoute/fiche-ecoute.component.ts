@@ -4,6 +4,7 @@ import { ProspectService } from '../../services/prospect.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { finalize } from 'rxjs';
 import { ProspectSummaryResponseDto } from '../../dto/prospect-summary-response-dto';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-fiche-ecoute',
@@ -16,6 +17,7 @@ export class FicheEcouteComponent implements OnInit {
   prospects: ProspectSummaryResponseDto[] = [];
   isLoading: boolean;
   idProspect: number;
+  companyName = environment.companyName;
 
   constructor(private prospectService: ProspectService,
     private snackbarService: SnackbarService,

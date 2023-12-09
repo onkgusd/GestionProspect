@@ -130,6 +130,29 @@
         <h2>Résumé de la Rencontre</h2>
         <textarea rows="10" cols="50"></textarea>
     </section>
+
+    <section class="consentement-section">
+        <h2>Consentement à la collecte et au stockage des données de contact</h2>
+        <p>Par la présente, <strong>{{ prospect.nom || "........................................................" }}</strong>,
+            légalement représentée par <strong>........................................................</strong>,
+            en sa qualité de <strong>........................................................</strong>,
+            donne son accord explicite à <strong>{{companyName}}</strong> pour la collecte et le stockage des données de
+            contact concernant ses employés et autres contacts internes.</p>
+        <p>Nous comprenons que ces données seront utilisées dans le cadre de la création et l'exploitation d'une base de
+            données afin de mettre en oeuvre des actions de prospection de
+            <strong>{{companyName}}</strong>. Nous reconnaissons que
+            ces informations sont nécessaires pour la réalisation des services fournis par
+            <strong>{{companyName}}</strong> et consentons à ce qu'elles soient stockées dans leur système de données.
+        </p>
+        <div class="signature">
+            <div class="signature-block">
+                <strong>Signé par :</strong><br>
+                [Nom du Représentant] : ......................<br>
+                [Titre] : ......................<br>
+                [Date] : .......................
+            </div>
+        </div>
+    </section>
 </section>
 
 <app-loader *ngIf="isLoading"></app-loader>
