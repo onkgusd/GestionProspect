@@ -53,7 +53,7 @@ export class ProspectFormComponent implements OnInit {
       .pipe(finalize(() => this.isSubmitting = false))
       .subscribe({
         next: prospect => {
-          this.router.navigate(['prospects']);
+          this.router.navigate(['prospects', prospect.id]);
           this.snackbarService.openSuccessSnackBar(`😊 Ajout de "${prospect.nom}" réussi !`);
         },
         error: error => this.snackbarService.openErrorSnackBar(`😖 Oups, une erreur technique est survenue lors de l'ajout.`),
@@ -63,7 +63,7 @@ export class ProspectFormComponent implements OnInit {
       .pipe(finalize(() => this.isSubmitting = false))
       .subscribe({
         next: prospect => {
-          this.router.navigate(['prospects']);
+          this.router.navigate(['prospects', prospect.id]);
           this.snackbarService.openSuccessSnackBar(`👌 Mise à jour de "${prospect.nom}" réussie !`);
         },
         error: error =>

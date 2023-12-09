@@ -65,7 +65,8 @@ export class ProspectListComponent implements OnInit {
     window.print();
   }
 
-  exportToCsv(filename: string) {
+  exportToCsv() {
+    const filename = `exportProspect_${new Date().toLocaleDateString('fr-FR')}.csv`
     const headers = Object.keys(this.prospectList[0]);
     const BOM = '\uFEFF';
     const csvContent = [headers.join(';')].concat(this.prospectList.map(row => {

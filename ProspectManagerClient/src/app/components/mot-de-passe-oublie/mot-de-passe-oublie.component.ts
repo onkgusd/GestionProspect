@@ -27,10 +27,10 @@ export class MotDePasseOublieComponent implements OnInit {
       this.snackbarService.openSnackBar("Demande d'envoi de mot de passe...");
       this.authService.demandeLienReinitialisationMotDePasse(this.email).subscribe((isLoggedIn: boolean) => {
         if (isLoggedIn) {
-          this.snackbarService.openSnackBar("Un lien de réinitialisation a été envoyé :)");
+          this.snackbarService.openSnackBar("📬 Un lien de réinitialisation a été envoyé !");
           this.router.navigate(['/login']);
         } else {
-          this.snackbarService.openErrorSnackBar("Erreur lors de la connexion !", 10000);
+          this.snackbarService.openErrorSnackBar("😮 Erreur lors de la connexion !", 10000);
         }
 
         this.isSubmitting = false;

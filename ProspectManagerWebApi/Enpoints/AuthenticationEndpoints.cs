@@ -26,7 +26,7 @@ namespace ProspectManagerWebApi.Enpoints
                                                            || u.Email == user.Login)
                                                            && u.Actif);
 
-                if (utilisateur == null || !PasswordHelper.VerifyPassword(user.Password, utilisateur.Empreinte))
+                if (utilisateur == null || !PasswordHelper.VerifyPassword(user.Password.Replace("\\\\", "\\"), utilisateur.Empreinte))
                     return Results.Unauthorized();
 
                 utilisateur.DateConnexion = DateTime.UtcNow;

@@ -34,7 +34,7 @@ export class ReinitMotDePasseComponent implements OnInit {
       this.authService.reinitMotDePasse(this.email, this.motdepasse, this.token || "").subscribe({
         next: (result) => {
           if (result){
-            this.snackbarService.openSuccessSnackBar("Mot passe réinitialisé :)");
+            this.snackbarService.openSuccessSnackBar("👍 Mot passe réinitialisé !");
             this.authService.login(this.email, this.motdepasse).subscribe(() => this.router.navigate(["/login"]));
           }
           else {

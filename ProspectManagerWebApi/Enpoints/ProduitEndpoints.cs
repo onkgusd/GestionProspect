@@ -32,7 +32,7 @@ namespace ProspectManagerWebApi.Enpoints
                     .FirstOrDefaultAsync(p => p.Id == idProduit) is Produit produit ?
                 Results.Ok(mapper.Map<ProduitResponseDTO>(produit)) : Results.NotFound());
 
-            app.MapPost("/produits", [Authorize(Policy = "Admin")] async ([FromBody] Produit produit, ProspectManagerDbContext db) =>
+            app.MapPost("/produits", [Authorize] async ([FromBody] Produit produit, ProspectManagerDbContext db) =>
             {
                 db.Produits.Add(produit);
                 await db.SaveChangesAsync();

@@ -35,12 +35,22 @@ namespace ProspectManagerWebApi.Enpoints
             app.MapPost("/prospects/{idprospect:int}/contacts/", [Authorize] async ([FromBody] Contact contact,
                                                                                     [FromRoute] int idProspect,
                                                                                     ProspectManagerDbContext db,
+                                                                                    UserService userService,
                                                                                     IMapper mapper) =>
             {
                 var prospect = await db.Prospects.Include(p => p.Contacts).FirstOrDefaultAsync(p => p.Id == idProspect);
                 if (prospect == null)
                     return Results.NotFound($"Aucun prospect trouvé avec l'ID {idProspect}.");
 
+                var utilisateur = await userService.GetCurrentUser();
+
+                prospect.Modifications.Add(new Modification
+                {
+                    NouvelleValeur = $"Création du contact {contact.Nom}.",
+                    DateModification = DateTimeOffset.UtcNow,
+                    Champ = "Contact",
+                    Utilisateur = utilisateur
+                });
                 prospect?.Contacts?.Add(contact);
 
                 await db.SaveChangesAsync();
@@ -71,6 +81,7 @@ namespace ProspectManagerWebApi.Enpoints
             {
                 var existingContact = await db.Contacts
                                               .Include(c => c.Prospect)
+                                              .Include(c => c.Modifications)
                                               .FirstOrDefaultAsync(c => c.Id == idContact);
 
                 if (existingContact == null)

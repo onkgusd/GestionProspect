@@ -125,7 +125,7 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<ProspectManagerDbContext>();
     if (context.Database.EnsureCreated())
     {
-        context.Utilisateurs.AddRange(new Utilisateur
+        context.Utilisateurs.Add(new Utilisateur
         {
             Login = builder.Configuration["InitData:DefaultLogin"] ?? throw new Exception("Login de l'administrateur non fourni !"),
             Actif = true,

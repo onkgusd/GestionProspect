@@ -82,7 +82,7 @@ export class StatutListComponent {
           this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);
           statut.actif = actif;
         },
-        error: () => this.snackbarService.openErrorSnackBar(`😒 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation"} :(`),
+        error: () => this.snackbarService.openErrorSnackBar(`😒 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation"}.`),
       }
     )
   }

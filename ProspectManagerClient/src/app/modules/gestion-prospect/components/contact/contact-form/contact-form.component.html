@@ -5,18 +5,22 @@
     <mat-card-content>
         <form #contactForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
             <mat-form-field class="full-width">
+                <mat-label>Nom</mat-label>
                 <input matInput placeholder="Nom" name="nom" [(ngModel)]="contact.nom" required>
             </mat-form-field>
             <br />
             <mat-form-field class="full-width">
+                <mat-label>Fonction</mat-label>
                 <input matInput placeholder="Fonction" name="fonction" [(ngModel)]="contact.fonction">
             </mat-form-field>
             <br />
             <mat-form-field class="full-width">
+                <mat-label>Email</mat-label>
                 <input matInput placeholder="E-mail" name="email" [(ngModel)]="contact.email">
             </mat-form-field>
             <br />
             <mat-form-field>
+                <mat-label>Téléphone</mat-label>
                 <input matInput placeholder="Téléphone" name="telephone" [(ngModel)]="contact.telephone">
             </mat-form-field>
             <br />

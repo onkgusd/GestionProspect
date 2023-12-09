@@ -146,7 +146,7 @@
         </ng-template>
     </div>
 
-    <app-prospect-list [prospectList]="prospectSearchResult" *ngIf="!isLoading && prospectSearchResult.length > 0"
+    <app-prospect-list [prospectList]="prospectSearchResult" *ngIf="!isLoading"
         [isPrintable]="true"></app-prospect-list>
 
     <div *ngIf="hasBeenLaunched && !isLoading && prospectSearchResult.length === 0" class="no-result">

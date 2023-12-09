@@ -163,7 +163,11 @@ namespace ProspectManagerWebApi.Enpoints
                     .ToArrayAsync() is ProduitProspect[] produitProspects ?
                 Results.Ok(produitProspects) : Results.NotFound());
 
-            app.MapPost("/prospects/{idprospect:int}/produits/{idproduit:int}", [Authorize] async ([FromBody] ProduitProspectRequestDTO produitProspect, [FromRoute] int idProspect, [FromRoute] int idProduit, ProspectManagerDbContext db) =>
+            app.MapPost("/prospects/{idprospect:int}/produits/{idproduit:int}", [Authorize] async ([FromBody] ProduitProspectRequestDTO produitProspect,
+                    [FromRoute] int idProspect,
+                    [FromRoute] int idProduit,
+                    ProspectManagerDbContext db,
+                    UserService userService) =>
             {
                 var produit = db.Produits.Find(idProduit);
                 var prospect = db.Prospects.Find(idProspect);
@@ -176,6 +180,14 @@ namespace ProspectManagerWebApi.Enpoints
                     Prospect = prospect,
                     ProbabiliteSucces = produitProspect.ProbabiliteSucces,
                     DateProposition = DateTimeOffset.UtcNow
+                });
+
+                prospect.Modifications.Add(new Modification
+                {
+                    Champ = "Proposition",
+                    DateModification = DateTimeOffset.UtcNow,
+                    Utilisateur = await userService.GetCurrentUser(),
+                    NouvelleValeur = $"Ajout du produit {produit.Libelle} avec un probabilité de {produitProspect.ProbabiliteSucces}."
                 });
 
                 await db.SaveChangesAsync();
@@ -289,7 +301,7 @@ namespace ProspectManagerWebApi.Enpoints
                     {
                         AncienneValeur = $"Produit {existingProduitProspect.Produit.Libelle} (probabilité : {existingProduitProspect.ProbabiliteSucces})",
                         NouvelleValeur = "Supprimé",
-                        Champ = nameof(existingProduitProspect.Prospect.ProduitProspects),
+                        Champ = "Proposition",
                         DateModification = DateTime.UtcNow,
                         Utilisateur = await userService.GetCurrentUser()
                     });

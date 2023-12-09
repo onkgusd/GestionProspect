@@ -27,9 +27,9 @@ export class StatutFormComponent {
         .subscribe({
           next: statut => {
             this.router.navigate(['statuts']);
-            this.snackbarService.openSuccessSnackBar(`Ajout de "${statut.libelle}" réussi !`);
+            this.snackbarService.openSuccessSnackBar(`🎉 Ajout de "${statut.libelle}" réussi !`);
           },
-          error: error => this.snackbarService.openErrorSnackBar(`Oups, une erreur technique est survenue lors de l'ajout :(`)
+          error: error => this.snackbarService.openErrorSnackBar(`😔 Oups, une erreur technique est survenue lors de l'ajout.`)
         });
     }
     else {
@@ -38,9 +38,9 @@ export class StatutFormComponent {
         .subscribe({
           next: statut => {
             this.router.navigate(['statuts']);
-            this.snackbarService.openSuccessSnackBar(`Mise à jour de "${statut.libelle}" réussie !`);
+            this.snackbarService.openSuccessSnackBar(`👍 Mise à jour de "${statut.libelle}" réussie !`);
           },
-          error: error => this.snackbarService.openErrorSnackBar(`Oups, une erreur technique est survenue lors de la sauvegarde :(`),
+          error: error => this.snackbarService.openErrorSnackBar(`😵 Oups, une erreur technique est survenue lors de la sauvegarde.`),
         });
     }
   }

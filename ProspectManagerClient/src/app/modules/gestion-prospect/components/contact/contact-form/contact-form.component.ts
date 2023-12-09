@@ -25,10 +25,10 @@ export class ContactFormComponent {
       this.contactService.add(this.contact, this.idProspect).subscribe({
         next: contact => {
           this.previousPage();
-          this.snackbarService.openSuccessSnackBar(`Ajout de "${contact.nom}" réussi !`);
+          this.snackbarService.openSuccessSnackBar(`🤗 Ajout de "${contact.nom}" réussi !`);
         },
         error: error => {
-          this.snackbarService.openErrorSnackBar(`Oups, une erreur est survenue lors de l'ajout :(`);
+          this.snackbarService.openErrorSnackBar(`😖 Oups, une erreur est survenue lors de l'ajout.`);
           this.isSubmitting = false;
         }
       });
@@ -36,10 +36,10 @@ export class ContactFormComponent {
       this.contactService.update(this.contact).subscribe({
         next: contact => {
           this.previousPage();
-          this.snackbarService.openSuccessSnackBar(`Mise à jour de "${contact.nom}" réussie !`);
+          this.snackbarService.openSuccessSnackBar(`👌 Mise à jour de "${contact.nom}" réussie !`);
         },
         error: error => {
-          this.snackbarService.openErrorSnackBar(`Oups, une erreur est survenue lors de la sauvegarde :(`);
+          this.snackbarService.openErrorSnackBar(`😟 Oups, une erreur est survenue lors de la sauvegarde.`);
           this.isSubmitting = false
         }
       });
