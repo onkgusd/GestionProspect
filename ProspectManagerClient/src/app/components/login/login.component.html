@@ -24,10 +24,11 @@
             </mat-form-field>
             <br>
             <button fxLayoutAlign="center center" style="margin: auto;" mat-raised-button color="primary" type="submit"
-              [disabled]="!loginForm.form.valid || isSubmitting">Login</button>
+              [disabled]="!loginForm.form.valid || isSubmitting" title="S'authentifier">Login</button>
           </form>
         </mat-card-content>
       </mat-card>
     </div>
   </ng-container>
+  <a [routerLink]="['mot-de-passe-oublie']" title="Mot de passe oublié">Mot de passe oublié ?</a>
 </div>

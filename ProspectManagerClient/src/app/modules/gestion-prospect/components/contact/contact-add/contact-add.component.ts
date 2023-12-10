@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component,  OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -7,11 +7,11 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./contact-add.component.scss']
 })
 export class ContactAddComponent implements OnInit {
-  prospectId: string | null;
+  idProspect: string | null;
 
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.prospectId = this.route.snapshot.paramMap.get('id');
+    this.idProspect = this.route.snapshot.paramMap.get('id');
   }
 }

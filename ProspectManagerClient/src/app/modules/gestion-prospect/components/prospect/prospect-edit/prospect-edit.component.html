@@ -1,9 +1,26 @@
-<mat-tab-group *ngIf="prospect">
+<mat-tab-group *ngIf="!isLoading && prospect" (selectedIndexChange)="onTabChange($event)">
     <mat-tab label="Prospect">
-        <app-prospect-form [isAddForm]="false" [prospect]="prospect"/>
+        <app-prospect-form [isAddForm]="false" [prospect]="prospect" />
+    </mat-tab>
+    <mat-tab label="Produits proposés ({{prospect.produitProspects.length}})">
+        <app-produit-prospect-for-prospect-list [prospect]="prospect"></app-produit-prospect-for-prospect-list>
+    </mat-tab>
+    <mat-tab label="Evénements ({{prospect.evenements.length}})">
+        <app-evenement-list [evenementList]="prospect.evenements"></app-evenement-list>
     </mat-tab>
     <mat-tab label="Contacts ({{prospect.contacts.length}})">
         <app-contact-list [contactList]="prospect.contacts"></app-contact-list>
     </mat-tab>
+    <mat-tab label="Historique">
+        <app-modification-list [isVisible]="isOnModificationsTab" [idProspect]="prospect.id" />
+    </mat-tab>
 </mat-tab-group>
-<app-loader *ngIf="!prospect"></app-loader>
+
+<button mat-fab class="floating-button" *ngIf="!isLoading && tabIndex == 0" color="primary"
+    (click)="printFicheRencontre()" title="Imprimer la fiche écoute">
+    <mat-icon>print</mat-icon>
+</button>
+
+
+<app-fiche-ecoute #printContainer [prospect]="prospect" [standalone]="false" *ngIf="!isLoading"></app-fiche-ecoute>
+<app-loader *ngIf="isLoading"></app-loader>

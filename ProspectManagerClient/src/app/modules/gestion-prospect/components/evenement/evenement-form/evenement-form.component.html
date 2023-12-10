@@ -1,0 +1,70 @@
+<mat-card class="centered-card">
+  <mat-card-header class="centered title">
+    <mat-card-title>Fiche Evenement</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form #evenementForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
+      <mat-form-field class="full-width">
+        <mat-label>Type d'Evenement</mat-label>
+        <mat-select [(ngModel)]="evenement.typeEvenement" [ngModelOptions]="{ standalone: true }" required
+          [compareWith]="compareTypeEvenement">
+          <mat-option *ngFor="let typeEvenement of typeEvenements" [value]="typeEvenement">{{ typeEvenement.libelle
+            }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br />
+      <mat-form-field class="full-width">
+        <mat-label>Date de l'Evenement</mat-label>
+        <input matInput [matDatepicker]="picker" placeholder="Date de l'Evenement" name="dateEvenement"
+          [(ngModel)]="evenement.dateEvenement" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <br />
+      <app-rating
+      label="Evaluation du ressenti"
+      [customIcons]="['sentiment_very_dissatisfied', 'sentiment_dissatisfied', 'sentiment_neutral', 'sentiment_satisfied', 'sentiment_very_satisfied']"
+      [customColors]="['#C2E0F4', '#A3D8F4', '#7FD9F3', '#98E2A3', '#72C79B']"
+      [(rating)]="evenement.evaluation">
+    </app-rating>
+      <mat-form-field class="full-width">
+        <textarea matInput placeholder="Resultat" name="resultat" [(ngModel)]="evenement.resultat">
+                </textarea>
+      </mat-form-field>
+      <br />
+      <mat-form-field class="full-width">
+        <mat-label>Choisir un contact</mat-label>
+        <mat-select [(ngModel)]="evenement.contact" [ngModelOptions]="{ standalone: true }"
+          [compareWith]="compareContacts">
+          <mat-option *ngFor="let contact of contacts" [value]="contact">{{ contact.nom }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br />
+      <mat-form-field class="full-width">
+        <mat-label>Produits</mat-label>
+        <mat-chip-grid #chipGrid aria-label="Sélection de produits">
+          <mat-chip-row *ngFor="let produit of evenement.produits" (removed)="remove(produit)">
+            {{produit.libelle}}
+            <button matChipRemove [attr.aria-label]="'Supprimer ' + produit.libelle">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        </mat-chip-grid>
+        <input placeholder="Saisissez le nom d'un produit..." #produitsInput [formControl]="produitsCtrl"
+          [matChipInputFor]="chipGrid" [matAutocomplete]="auto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="add($event)" />
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+          <mat-option *ngFor="let produit of filteredProduits | async" [value]="produit.libelle">
+            {{produit.libelle}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      <div fxLayout="row" fxLayoutAlign="center">
+        <button mat-raised-button color="secondary" type="button" (click)="previousPage()" title="Annuler">Annuler</button>
+        <button mat-raised-button color="primary" type="submit"
+        [title]="isAddForm ? 'Ajouter' : 'Enregistrer'"
+          [disabled]="isSubmitting || !evenementForm.form.valid">{{isAddForm ? 'Ajouter' : 'Enregistrer'}}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

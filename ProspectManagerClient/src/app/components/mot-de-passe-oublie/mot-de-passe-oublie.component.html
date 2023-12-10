@@ -1,0 +1,36 @@
+<div fxLayout="column" fxLayoutAlign="center center" style="height: 100vh;">
+  <ng-container *ngIf="isSubmitting">
+    <div fxLayoutAlign="center" fxLayout="column" style="flex: 1;">
+      <app-loader></app-loader>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="!isSubmitting">
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <mat-card class="center-container" style="max-width: 500px;">
+        <mat-card-header fxLayoutAlign="center center">
+          <mat-card-title>Demande de réinitialisation du mot de passe</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p style="text-align: center;">Après avoir soumis votre demande, vous recevrez un email contenant un lien pour
+            définir un nouveau mot de passe. Ce lien sera valide pendant 1 heure.</p>
+          <form #motdepasseoublieForm="ngForm" (ngSubmit)="onSubmit(motdepasseoublieForm)">
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label>Indiquer votre adresse email</mat-label>
+              <input matInput placeholder="Saisissez votre email" type="email" name="username" [(ngModel)]="email"
+                required email #emailInput="ngModel"> <mat-error
+                *ngIf="emailInput.invalid && emailInput.errors?.['email']">Veuillez saisir une adresse email
+                valide</mat-error>
+            </mat-form-field>
+            <br>
+            <div fxLayout="row" fxLayoutAlign="center">
+              <button mat-raised-button color="secondary" type="button" routerLink=".." title="Annuler">Annuler</button>
+              <button mat-raised-button color="primary"
+                type="submit" [disabled]="!motdepasseoublieForm.form.valid || isSubmitting"
+                title="Lancer la procédure">Lancer la procédure</button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-container>
+</div>

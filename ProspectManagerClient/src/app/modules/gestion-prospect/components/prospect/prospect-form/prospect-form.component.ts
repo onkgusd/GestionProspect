@@ -5,7 +5,12 @@ import { Router } from '@angular/router';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { Statut } from '../../../models/statut';
 import { StatutService } from '../../../services/statut.service';
-import { BehaviorSubject } from 'rxjs';
+import { TypeOrganisme } from '../../../models/type-organisme';
+import { TypeOrganismeService } from '../../../services/type-organisme.service';
+import { SecteurGeographique } from '../../../models/secteur-geographique';
+import { SecteurGeographiqueService } from '../../../services/secteur-geographique.service';
+import { Location } from '@angular/common';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-prospect-form',
@@ -17,11 +22,26 @@ export class ProspectFormComponent implements OnInit {
   @Input() isAddForm: boolean = false;
   isSubmitting: boolean = false;
   statuts: Statut[];
-  constructor(private prospectService: ProspectService, private router: Router, private snackbarService: SnackbarService, private statutService: StatutService) { }
+  secteursGeographiques: SecteurGeographique[];
+  typesOrganisme: TypeOrganisme[];
+
+  constructor(private prospectService: ProspectService,
+    private router: Router,
+    private snackbarService: SnackbarService,
+    private statutService: StatutService,
+    private typeOrganismeService: TypeOrganismeService,
+    private secteurGeographiqueService: SecteurGeographiqueService,
+    private location: Location) { }
 
   ngOnInit(): void {
-    this.statutService.getStatuts().subscribe(statuts =>
-        this.statuts = statuts
+    this.statutService.getAll().subscribe(statuts =>
+      this.statuts = statuts.filter(s => s.actif || s.id === this.prospect.statut?.id)
+    );
+    this.typeOrganismeService.getAll().subscribe(typesOrganisme =>
+      this.typesOrganisme = typesOrganisme.filter(to => to.actif || to.id === this.prospect.typeOrganisme?.id)
+    );
+    this.secteurGeographiqueService.getAll().subscribe(secteursGeographiques =>
+      this.secteursGeographiques = secteursGeographiques.filter(sg => sg.actif || sg.id === this.prospect.secteurGeographique?.id)
     );
   }
 
@@ -29,28 +49,42 @@ export class ProspectFormComponent implements OnInit {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.prospectService.addProspect(this.prospect).subscribe({
+      this.prospectService.add(this.prospect)
+      .pipe(finalize(() => this.isSubmitting = false))
+      .subscribe({
         next: prospect => {
-          this.router.navigate(['prospects']);
-          this.snackbarService.openErrorSnackBar(`Ajout de "${prospect.nom}" réussi !`);
+          this.router.navigate(['prospects', prospect.id]);
+          this.snackbarService.openSuccessSnackBar(`😊 Ajout de "${prospect.nom}" réussi !`);
         },
-        error: error => this.snackbarService.openErrorSnackBar(`Oups, une erreur technique est survenue lors de l'ajout :(`),
-        complete: () => (this.isSubmitting = false)
+        error: error => this.snackbarService.openErrorSnackBar(`😖 Oups, une erreur technique est survenue lors de l'ajout.`),
       });
     } else {
-      this.prospectService.updateProspect(this.prospect).subscribe({
+      this.prospectService.update(this.prospect)
+      .pipe(finalize(() => this.isSubmitting = false))
+      .subscribe({
         next: prospect => {
-          this.router.navigate(['prospects']);
-          this.snackbarService.openErrorSnackBar(`Mise à jour de "${prospect.nom}" réussie !`);
+          this.router.navigate(['prospects', prospect.id]);
+          this.snackbarService.openSuccessSnackBar(`👌 Mise à jour de "${prospect.nom}" réussie !`);
         },
         error: error =>
-          this.snackbarService.openErrorSnackBar(`Oups, une erreur technique est survenue lors de la sauvegarde :(`),
-        complete: () => (this.isSubmitting = false)
+          this.snackbarService.openErrorSnackBar(`🙄 Oups, une erreur technique est survenue lors de la sauvegarde.`),
       });
     }
   }
-  
+
   compareStatuts(statut1: Statut, statut2: Statut): boolean {
     return statut1 && statut2 ? statut1.id === statut2.id : statut1 === statut2;
+  }
+
+  compareTypesOrganisme(typeOrganisme1: TypeOrganisme, typeOrganisme2: TypeOrganisme): boolean {
+    return typeOrganisme1 && typeOrganisme2 ? typeOrganisme1.id === typeOrganisme2.id : typeOrganisme1 === typeOrganisme2;
+  }
+
+  compareSecteursGeographiques(secteur1: TypeOrganisme, secteur2: TypeOrganisme): boolean {
+    return secteur1 && secteur2 ? secteur1.id === secteur2.id : secteur1 === secteur2;
+  }
+
+  previousPage() {
+    this.location.back();
   }
 }

@@ -1,4 +1,6 @@
 export const environment = {
     production: false,
-    baseUrl: 'https://localhost:7282'
+    webapiBaseUrl: 'https://localhost:7282',
+    passwordLength: 12,
+    companyName: "Université Jules Verne"
   };

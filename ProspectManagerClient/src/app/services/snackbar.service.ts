@@ -10,28 +10,27 @@ export class SnackbarService {
 
   openSnackBar(message: string, duration: number = 5000) {
     this.snackBar.open(message, 'Fermer', {
-      duration: duration,
+      duration: duration
     });
   }
 
   openErrorSnackBar(message: string, duration: number = 5000) {
     this.snackBar.open(message, 'Fermer', {
       duration: duration,
-      panelClass: ['snack-error']
+      panelClass: 'snack-error'
     });
   }
 
   openSuccessSnackBar(message: string, duration: number = 5000) {
     this.snackBar.open(message, 'Fermer', {
-      duration: duration,
-      panelClass: ['mat-success-bar']
+      duration: duration
     });
   }
 
   openWarningSnackBar(message: string, duration: number = 5000) {
     this.snackBar.open(message, 'Fermer', {
       duration: duration,
-      panelClass: ['mat-warning-bar']
+      panelClass: 'snack-warning'
     });
   }
 

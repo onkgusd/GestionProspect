@@ -10,10 +10,6 @@ body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.clickable {
-    cursor: pointer;
-}
-
 .basic-form {
     min-width: 150px;
     max-width: 500px;
@@ -34,8 +30,106 @@ body {
     margin-bottom: 1.4rem;
 }
 
-button.floating-button {
+button.floating-button,
+div.floating-button {
     position: fixed;
-    bottom: 25px;
-    right: 25px;
+    bottom: -0em;
+    right: -0em;
+    z-index: 1;
+
+    transition: transform 0.3s ease-in-out,  opacity 0.3s ease-in-out;;
+    transform: scale(0.7);
+    opacity: 0.9;
+
+    &:hover {
+        transform: scale(1.2);
+        right: 1em;
+        bottom: 1em;
+        opacity: 1;
+    }
+
+    & button {
+        margin-bottom: 10px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+tr,
+th {
+    .right-align {
+        text-align: right;
+    }
+
+    &.inactive-row {
+        background-color: lighten(grey, 45%);
+        color: #757575;
+    }
+
+    &.clickable {
+        cursor: pointer;
+    }
+
+    &.clickable:hover {
+        background-color: lighten(grey, 40%);
+    }
+}
+
+.snack-error {
+    --mdc-snackbar-container-color: rgb(202, 56, 56);
+}
+
+.snack-warning {
+    --mdc-snackbar-container-color: rgb(152, 123, 7);
+}
+
+@media screen {
+    .only-for-printing {
+        display: none;
+    }
+}
+
+@media print {
+    @page {
+        size: landscape;
+    }
+
+    body *:not(:has(.print-section)):not(.print-section):not(.print-section *) {
+        display: none !important;
+    }
+
+    mat-sidenav-container.mat-drawer-container {
+        overflow: visible;
+    }
+
+    mat-sidenav-content {
+        margin-left: 0 !important;
+        position: static !important;
+
+        & * {
+            box-shadow: none !important;
+        }
+
+        &.mat-drawer-content {
+            overflow: visible;
+        }
+    }
+
+    .print-section {
+        position: static;
+        overflow: visible;
+        width: auto;
+        max-height: none;
+        float: none;
+    }
+
+    textarea {
+        border: none;
+    }
+
+    .no-print {
+        display: none;
+    }
 }

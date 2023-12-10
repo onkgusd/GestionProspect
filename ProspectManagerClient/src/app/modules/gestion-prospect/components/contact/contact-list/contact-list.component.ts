@@ -4,6 +4,10 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Contact } from '../../../models/contact';
 import { ContactService } from '../../../services/contact.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DeleteConfirmationDialogComponent } from 'src/app/components/delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-contact-list',
@@ -13,27 +17,91 @@ import { ContactService } from '../../../services/contact.service';
 
 export class ContactListComponent implements OnInit {
   contacts: MatTableDataSource<Contact>;
-  displayedColumns: string[] = ['nom', 'fonction', 'email', 'telephone', 'actif'];
+  displayedColumns: string[] = ['nom', 'fonction', 'email', 'telephone', 'actions'];
+  isLoading: boolean;
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort)
+  set sort(value: MatSort) {
+    if (this.contacts) {
+      this.contacts.sort = value;
+    }
+  }
+
+  @ViewChild(MatPaginator)
+  set paginator(value: MatPaginator) {
+    if (this.contacts) {
+      this.contacts.paginator = value;
+    }
+  }
+
   @Input() idProspect: number;
   @Input() contactList: Contact[];
 
-  constructor(private contactService: ContactService) { }
+  constructor(public dialog: MatDialog, private contactService: ContactService, private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
     if (this.contactList) {
       this.contacts = new MatTableDataSource(this.contactList);
     }
     else {
-      this.contactService.getContacts(this.idProspect).subscribe((contacts: Contact[]) => {
-        this.contacts = new MatTableDataSource(contacts);
-      });
+      this.contactService.getAll(this.idProspect)
+        .pipe(finalize(() => this.isLoading = false))
+        .subscribe(
+          {
+            next: (contacts: Contact[]) => {
+              this.contacts = new MatTableDataSource(contacts);
+            },
+            error: error => this.snackbarService.openErrorSnackBar("😵 Erreur lors du chargement des contacts.")
+          });
     }
+  }
 
-    this.contacts.sort = this.sort;
-    this.contacts.paginator = this.paginator;
+  openDeleteConfirmationDialog(contact: Contact): void {
+    const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+      data: { message: 'Voulez-vous vraiment supprimer ce contact ?' }
+    });
 
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteContact(contact);
+      }
+    });
+  }
+
+  private deleteContact(contact: Contact): void {
+    this.contactService.delete(contact).subscribe(
+      {
+        next: (deleteResponse) => {
+          const index = this.contactList.findIndex((c) => c.id === contact.id);
+          if (index !== -1) {
+            this.contactList.splice(index, 1);
+          }
+
+          if (deleteResponse.statut === "Deleted") {
+            this.contacts.data = this.contactList;
+            this.contacts._updateChangeSubscription();
+            this.snackbarService.openSuccessSnackBar("🗑️ Suppression réussie.");
+          }
+          else {
+            contact.actif = false;
+            this.snackbarService.openWarningSnackBar("💤 Ce contact est utilisé, il a été marqué comme inactif.");
+          }
+        },
+        error: () => this.snackbarService.openErrorSnackBar("😟 Erreur lors de la mise à jour.")
+      }
+    );
+  }
+
+  switchStatus(contact: Contact, actif: boolean): void {
+
+    this.contactService.update({ ...contact, actif }).subscribe(
+      {
+        next: () => {
+          this.snackbarService.openSuccessSnackBar(`👌 ${actif ? "Réactivé" : "Désactivé"} avec succés !`);
+          contact.actif = actif;
+        },
+        error: () => this.snackbarService.openErrorSnackBar(`😒 Une erreur est survenue lors de la ${actif ? "résactivation" : "désactivation"}.`),
+      }
+    )
   }
 }

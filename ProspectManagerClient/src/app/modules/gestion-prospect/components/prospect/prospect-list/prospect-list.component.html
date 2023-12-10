@@ -1,10 +1,16 @@
-<div class="mat-elevation-z8" [hidden]="!prospects">
-  <table mat-table [dataSource]="prospects" matSort>
+<div class="mat-elevation-z8" [hidden]="isLoading || prospectList.length === 0">
+  <table mat-table [dataSource]="prospects" matSort class="print-section">
 
     <!-- ID Column -->
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
       <td mat-cell *matCellDef="let prospect">{{ prospect.id }}</td>
+    </ng-container>
+
+    <!-- Type organisme Column -->
+    <ng-container matColumnDef="type-organisme">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Type d'organisme</th>
+      <td mat-cell *matCellDef="let prospect">{{ prospect.typeOrganisme.libelle }}</td>
     </ng-container>
 
     <!-- Nom Column -->
@@ -19,10 +25,10 @@
       <td mat-cell *matCellDef="let prospect">{{ prospect.statut.libelle }}</td>
     </ng-container>
 
-    <!-- Departement Column -->
-    <ng-container matColumnDef="departement">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Departement</th>
-      <td mat-cell *matCellDef="let prospect">{{ prospect.departement }}</td>
+    <!-- Secteur Geographique Column -->
+    <ng-container matColumnDef="secteurGeographique">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Secteur géographique</th>
+      <td mat-cell *matCellDef="let prospect">{{ prospect.secteurGeographique.libelle }}</td>
     </ng-container>
 
     <!-- Adresse Column -->
@@ -52,19 +58,45 @@
     <!-- DateCreation Column -->
     <ng-container matColumnDef="dateCreation">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Date de création</th>
-      <td mat-cell *matCellDef="let prospect">{{ prospect.dateCreation }}</td>
+      <td mat-cell *matCellDef="let prospect">{{ prospect.dateCreation | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef class="right-align no-print"></th>
+      <td mat-cell *matCellDef="let produit" class="right-align no-print">
+        <button mat-icon-button (click)="$event.stopPropagation(); openDeleteConfirmationDialog(produit)"
+          title="Supprimer le prospect">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button *ngIf="!produit.actif" mat-icon-button (click)="$event.stopPropagation(); switchStatus(produit, true)"
+          title="Activer le prospect">
+          <mat-icon>settings_backup_restore</mat-icon>
+        </button>
+        <button *ngIf="produit.actif" mat-icon-button (click)="$event.stopPropagation(); switchStatus(produit, false)"
+          title="Desactiver le prospect">
+          <mat-icon>block</mat-icon>
+        </button>
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/prospects', row.id]"
-      class="clickable highlight-row"></tr>
+      class="clickable highlight-row" [ngClass]="{'inactive-row': !row.actif}"></tr>
   </table>
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>
 
-<app-loader *ngIf="!prospects"></app-loader>
+<app-loader *ngIf="isLoading"></app-loader>
 
-<button mat-fab color="primary" class="floating-button" routerLink="/prospects/add">
-  <mat-icon>add</mat-icon>
-</button>
-
+<div class="floating-button" [ngClass]="{'expanded': areButtonsExpanded}" fxLayout="column" onblur="toggleButtons()">
+  <button mat-fab color="primary" (click)="printList()" *ngIf="isPrintable" title="Imprimer la liste">
+    <mat-icon>print</mat-icon>
+  </button>
+  <button mat-fab color="primary" (click)="exportToCsv()" *ngIf="isPrintable" title="Exporter la liste">
+    <mat-icon>file_download</mat-icon>
+  </button>
+  <button mat-fab color="primary" routerLink="/prospects/add" title="Ajouter un prospect">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

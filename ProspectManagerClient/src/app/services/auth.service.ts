@@ -3,10 +3,15 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { jwtDecode } from "jwt-decode";
+import { ReinitMotDePasseDto } from '../modules/gestion-prospect/dto/reinit-motdepasse-dto';
+import { Utilisateur } from '../modules/gestion-prospect/models/utilisateur';
+import { SnackbarService } from './snackbar.service';
+import { SearchService } from '../modules/gestion-prospect/services/search.service';
 
 interface AuthResponse {
   token: string;
   expirationDate: Date;
+  utilisateur: Utilisateur;
 }
 
 @Injectable({
@@ -17,7 +22,7 @@ export class AuthService {
   private token: string | undefined = localStorage.getItem("token") ?? void 0;
   private role: string | undefined;
   private userName: string | undefined;
-  
+
   private _isLoggedIn = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this._isLoggedIn.asObservable();
 
@@ -27,23 +32,23 @@ export class AuthService {
   private _isAdmin = new BehaviorSubject<boolean>(false);
   isAdmin$ = this._isAdmin.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private snackbarService: SnackbarService, private searchService: SearchService) {
     if (this.token)
       this.readToken(this.token);
-   }
+  }
 
-  login(login: string, password: string): Observable<boolean> {
+  login(login: string, password: string): Observable<Utilisateur | boolean> {
     const httpOptions = {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     }
 
-    return this.http.post<AuthResponse>(`${environment.baseUrl}/authentication/getToken`, { login, password }, httpOptions).pipe(
+    return this.http.post<AuthResponse>(`${environment.webapiBaseUrl}/authentication/getToken`, { login, password }, httpOptions).pipe(
       map((response: AuthResponse) => {
         localStorage.setItem("token", response.token)
         localStorage.setItem("expires_at", response.expirationDate.toString());
         this.token = response.token;
         this.readToken(response.token);
-        return true;
+        return response.utilisateur;
       }),
       catchError((error) => {
         console.log(error);
@@ -58,13 +63,27 @@ export class AuthService {
     this.userName = void 0;
     localStorage.removeItem("token");
     localStorage.removeItem("expires_at");
+    this.searchService.reinitSearch();
     this._userName.next("");
     this._isLoggedIn.next(false);
     this._isAdmin.next(false);
   }
 
   getToken(): string | undefined {
-    return this.token;
+    let tokenExpiry = localStorage.getItem("expires_at");
+
+    if (tokenExpiry) {
+      let expiryDate = new Date(tokenExpiry);
+      if (expiryDate > new Date()) {
+        return this.token;
+      }
+      else {
+        this.logout()
+        this.snackbarService.openWarningSnackBar("😶‍🌫️ Votre session a expiré, vous devez vous réauthentifier.");
+      }
+    }
+
+    return void 0;
   }
 
   isAdmin(): boolean {
@@ -74,7 +93,7 @@ export class AuthService {
   private readToken(token: string): boolean {
     const decodedToken = this.getDecodedToken(token);
 
-    if (decodedToken){
+    if (decodedToken) {
       this.role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       this.userName = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] as string;
       this._userName.next(this.userName);
@@ -96,5 +115,33 @@ export class AuthService {
     catch (Error) {
       return null;
     }
+  }
+
+  demandeLienReinitialisationMotDePasse(email: string) {
+    const httpOptions = {
+      headers: new HttpHeaders({ "Content-Type": "application/json" })
+    }
+
+    return this.http.post(`${environment.webapiBaseUrl}/authentication/demande-reinitialisation`, { email }, httpOptions).pipe(
+      map(() => true),
+      catchError((error) => {
+        console.log(error);
+        return of(false);
+      })
+    );
+  }
+
+  reinitMotDePasse(email: string, nouveauMotDePasse: string, token: string): Observable<boolean> {
+    const httpOptions = {
+      headers: new HttpHeaders({ "Content-Type": "application/json" })
+    }
+    const request: ReinitMotDePasseDto = { email, nouveauMotDePasse, token };
+
+    return this.http.post<any>(`${environment.webapiBaseUrl}/authentication/reinitialiser-motdepasse`, request, httpOptions).pipe(
+      catchError((error) => {
+        console.log(error);
+        return of(false);
+      })
+    );
   }
 }

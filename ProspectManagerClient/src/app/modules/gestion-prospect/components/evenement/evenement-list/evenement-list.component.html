@@ -1,0 +1,88 @@
+<div class="mat-elevation-z8" [hidden]="isLoading">
+    <mat-card>
+        <mat-card-content fxLayout="column" fxLayoutAlign="center stretch">
+            <table mat-table [dataSource]="evenements" matSort>
+
+                <!-- ID Column -->
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                    <td mat-cell *matCellDef="let evenement">{{ evenement.id }}</td>
+                </ng-container>
+
+                <!-- Type Evenement Column -->
+                <ng-container matColumnDef="typeEvenement">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Type d'Événement</th>
+                    <td mat-cell *matCellDef="let evenement">{{ evenement.typeEvenement.libelle }}</td>
+                </ng-container>
+
+                <!-- Date Evenement Column -->
+                <ng-container matColumnDef="dateEvenement">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+                    <td mat-cell *matCellDef="let evenement">{{ evenement.dateEvenement | date: 'dd/MM/yyyy' }}</td>
+                </ng-container>
+
+                <!-- Resultat Column -->
+                <ng-container matColumnDef="resultat">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Résultat</th>
+                    <td mat-cell *matCellDef="let evenement">{{ evenement.resultat }}</td>
+                </ng-container>
+
+                <!-- Utilisateur Column -->
+                <ng-container matColumnDef="utilisateur">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Utilisateur</th>
+                    <td mat-cell *matCellDef="let evenement">{{ evenement.utilisateur?.login }}</td>
+                </ng-container>
+
+                <!-- Contact Column -->
+                <ng-container matColumnDef="contact">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Contact</th>
+                    <td mat-cell *matCellDef="let evenement">{{ evenement.contact?.nom }}</td>
+                </ng-container>
+
+                <!-- Produits Column -->
+                <ng-container matColumnDef="produit">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Produits</th>
+                    <td mat-cell *matCellDef="let evenement">
+                        <mat-chip-listbox>
+                            <mat-chip *ngFor="let produit of evenement.produits" color="warn"
+                                [routerLink]="['/produits', produit.id]">
+                                {{produit.libelle}}
+                            </mat-chip>
+                        </mat-chip-listbox>
+                    </td>
+                </ng-container>
+
+                <!-- Evaluation Column -->
+                <ng-container matColumnDef="evaluation">
+                    <th mat-header-cell *matHeaderCellDef>Evaluation</th>
+                    <td mat-cell *matCellDef="let evenement">
+                        <app-rating
+                            [customIcons]="['sentiment_very_dissatisfied', 'sentiment_dissatisfied', 'sentiment_neutral', 'sentiment_satisfied', 'sentiment_very_satisfied']"
+                            [customColors]="['#C2E0F4', '#A3D8F4', '#7FD9F3', '#98E2A3', '#72C79B']"
+                            [(rating)]="evenement.evaluation" [readonly]="true">
+                        </app-rating>
+                    </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let evenement">
+                        <button mat-icon-button title="Supprimer l'événement"
+                            (click)="$event.stopPropagation(); openDeleteConfirmationDialog(evenement)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['evenements', row.id]"
+                    class="clickable"></tr>
+            </table>
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<button mat-fab color="primary" class="floating-button" [routerLink]="['evenements', 'add']" title="Ajouter un événement">
+    <mat-icon>add</mat-icon>
+</button>

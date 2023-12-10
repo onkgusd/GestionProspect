@@ -1,2 +1,9 @@
-<app-produit-form [produit]="produit" *ngIf="produit" />
-<app-loader *ngIf="!produit"></app-loader>
+<mat-tab-group *ngIf="!isLoading && produit">
+    <mat-tab label="Produit">
+        <app-produit-form [produit]="produit"/>
+    </mat-tab>
+    <mat-tab label="Prospects ({{produit.produitProspects.length}})">
+        <app-produit-prospect-for-produit-list [produit]="produit" />
+    </mat-tab>
+</mat-tab-group>
+<app-loader *ngIf="isLoading"></app-loader>

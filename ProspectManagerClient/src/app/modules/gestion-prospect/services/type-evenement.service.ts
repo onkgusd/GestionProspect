@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { TypeEvenement } from '../models/type-evenement';
 import { environment } from 'src/environments/environment';
 import { Observable, catchError, tap } from 'rxjs';
+import { DeleteResponseDto } from '../dto/delete-response-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,8 @@ export class TypeEvenementService {
 
   constructor(private http: HttpClient) { }
 
-  getTypesEvenement(): Observable<TypeEvenement[]> {
-    return this.http.get<TypeEvenement[]>(`${environment.baseUrl}/types-evenement`).pipe(
-      tap(typeEvenementList => console.log(typeEvenementList)),
+  getAll(): Observable<TypeEvenement[]> {
+    return this.http.get<TypeEvenement[]>(`${environment.webapiBaseUrl}/types-evenement`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -21,9 +21,8 @@ export class TypeEvenementService {
     );
   }
 
-  getTypeEvenement(id: number): Observable<TypeEvenement> {
-    return this.http.get<TypeEvenement>(`${environment.baseUrl}/types-evenement/${id}`).pipe(
-      tap(typeEvenement => console.log(typeEvenement)),
+  get(id: number): Observable<TypeEvenement> {
+    return this.http.get<TypeEvenement>(`${environment.webapiBaseUrl}/types-evenement/${id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -31,13 +30,12 @@ export class TypeEvenementService {
     );
   }
 
-  addTypeEvenement(typeEvenement: TypeEvenement): Observable<TypeEvenement> {
+  add(typeEvenement: TypeEvenement): Observable<TypeEvenement> {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.post<TypeEvenement>(`${environment.baseUrl}/types-evenement`, typeEvenement, httpOptions).pipe(
-      tap(produit => console.log(produit)),
+    return this.http.post<TypeEvenement>(`${environment.webapiBaseUrl}/types-evenement`, typeEvenement, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -45,13 +43,12 @@ export class TypeEvenementService {
     )
   }
 
-  updateTypeEvenement(typeEvenement: TypeEvenement) {
+  update(typeEvenement: TypeEvenement) {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.put<TypeEvenement>(`${environment.baseUrl}/types-evenement/${typeEvenement.id}`, typeEvenement, httpOptions).pipe(
-      tap(response => console.log(response)),
+    return this.http.put<TypeEvenement>(`${environment.webapiBaseUrl}/types-evenement/${typeEvenement.id}`, typeEvenement, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -59,9 +56,8 @@ export class TypeEvenementService {
     );
   }
 
-  deleteProduit(typeEvenement: TypeEvenement) {
-    return this.http.delete<TypeEvenement>(`${environment.baseUrl}/types-evenement/${typeEvenement.id}`).pipe(
-      tap(response => console.log(response)),
+  delete(idTypeEvenement: number)  {
+    return this.http.delete<DeleteResponseDto>(`${environment.webapiBaseUrl}/types-evenement/${idTypeEvenement}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

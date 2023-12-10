@@ -1,0 +1,44 @@
+<div fxLayout="column" fxLayoutAlign="center center" style="height: 100vh;">
+    <ng-container *ngIf="isSubmitting">
+        <div fxLayoutAlign="center" fxLayout="column" style="flex: 1; min-width: 400px;">
+            <app-loader></app-loader>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!isSubmitting">
+        <div fxLayout="row" fxLayoutAlign="center center">
+            <mat-card class="center-container" style="max-width: 500px;">
+                <mat-card-header fxLayoutAlign="center center">
+                    <mat-card-title>Définition du mot de passe</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <form #reinitMotdepasseForm="ngForm" (ngSubmit)="onSubmit(reinitMotdepasseForm)">
+                        <mat-form-field appearance="fill" class="full-width">
+                            <mat-label>Confirmer votre adresse email</mat-label>
+                            <input matInput placeholder="exemple@exemple.fr" type="email" name="username"
+                                [(ngModel)]="email" required email #emailInput="ngModel"> <mat-error
+                                *ngIf="emailInput.invalid && emailInput.errors?.['email']">Veuillez saisir une adresse
+                                email valide</mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="full-width">
+                            <mat-label>Nouveau mot de passe</mat-label>
+                            <input matInput placeholder="Mot de passe" #passwordInput name="motdepasse" minlength="12"
+                                [(ngModel)]="motdepasse" required [type]="showPassword ? 'text' : 'password'"
+                                (input)="setPasswordHasBeenChanged()">
+                            <mat-icon matSuffix *ngIf="passwordHasBeenChanged"
+                                (click)="showPassword = !showPassword">{{showPassword ?
+                                'visibility' : 'visibility_off'}}</mat-icon>
+                            <mat-icon matSuffix (click)="generatePassword()">refresh</mat-icon>
+                        </mat-form-field>
+                        <br>
+                        <div fxLayout="row" fxLayoutAlign="center">
+                            <button mat-raised-button color="secondary" type="button" routerLink=".." title="Annuler">Annuler</button>
+                            <button mat-raised-button color="primary" type="submit"
+                                title="Définir le mot de passe"
+                                [disabled]="!reinitMotdepasseForm.form.valid || isSubmitting">Définir le mot de passe</button>
+                        </div>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </ng-container>
+</div>

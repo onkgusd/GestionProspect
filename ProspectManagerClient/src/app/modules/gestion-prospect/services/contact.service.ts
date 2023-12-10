@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, tap } from 'rxjs';
 import { Contact } from '../models/contact';
 import { environment } from 'src/environments/environment';
+import { DeleteResponseDto } from '../dto/delete-response-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,8 @@ export class ContactService {
   
   constructor(private http: HttpClient) { }
 
-  getContacts(idProspect: number): Observable<Contact[]> {
-    return this.http.get<Contact[]>(`${environment.baseUrl}/prospects/${idProspect}/contacts`).pipe(
-      tap(contactsList => console.log(contactsList)),
+  getAll(idProspect: number): Observable<Contact[]> {
+    return this.http.get<Contact[]>(`${environment.webapiBaseUrl}/prospects/${idProspect}/contacts`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -21,9 +21,8 @@ export class ContactService {
     );
   }
 
-  getContact(id: number): Observable<Contact> {
-    return this.http.get<Contact>(`${environment.baseUrl}/contacts/${id}`).pipe(
-      tap(contact => console.log(contact)),
+  get(id: number): Observable<Contact> {
+    return this.http.get<Contact>(`${environment.webapiBaseUrl}/contacts/${id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -31,13 +30,12 @@ export class ContactService {
     );
   }
 
-  addContact(contact: Contact): Observable<Contact> {
+  add(contact: Contact, idProspect: number): Observable<Contact> {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.post<Contact>(`${environment.baseUrl}/contacts`, contact, httpOptions).pipe(
-      tap(contact => console.log(contact)),
+    return this.http.post<Contact>(`${environment.webapiBaseUrl}/prospects/${idProspect}/contacts`, contact, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -45,13 +43,12 @@ export class ContactService {
     )
   }
 
-  updateContact(contact: Contact) {
+  update(contact: Contact) {
     const httpOptions = {
       headers : new HttpHeaders({"Content-Type": "application/json"})
     }
 
-    return this.http.put<Contact>(`${environment.baseUrl}/contacts/${contact.id}`, contact, httpOptions).pipe(
-      tap(response => console.log(response)),
+    return this.http.put<Contact>(`${environment.webapiBaseUrl}/contacts/${contact.id}`, contact, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -59,9 +56,8 @@ export class ContactService {
     );
   }
 
-  deleteContact(contact: Contact) {
-    return this.http.delete<Contact>(`${environment.baseUrl}/contacts/${contact.id}`).pipe(
-      tap(response => console.log(response)),
+  delete(contact: Contact) {
+    return this.http.delete<DeleteResponseDto>(`${environment.webapiBaseUrl}/contacts/${contact.id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

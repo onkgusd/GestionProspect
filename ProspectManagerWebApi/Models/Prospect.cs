@@ -1,24 +1,28 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProspectManagerWebApi.Models
 {
-    internal class Prospect : ITableHistorique
+    [Index(nameof(Nom), IsUnique = true)]
+    public class Prospect : ITableHistorique
     {
         public int Id { get; set; }
 
         [Required]
-        public string Nom { get; set; }
-        public string? Departement { get; set; }
+        public string Nom { get; set; } = "";
+        public SecteurGeographique SecteurGeographique { get; set; } = new SecteurGeographique();
         public string? Adresse { get; set; }
         public string? Telephone { get; set; }
         public string? Mail { get; set; }
         public string? SecteurActivite { get; set; }
-        public DateTime DateCreation { get; set; }
-        public Statut? Statut { get; set; }
-        public TypeOrganisme? TypeOrganisme { get; set; }
-        public ICollection<Contact>? Contacts { get; set; }
-        public Utilisateur? UtilisateurCreation { get; set; }
-        public ICollection<Modification>? Modifications { get; set; }
-        public ICollection<ProduitProspect>? ProduitProspects { get; set; }
+        public DateTimeOffset DateCreation { get; set; }
+        public Statut Statut { get; set; } = new Statut();
+        public bool Actif {  get; set; }
+        public TypeOrganisme TypeOrganisme { get; set; } = new TypeOrganisme();
+        public ICollection<Contact> Contacts { get; set; } = new List<Contact>();
+        public Utilisateur UtilisateurCreation { get; set; } = new Utilisateur();
+        public ICollection<Modification> Modifications { get; set; } = new List<Modification>();
+        public ICollection<ProduitProspect> ProduitProspects { get; set; } = new List<ProduitProspect>();
+        public ICollection<Evenement> Evenements { get; set; } = new List<Evenement>();
     }
 }

@@ -3,6 +3,8 @@ import { Produit } from '../../../models/produit';
 import { ProduitService } from '../../../services/produit-service';
 import { Router } from '@angular/router';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { Location } from '@angular/common';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-produit-form',
@@ -15,30 +17,38 @@ export class ProduitFormComponent {
 
   isSubmitting: boolean = false;
 
-  constructor(private produitService: ProduitService, private router: Router, private snackbarService: SnackbarService) { }
+  constructor(private produitService: ProduitService,
+    private snackbarService: SnackbarService,
+    private location: Location) { }
 
   onSubmit() {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.produitService.addProduits(this.produit).subscribe({
-        next: produit => {
-          this.router.navigate(['produits']);
-          this.snackbarService.openErrorSnackBar(`Ajout de "${produit.libelle}" réussie !`);
-        },
-        error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue l'ajout :(`),
-        complete: () => this.isSubmitting = false
-    });
+      this.produitService.add(this.produit)
+        .pipe(finalize(() => this.isSubmitting = false))
+        .subscribe({
+          next: produit => {
+            this.previousPage()
+            this.snackbarService.openSuccessSnackBar(`👌 Ajout de "${produit.libelle}" réussie !`);
+          },
+          error: error => this.snackbarService.openErrorSnackBar(`😵 Oupsss, une erreur technique est survenue l'ajout.`),
+        });
     }
     else {
-      this.produitService.updateProduit(this.produit).subscribe({
-        next: produit => {
-          this.router.navigate(['produits']);
-          this.snackbarService.openErrorSnackBar(`Mise à jour de "${produit.libelle}" réussie !`);
-        },
-        error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue lors de la sauvegarde :(`),
-        complete: () => this.isSubmitting = false
-      })
+      this.produitService.update(this.produit)
+        .pipe(finalize(() => this.isSubmitting = false))
+        .subscribe({
+          next: produit => {
+            this.previousPage()
+            this.snackbarService.openSuccessSnackBar(`👍 Mise à jour de "${produit.libelle}" réussie !`);
+          },
+          error: error => this.snackbarService.openErrorSnackBar(`😖 Oupsss, une erreur technique est survenue lors de la sauvegarde.`),
+        })
     }
+  }
+
+  previousPage() {
+    this.location.back();
   }
 }

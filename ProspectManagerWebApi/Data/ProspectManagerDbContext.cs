@@ -3,11 +3,19 @@ using ProspectManagerWebApi.Models;
 
 namespace ProspectManagerWebApi.Data
 {
-    internal class ProspectManagerDbContext : DbContext
+    public class ProspectManagerDbContext : DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public ProspectManagerDbContext(DbContextOptions<ProspectManagerDbContext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ProspectManager;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+        
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ProduitProspect>()
+                .HasKey(pp => new { pp.ProduitId, pp.ProspectId });
+
+            base.OnModelCreating(modelBuilder);
         }
 
         public virtual DbSet<Contact> Contacts { get; set; }
@@ -20,5 +28,7 @@ namespace ProspectManagerWebApi.Data
         public virtual DbSet<TypeEvenement> TypesEvenement { get; set; }
         public virtual DbSet<TypeOrganisme> TypesOrganisme { get; set; }
         public virtual DbSet<Utilisateur> Utilisateurs { get; set; }
+        public virtual DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+        public virtual DbSet<SecteurGeographique> SecteursGeographiques { get; set; }
     }
 }

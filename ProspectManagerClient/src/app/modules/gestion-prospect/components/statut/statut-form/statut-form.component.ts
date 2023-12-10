@@ -3,6 +3,7 @@ import { Statut } from '../../../models/statut';
 import { StatutService } from '../../../services/statut.service';
 import { Router } from '@angular/router';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-statut-form',
@@ -17,28 +18,30 @@ export class StatutFormComponent {
 
   constructor(private statutService: StatutService, private router: Router, private snackbarService: SnackbarService) { }
 
-  onSubmit(){
+  onSubmit() {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.statutService.addStatut(this.statut).subscribe({
-        next: statut => {
-          this.router.navigate(['statuts']);
-          this.snackbarService.openErrorSnackBar(`Ajout de "${statut.libelle}" réussi !`);
-        },
-        error: error => this.snackbarService.openErrorSnackBar(`Oups, une erreur technique est survenue lors de l'ajout :(`),
-        complete: () => this.isSubmitting = false
-      });
+      this.statutService.add(this.statut)
+        .pipe(finalize(() => this.isSubmitting = false))
+        .subscribe({
+          next: statut => {
+            this.router.navigate(['statuts']);
+            this.snackbarService.openSuccessSnackBar(`🎉 Ajout de "${statut.libelle}" réussi !`);
+          },
+          error: error => this.snackbarService.openErrorSnackBar(`😔 Oups, une erreur technique est survenue lors de l'ajout.`)
+        });
     }
     else {
-      this.statutService.updateStatut(this.statut).subscribe({
-        next: statut => {
-          this.router.navigate(['statuts']);
-          this.snackbarService.openErrorSnackBar(`Mise à jour de "${statut.libelle}" réussie !`);
-        },
-        error: error => this.snackbarService.openErrorSnackBar(`Oups, une erreur technique est survenue lors de la sauvegarde :(`),
-        complete: () => this.isSubmitting = false
-      });
+      this.statutService.update(this.statut)
+        .pipe(finalize(() => this.isSubmitting = false))
+        .subscribe({
+          next: statut => {
+            this.router.navigate(['statuts']);
+            this.snackbarService.openSuccessSnackBar(`👍 Mise à jour de "${statut.libelle}" réussie !`);
+          },
+          error: error => this.snackbarService.openErrorSnackBar(`😵 Oups, une erreur technique est survenue lors de la sauvegarde.`),
+        });
     }
   }
 }

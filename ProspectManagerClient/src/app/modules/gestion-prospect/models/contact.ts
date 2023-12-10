@@ -1,3 +1,5 @@
+import { Modification } from "./modification";
+
 export class Contact {
     id: number;
     nom: string;
@@ -5,5 +7,5 @@ export class Contact {
     email: string;
     telephone: string;
     actif: boolean = true;
-    prospectId: number;
+    modifications: Modification[];
 }

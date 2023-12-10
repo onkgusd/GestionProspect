@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { Contact } from '../../../models/contact';
-import { Router } from '@angular/router';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { ContactService } from '../../../services/contact.service';
 import { Location } from '@angular/common';
@@ -13,35 +12,34 @@ import { Location } from '@angular/common';
 export class ContactFormComponent {
   @Input() contact: Contact = new Contact();
   @Input() isAddForm: boolean = false;
-  @Input() prospectId: number;
+  @Input() idProspect: number;
 
   isSubmitting: boolean = false;
 
-  constructor(private contactService: ContactService, private router: Router, private snackbarService: SnackbarService, private location: Location) { }
+  constructor(private contactService: ContactService, private snackbarService: SnackbarService, private location: Location) { }
 
   onSubmit() {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.contact.prospectId = this.prospectId;
-      this.contactService.addContact(this.contact).subscribe({
+      this.contactService.add(this.contact, this.idProspect).subscribe({
         next: contact => {
           this.previousPage();
-          this.snackbarService.openErrorSnackBar(`Ajout de "${contact.nom}" réussi !`);
+          this.snackbarService.openSuccessSnackBar(`🤗 Ajout de "${contact.nom}" réussi !`);
         },
         error: error => {
-          this.snackbarService.openErrorSnackBar(`Oups, une erreur est survenue lors de l'ajout :(`);
+          this.snackbarService.openErrorSnackBar(`😖 Oups, une erreur est survenue lors de l'ajout.`);
           this.isSubmitting = false;
         }
       });
     } else {
-      this.contactService.updateContact(this.contact).subscribe({
+      this.contactService.update(this.contact).subscribe({
         next: contact => {
           this.previousPage();
-          this.snackbarService.openErrorSnackBar(`Mise à jour de "${contact.nom}" réussie !`);
+          this.snackbarService.openSuccessSnackBar(`👌 Mise à jour de "${contact.nom}" réussie !`);
         },
         error: error => {
-          this.snackbarService.openErrorSnackBar(`Oups, une erreur est survenue lors de la sauvegarde :(`);
+          this.snackbarService.openErrorSnackBar(`😟 Oups, une erreur est survenue lors de la sauvegarde.`);
           this.isSubmitting = false
         }
       });

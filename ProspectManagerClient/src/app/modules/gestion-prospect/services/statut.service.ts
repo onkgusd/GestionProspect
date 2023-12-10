@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Statut } from '../models/statut';
 import { environment } from 'src/environments/environment';
 import { Observable, catchError, tap } from 'rxjs';
+import { DeleteResponseDto } from '../dto/delete-response-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,8 @@ export class StatutService {
 
   constructor(private http: HttpClient) { }
 
-  getStatuts(): Observable<Statut[]> {
-    return this.http.get<Statut[]>(`${environment.baseUrl}/statuts`).pipe(
-      tap(statutList => console.log(statutList)),
+  getAll(): Observable<Statut[]> {
+    return this.http.get<Statut[]>(`${environment.webapiBaseUrl}/statuts`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -21,9 +21,8 @@ export class StatutService {
     );
   }
 
-  getStatut(id: number): Observable<Statut> {
-    return this.http.get<Statut>(`${environment.baseUrl}/statuts/${id}`).pipe(
-      tap(statut => console.log(statut)),
+  get(id: number): Observable<Statut> {
+    return this.http.get<Statut>(`${environment.webapiBaseUrl}/statuts/${id}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -31,13 +30,12 @@ export class StatutService {
     );
   }
 
-  addStatut(statut: Statut): Observable<Statut> {
+  add(statut: Statut): Observable<Statut> {
     const httpOptions = {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
 
-    return this.http.post<Statut>(`${environment.baseUrl}/statuts`, statut, httpOptions).pipe(
-      tap(statut => console.log(statut)),
+    return this.http.post<Statut>(`${environment.webapiBaseUrl}/statuts`, statut, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -45,13 +43,12 @@ export class StatutService {
     );
   }
 
-  updateStatut(statut: Statut) {
+  update(statut: Statut) {
     const httpOptions = {
       headers: new HttpHeaders({ "Content-Type": "application/json" })
     };
 
-    return this.http.put<Statut>(`${environment.baseUrl}/statuts/${statut.id}`, statut, httpOptions).pipe(
-      tap(response => console.log(response)),
+    return this.http.put<Statut>(`${environment.webapiBaseUrl}/statuts/${statut.id}`, statut, httpOptions).pipe(
       catchError((error) => {
         console.error(error);
         throw error;
@@ -59,9 +56,8 @@ export class StatutService {
     );
   }
 
-  deleteStatut(statut: Statut) {
-    return this.http.delete<Statut>(`${environment.baseUrl}/statuts/${statut.id}`).pipe(
-      tap(response => console.log(response)),
+  delete(idStatut: number) {
+    return this.http.delete<DeleteResponseDto>(`${environment.webapiBaseUrl}/statuts/${idStatut}`).pipe(
       catchError((error) => {
         console.error(error);
         throw error;

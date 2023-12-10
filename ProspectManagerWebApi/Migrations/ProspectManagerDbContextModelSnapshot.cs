@@ -17,7 +17,7 @@ namespace ProspectManagerWebApi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "7.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -79,25 +79,32 @@ namespace ProspectManagerWebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ContactId")
+                    b.Property<int?>("ContactId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DateEvenement")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("DateEvenement")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Evaluation")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProspectId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Resultat")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TypeEvenementId")
+                    b.Property<int?>("TypeEvenementId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UtilisateurId")
+                    b.Property<int?>("UtilisateurId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ContactId");
+
+                    b.HasIndex("ProspectId");
 
                     b.HasIndex("TypeEvenementId");
 
@@ -125,25 +132,31 @@ namespace ProspectManagerWebApi.Migrations
                     b.Property<int?>("ContactId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DateModification")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("DateModification")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<int?>("EvenementId")
                         .HasColumnType("int");
+
+                    b.Property<string>("JsonObjectBackup")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NouvelleValeur")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProduitProspectId")
+                    b.Property<int?>("ProduitId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProduitProspectProduitId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProduitProspectProspectId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ProspectId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Table")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UtilisateurId")
                         .HasColumnType("int");
@@ -154,13 +167,49 @@ namespace ProspectManagerWebApi.Migrations
 
                     b.HasIndex("EvenementId");
 
-                    b.HasIndex("ProduitProspectId");
+                    b.HasIndex("ProduitId");
 
                     b.HasIndex("ProspectId");
 
                     b.HasIndex("UtilisateurId");
 
+                    b.HasIndex("ProduitProspectProduitId", "ProduitProspectProspectId");
+
                     b.ToTable("Modifications");
+                });
+
+            modelBuilder.Entity("ProspectManagerWebApi.Models.PasswordResetToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("ExpirationDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("IPAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("UtilisateurId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UtilisateurId");
+
+                    b.ToTable("PasswordResetTokens");
                 });
 
             modelBuilder.Entity("ProspectManagerWebApi.Models.Produit", b =>
@@ -171,42 +220,46 @@ namespace ProspectManagerWebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool?>("Actif")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Libelle")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Reference")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Libelle")
+                        .IsUnique();
+
+                    b.HasIndex("Reference")
+                        .IsUnique();
 
                     b.ToTable("Produits");
                 });
 
             modelBuilder.Entity("ProspectManagerWebApi.Models.ProduitProspect", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProbabiliteSucces")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProduitId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProspectId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<DateTimeOffset>("DateProposition")
+                        .HasColumnType("datetimeoffset");
 
-                    b.HasIndex("ProduitId");
+                    b.Property<int>("ProbabiliteSucces")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProduitId", "ProspectId");
 
                     b.HasIndex("ProspectId");
 
@@ -221,43 +274,46 @@ namespace ProspectManagerWebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Actif")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Adresse")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DateCreation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Departement")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTimeOffset>("DateCreation")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Mail")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nom")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SecteurActivite")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("StatutId")
+                    b.Property<int?>("SecteurGeographiqueId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StatutId")
                         .HasColumnType("int");
 
                     b.Property<string>("Telephone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TypeOrganismeId")
+                    b.Property<int>("TypeOrganismeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UtilisateurCreationId")
+                    b.Property<int>("UtilisateurCreationId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Nom")
+                        .IsUnique();
+
+                    b.HasIndex("SecteurGeographiqueId");
 
                     b.HasIndex("StatutId");
 
@@ -268,6 +324,26 @@ namespace ProspectManagerWebApi.Migrations
                     b.ToTable("Prospects");
                 });
 
+            modelBuilder.Entity("ProspectManagerWebApi.Models.SecteurGeographique", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool?>("Actif")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Libelle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecteursGeographiques");
+                });
+
             modelBuilder.Entity("ProspectManagerWebApi.Models.Statut", b =>
                 {
                     b.Property<int>("Id")
@@ -276,11 +352,17 @@ namespace ProspectManagerWebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool?>("Actif")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Libelle")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Libelle")
+                        .IsUnique();
 
                     b.ToTable("Statuts");
                 });
@@ -293,11 +375,17 @@ namespace ProspectManagerWebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool?>("Actif")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Libelle")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Libelle")
+                        .IsUnique();
 
                     b.ToTable("TypesEvenement");
                 });
@@ -310,11 +398,17 @@ namespace ProspectManagerWebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool?>("Actif")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Libelle")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Libelle")
+                        .IsUnique();
 
                     b.ToTable("TypesOrganisme");
                 });
@@ -330,14 +424,15 @@ namespace ProspectManagerWebApi.Migrations
                     b.Property<bool>("Actif")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Admin")
-                        .HasColumnType("bit");
+                    b.Property<DateTimeOffset?>("DateConnexion")
+                        .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime>("DateConnexion")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("DateModificationMotDePasse")
+                        .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime>("DateModificationMotDePasse")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Empreinte")
                         .IsRequired()
@@ -345,9 +440,19 @@ namespace ProspectManagerWebApi.Migrations
 
                     b.Property<string>("Login")
                         .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Login")
+                        .IsUnique();
 
                     b.ToTable("Utilisateurs");
                 });
@@ -369,34 +474,38 @@ namespace ProspectManagerWebApi.Migrations
 
             modelBuilder.Entity("ProspectManagerWebApi.Models.Contact", b =>
                 {
-                    b.HasOne("ProspectManagerWebApi.Models.Prospect", null)
+                    b.HasOne("ProspectManagerWebApi.Models.Prospect", "Prospect")
                         .WithMany("Contacts")
                         .HasForeignKey("ProspectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Prospect");
                 });
 
             modelBuilder.Entity("ProspectManagerWebApi.Models.Evenement", b =>
                 {
                     b.HasOne("ProspectManagerWebApi.Models.Contact", "Contact")
                         .WithMany()
-                        .HasForeignKey("ContactId")
+                        .HasForeignKey("ContactId");
+
+                    b.HasOne("ProspectManagerWebApi.Models.Prospect", "Prospect")
+                        .WithMany("Evenements")
+                        .HasForeignKey("ProspectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ProspectManagerWebApi.Models.TypeEvenement", "TypeEvenement")
                         .WithMany()
-                        .HasForeignKey("TypeEvenementId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TypeEvenementId");
 
                     b.HasOne("ProspectManagerWebApi.Models.Utilisateur", "Utilisateur")
                         .WithMany()
-                        .HasForeignKey("UtilisateurId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UtilisateurId");
 
                     b.Navigation("Contact");
+
+                    b.Navigation("Prospect");
 
                     b.Navigation("TypeEvenement");
 
@@ -413,9 +522,9 @@ namespace ProspectManagerWebApi.Migrations
                         .WithMany("Modifications")
                         .HasForeignKey("EvenementId");
 
-                    b.HasOne("ProspectManagerWebApi.Models.ProduitProspect", null)
+                    b.HasOne("ProspectManagerWebApi.Models.Produit", null)
                         .WithMany("Modifications")
-                        .HasForeignKey("ProduitProspectId");
+                        .HasForeignKey("ProduitId");
 
                     b.HasOne("ProspectManagerWebApi.Models.Prospect", null)
                         .WithMany("Modifications")
@@ -427,7 +536,18 @@ namespace ProspectManagerWebApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ProspectManagerWebApi.Models.ProduitProspect", null)
+                        .WithMany("Modifications")
+                        .HasForeignKey("ProduitProspectProduitId", "ProduitProspectProspectId");
+
                     b.Navigation("Utilisateur");
+                });
+
+            modelBuilder.Entity("ProspectManagerWebApi.Models.PasswordResetToken", b =>
+                {
+                    b.HasOne("ProspectManagerWebApi.Models.Utilisateur", null)
+                        .WithMany("PasswordResetTokens")
+                        .HasForeignKey("UtilisateurId");
                 });
 
             modelBuilder.Entity("ProspectManagerWebApi.Models.ProduitProspect", b =>
@@ -451,17 +571,29 @@ namespace ProspectManagerWebApi.Migrations
 
             modelBuilder.Entity("ProspectManagerWebApi.Models.Prospect", b =>
                 {
+                    b.HasOne("ProspectManagerWebApi.Models.SecteurGeographique", "SecteurGeographique")
+                        .WithMany()
+                        .HasForeignKey("SecteurGeographiqueId");
+
                     b.HasOne("ProspectManagerWebApi.Models.Statut", "Statut")
                         .WithMany()
-                        .HasForeignKey("StatutId");
+                        .HasForeignKey("StatutId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ProspectManagerWebApi.Models.TypeOrganisme", "TypeOrganisme")
                         .WithMany()
-                        .HasForeignKey("TypeOrganismeId");
+                        .HasForeignKey("TypeOrganismeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ProspectManagerWebApi.Models.Utilisateur", "UtilisateurCreation")
                         .WithMany()
-                        .HasForeignKey("UtilisateurCreationId");
+                        .HasForeignKey("UtilisateurCreationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SecteurGeographique");
 
                     b.Navigation("Statut");
 
@@ -482,6 +614,8 @@ namespace ProspectManagerWebApi.Migrations
 
             modelBuilder.Entity("ProspectManagerWebApi.Models.Produit", b =>
                 {
+                    b.Navigation("Modifications");
+
                     b.Navigation("ProduitProspects");
                 });
 
@@ -494,9 +628,16 @@ namespace ProspectManagerWebApi.Migrations
                 {
                     b.Navigation("Contacts");
 
+                    b.Navigation("Evenements");
+
                     b.Navigation("Modifications");
 
                     b.Navigation("ProduitProspects");
+                });
+
+            modelBuilder.Entity("ProspectManagerWebApi.Models.Utilisateur", b =>
+                {
+                    b.Navigation("PasswordResetTokens");
                 });
 #pragma warning restore 612, 618
         }

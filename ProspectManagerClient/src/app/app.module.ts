@@ -1,4 +1,4 @@
-import { NgModule, Provider } from '@angular/core';
+import { LOCALE_ID, NgModule, Provider } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -30,10 +30,21 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { LoaderModule } from './modules/loader/loader.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
+import { DeleteConfirmationDialogComponent } from './components/delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { ForbiddenComponent } from './components/forbidden/forbidden.component';
+import { MotDePasseOublieComponent } from './components/mot-de-passe-oublie/mot-de-passe-oublie.component';
+import { ReinitMotDePasseComponent } from './components/reinit-mot-de-passe/reinit-mot-de-passe.component';
+import { DatePipe, registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+
+registerLocaleData(localeFr);
 
 const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
   { path: "login", component: LoginComponent },
+  { path: "forbidden", component: ForbiddenComponent },
+  { path: "login/mot-de-passe-oublie", component: MotDePasseOublieComponent },
+  { path: "login/reinit-mot-de-passe", component: ReinitMotDePasseComponent },
   { path: "**", component: PageNotFoundComponent }
 ];
 
@@ -41,7 +52,11 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     LoginComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    DeleteConfirmationDialogComponent,
+    ForbiddenComponent,
+    MotDePasseOublieComponent,
+    ReinitMotDePasseComponent
   ],
   imports: [
     HttpClientModule,
@@ -69,11 +84,13 @@ const routes: Routes = [
     GestionProspectModule,
     LoaderModule
   ],
-  providers: [SnackbarService,     {
+  providers: [SnackbarService, {
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptorService,
     multi: true
-  } as Provider],
+  } as Provider,
+    { provide: LOCALE_ID, useValue: 'fr-FR' },
+    DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

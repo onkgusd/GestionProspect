@@ -17,13 +17,20 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDividerModule } from '@angular/material/divider'
+
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoaderModule } from '../loader/loader.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { ProduitsListComponent } from './components/produit/produits-list/produits-list.component';
+import { ProduitListComponent } from './components/produit/produit-list/produit-list.component';
 import { ProduitAddComponent } from './components/produit/produit-add/produit-add.component';
 import { ProduitFormComponent } from './components/produit/produit-form/produit-form.component';
 import { ProduitEditComponent } from './components/produit/produit-edit/produit-edit.component';
@@ -43,10 +50,34 @@ import { StatutListComponent } from './components/statut/statut-list/statut-list
 import { StatutFormComponent } from './components/statut/statut-form/statut-form.component';
 import { StatutEditComponent } from './components/statut/statut-edit/statut-edit.component';
 import { StatutAddComponent } from './components/statut/statut-add/statut-add.component';
+import { ProduitProspectListForProspectComponent } from './components/produit-prospect/produit-prospect-list-for-prospect/produit-prospect-list-for-prospect.component';
+import { RatingComponent } from 'src/app/components/rating/rating.component';
+import { ProduitProspectDialogComponent } from './components/produit-prospect/produit-prospect-dialog/produit-prospect-dialog.component';
+import { EvenementListComponent } from './components/evenement/evenement-list/evenement-list.component';
+import { EvenementFormComponent } from './components/evenement/evenement-form/evenement-form.component';
+import { EvenementEditComponent } from './components/evenement/evenement-edit/evenement-edit.component';
+import { EvenementAddComponent } from './components/evenement/evenement-add/evenement-add.component';
+import { AdminGuard } from 'src/app/admin.guard';
+import { UtilisateurListComponent } from './components/utilisateur/utilisateur-list/utilisateur-list.component';
+import { UtilisateurFormComponent } from './components/utilisateur/utilisateur-form/utilisateur-form.component';
+import { UtilisateurEditComponent } from './components/utilisateur/utilisateur-edit/utilisateur-edit.component';
+import { UtilisateurAddComponent } from './components/utilisateur/utilisateur-add/utilisateur-add.component';
+import { TypeOrganismeListComponent } from './components/type-organisme/type-organisme-list/type-organisme-list.component';
+import { TypeOrganismeEditComponent } from './components/type-organisme/type-organisme-edit/type-organisme-edit.component';
+import { TypeOrganismeAddComponent } from './components/type-organisme/type-organisme-add/type-organisme-add.component';
+import { TypeOrganismeFormComponent } from './components/type-organisme/type-organisme-form/type-organisme-form.component';
+import { ProspectSearchComponent } from './components/prospect-search/prospect-search.component';
+import { ModificationListComponent } from './components/modification/modification-list/modification-list.component';
+import { FicheEcouteComponent } from './components/fiche-ecoute/fiche-ecoute.component';
+import { SecteurGeographiqueFormComponent } from './components/secteur-geographique/secteur-geographique-form/secteur-geographique-form.component';
+import { SecteurGeographiqueAddComponent } from './components/secteur-geographique/secteur-geographique-add/secteur-geographique-add.component';
+import { SecteurGeographiqueEditComponent } from './components/secteur-geographique/secteur-geographique-edit/secteur-geographique-edit.component';
+import { SecteurGeographiqueListComponent } from './components/secteur-geographique/secteur-geographique-list/secteur-geographique-list.component';
+import { ProduitProspectListForProduitComponent } from './components/produit-prospect/produit-prospect-list-for-produit/produit-prospect-list-for-produit.component';
 
 const gestionProspectRoutes: Routes = [
   // Produit
-  { path: "produits", component: ProduitsListComponent, canActivate: [AuthGuard] },
+  { path: "produits", component: ProduitListComponent, canActivate: [AuthGuard] },
   { path: "produits/add", component: ProduitAddComponent, canActivate: [AuthGuard] },
   { path: "produits/:id", component: ProduitEditComponent, canActivate: [AuthGuard] },
   // Prospect
@@ -55,19 +86,58 @@ const gestionProspectRoutes: Routes = [
   { path: "prospects/:id", component: ProspectEditComponent, canActivate: [AuthGuard] },
   // Contact
   { path: "prospects/:id/contacts/add", component: ContactAddComponent, canActivate: [AuthGuard] },
-  { path: "prospects/:id/contacts/:id", component: ContactEditComponent, canActivate: [AuthGuard] },
+  { path: "prospects/:id/contacts/:idContact", component: ContactEditComponent, canActivate: [AuthGuard] },
+  // Evenement
+  { path: "prospects/:id/evenements/add", component: EvenementAddComponent, canActivate: [AuthGuard] },
+  { path: "prospects/:id/evenements/:idEvenement", component: EvenementEditComponent, canActivate: [AuthGuard] },
   // Type d'évenement
-  { path: "types-evenement", component: TypeEvenementListComponent, canActivate: [AuthGuard] },
-  { path: "types-evenement/add", component: TypeEvenementAddComponent, canActivate: [AuthGuard] },
-  { path: "types-evenement/:id", component: TypeEvenementEditComponent, canActivate: [AuthGuard] },
+  { path: "types-evenement", component: TypeEvenementListComponent, canActivate: [AdminGuard] },
+  { path: "types-evenement/add", component: TypeEvenementAddComponent, canActivate: [AdminGuard] },
+  { path: "types-evenement/:id", component: TypeEvenementEditComponent, canActivate: [AdminGuard] },
+  // Type d'organisme
+  { path: "types-organisme", component: TypeOrganismeListComponent, canActivate: [AdminGuard] },
+  { path: "types-organisme/add", component: TypeOrganismeAddComponent, canActivate: [AdminGuard] },
+  { path: "types-organisme/:id", component: TypeOrganismeEditComponent, canActivate: [AdminGuard] },
   // Statut
-  { path: "statuts", component: StatutListComponent, canActivate: [AuthGuard] },
-  { path: "statuts/add", component: StatutAddComponent, canActivate: [AuthGuard] },
-  { path: "statuts/:id", component: StatutEditComponent, canActivate: [AuthGuard] }
+  { path: "statuts", component: StatutListComponent, canActivate: [AdminGuard] },
+  { path: "statuts/add", component: StatutAddComponent, canActivate: [AdminGuard] },
+  { path: "statuts/:id", component: StatutEditComponent, canActivate: [AdminGuard] },
+  // Utilisateur
+  { path: "utilisateurs", component: UtilisateurListComponent, canActivate: [AdminGuard] },
+  { path: "utilisateurs/add", component: UtilisateurAddComponent, canActivate: [AdminGuard] },
+  { path: "utilisateurs/:id", component: UtilisateurEditComponent, canActivate: [AdminGuard] },
+  // Type d'organisme
+  { path: "secteurs-geographiques", component: SecteurGeographiqueListComponent, canActivate: [AdminGuard] },
+  { path: "secteurs-geographiques/add", component: SecteurGeographiqueAddComponent, canActivate: [AdminGuard] },
+  { path: "secteurs-geographiques/:id", component: SecteurGeographiqueEditComponent, canActivate: [AdminGuard] },
+
+  // Search
+  { path: "search", component: ProspectSearchComponent, canActivate: [AuthGuard] },
+
+  // Print "fiche écoute"
+  { path: "fiche-ecoute", component: FicheEcouteComponent, canActivate: [AuthGuard] },
 ]
 
 @NgModule({
-  declarations: [ProduitsListComponent, ProduitAddComponent, ProduitFormComponent, ProduitEditComponent, TypeEvenementListComponent, TypeEvenementFormComponent, TypeEvenementAddComponent, TypeEvenementEditComponent, ProspectListComponent, ProspectFormComponent, ProspectAddComponent, ProspectEditComponent, ContactListComponent, ContactFormComponent, ContactEditComponent, ContactAddComponent, StatutListComponent, StatutFormComponent, StatutEditComponent, StatutAddComponent],
+  declarations: [
+    ProduitListComponent, ProduitAddComponent, ProduitFormComponent, ProduitEditComponent,
+    TypeEvenementListComponent, TypeEvenementFormComponent, TypeEvenementAddComponent, TypeEvenementEditComponent,
+    ProspectListComponent, ProspectFormComponent, ProspectAddComponent, ProspectEditComponent,
+    ContactListComponent, ContactFormComponent, ContactEditComponent, ContactAddComponent,
+    StatutListComponent, StatutFormComponent, StatutEditComponent, StatutAddComponent,
+    ProduitProspectListForProspectComponent, RatingComponent, ProduitProspectDialogComponent,
+    EvenementListComponent, EvenementFormComponent, EvenementEditComponent, EvenementAddComponent,
+    UtilisateurListComponent, UtilisateurFormComponent, UtilisateurEditComponent, UtilisateurAddComponent,
+    TypeOrganismeListComponent, TypeOrganismeEditComponent, TypeOrganismeAddComponent, TypeOrganismeFormComponent,
+    ProspectSearchComponent,
+    ModificationListComponent,
+    FicheEcouteComponent,
+    SecteurGeographiqueFormComponent,
+    SecteurGeographiqueAddComponent,
+    SecteurGeographiqueEditComponent,
+    SecteurGeographiqueListComponent,
+    ProduitProspectListForProduitComponent
+  ],
   imports: [
     CommonModule,
     BrowserModule,
@@ -89,6 +159,13 @@ const gestionProspectRoutes: Routes = [
     MatIconModule,
     MatTabsModule,
     MatCheckboxModule,
+    MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatChipsModule,
+    MatAutocompleteModule,
+    MatDividerModule,
+    ReactiveFormsModule,
     RouterModule.forChild(gestionProspectRoutes),
     FlexLayoutModule,
     LoaderModule

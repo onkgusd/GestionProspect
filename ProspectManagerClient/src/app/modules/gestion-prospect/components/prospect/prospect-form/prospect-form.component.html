@@ -4,24 +4,24 @@
   </mat-card-header>
   <mat-card-content fxLayout="column" fxLayoutAlign="center stretch">
     <form #prospectForm="ngForm" (ngSubmit)="onSubmit()" class="basic-form">
-      <mat-form-field *ngIf="!isAddForm">
-        <mat-label>Id</mat-label>
-        <input matInput placeholder="Id" name="Id" [ngModel]="prospect.id" readonly>
-      </mat-form-field>
-      <mat-form-field *ngIf="!isAddForm">
-        <mat-label>Date de création</mat-label>
-        <input matInput placeholder="Date de création" name="dateCreation" [ngModel]="prospect.dateCreation" readonly>
-      </mat-form-field>
-      <br />
       <mat-form-field>
-        <mat-label>Statut</mat-label>
-        <mat-select [(ngModel)]="prospect.statut" [ngModelOptions]="{standalone: true}" [compareWith]="compareStatuts">
-          <mat-option *ngFor="let statut of statuts" [value]="statut">{{ statut.libelle }}</mat-option>
+        <mat-label>Type d'organisme</mat-label>
+        <mat-select [(ngModel)]="prospect.typeOrganisme" [ngModelOptions]="{standalone: true}"
+          [compareWith]="compareTypesOrganisme">
+          <mat-option *ngFor="let typeOrganisme of typesOrganisme" [value]="typeOrganisme">{{ typeOrganisme.libelle
+            }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field>
+      <mat-form-field class="full-width">
         <mat-label>Nom</mat-label>
         <input matInput placeholder="Nom" name="nom" [(ngModel)]="prospect.nom" required>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Statut</mat-label>
+        <mat-select required [(ngModel)]="prospect.statut" [ngModelOptions]="{standalone: true}"
+          [compareWith]="compareStatuts">
+          <mat-option *ngFor="let statut of statuts" [value]="statut">{{ statut.libelle }}</mat-option>
+        </mat-select>
       </mat-form-field>
       <mat-form-field>
         <mat-label>Secteur d'activité</mat-label>
@@ -35,8 +35,11 @@
       </mat-form-field>
       <br />
       <mat-form-field>
-        <mat-label>Département</mat-label>
-        <input matInput placeholder="Département" name="departement" [(ngModel)]="prospect.departement">
+        <mat-label>Secteur géographique</mat-label>
+        <mat-select [(ngModel)]="prospect.secteurGeographique" [ngModelOptions]="{standalone: true}"
+          [compareWith]="compareSecteursGeographiques">
+          <mat-option *ngFor="let secteur of secteursGeographiques" [value]="secteur">{{ secteur.libelle }}</mat-option>
+        </mat-select>
       </mat-form-field>
       <br />
       <mat-form-field>
@@ -46,13 +49,15 @@
       <br />
       <mat-form-field class="full-width">
         <mat-label>E-mail</mat-label>
-        <input matInput placeholder="E-mail" name="mail" [(ngModel)]="prospect.mail" required>
+        <input matInput placeholder="E-mail" name="mail" [(ngModel)]="prospect.mail">
       </mat-form-field>
+      <br />
+      <mat-checkbox name="actif" [(ngModel)]="prospect.actif">Actif</mat-checkbox>
 
       <div fxLayout="row" fxLayoutAlign="center">
-        <button mat-raised-button color="secondary" type="button" routerLink="..">Annuler</button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="!prospectForm.form.valid">
-          Enregistrer
+        <button mat-raised-button color="secondary" type="button" (click)="previousPage()" title="Annuler">Annuler</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!prospectForm.form.valid" [title]="isAddForm ? 'Ajouter' : 'Enregistrer'">
+          {{isAddForm ? 'Ajouter' : 'Enregistrer'}}
         </button>
       </div>
     </form>

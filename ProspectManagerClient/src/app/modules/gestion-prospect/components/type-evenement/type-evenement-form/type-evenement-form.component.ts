@@ -3,6 +3,7 @@ import { TypeEvenement } from '../../../models/type-evenement';
 import { TypeEvenementService } from '../../../services/type-evenement.service';
 import { Router } from '@angular/router';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-type-evenement-form',
@@ -17,28 +18,30 @@ export class TypeEvenementFormComponent {
 
   constructor(private typeEvenementService: TypeEvenementService, private router: Router, private snackbarService: SnackbarService) { }
 
-  onSubmit(){
+  onSubmit() {
     this.isSubmitting = true;
 
     if (this.isAddForm) {
-      this.typeEvenementService.addTypeEvenement(this.typeEvenement).subscribe({
-        next: typeEvenement => {
-          this.router.navigate(['types-evenement']);
-          this.snackbarService.openErrorSnackBar(`Ajout de "${typeEvenement.libelle}" réussie !`);
-        },
-        error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue l'ajout :(`),
-        complete: () => this.isSubmitting = false
-    });
+      this.typeEvenementService.add(this.typeEvenement)
+        .pipe(finalize(() => this.isSubmitting = false))
+        .subscribe({
+          next: typeEvenement => {
+            this.router.navigate(['types-evenement']);
+            this.snackbarService.openSuccessSnackBar(`🎉 Ajout de "${typeEvenement.libelle}" réussie !`);
+          },
+          error: error => this.snackbarService.openErrorSnackBar(`😵 Oupsss, une erreur technique est survenue l'ajout.`),
+        });
     }
     else {
-      this.typeEvenementService.updateTypeEvenement(this.typeEvenement).subscribe({
-        next: typeEvenement => {
-          this.router.navigate(['types-evenement']);
-          this.snackbarService.openErrorSnackBar(`Mise à jour de "${typeEvenement.libelle}" réussie !`);
-        },
-        error: error => this.snackbarService.openErrorSnackBar(`Oupsss, une erreur technique est survenue lors de la sauvegarde :(`),
-        complete: () => this.isSubmitting = false
-      })
+      this.typeEvenementService.update(this.typeEvenement)
+        .pipe(finalize(() => this.isSubmitting = false))
+        .subscribe({
+          next: typeEvenement => {
+            this.router.navigate(['types-evenement']);
+            this.snackbarService.openSuccessSnackBar(`👍 Mise à jour de "${typeEvenement.libelle}" réussie !`);
+          },
+          error: error => this.snackbarService.openErrorSnackBar(`😟 Oupsss, une erreur technique est survenue lors de la sauvegarde.`)
+        })
     }
   }
 

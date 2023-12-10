@@ -1,0 +1,9 @@
+
+<div fxLayout="row" fxLayoutAlign="start" class="full-width">
+  <label *ngIf="label">{{label}}</label>
+  <div class="rating">
+    <span *ngFor="let star of defaultStars; let i = index" (click)="readonly || $event.stopPropagation(); !readonly && setRating(i + 1) ">
+      <mat-icon class="star" [style.color]="getColor(i)">{{ getIcon(i) }}</mat-icon>
+    </span>
+  </div>
+</div>

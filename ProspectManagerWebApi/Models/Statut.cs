@@ -1,8 +1,16 @@
-﻿namespace ProspectManagerWebApi.Models
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+
+namespace ProspectManagerWebApi.Models
 {
-    internal class Statut
+    [Index(nameof(Libelle), IsUnique = true)]
+    public class Statut : ILabelable
     {
         public int Id { get; set; }
-        public string Libelle { get; set; }
+
+        [Required]
+        public string Libelle { get; set; } = string.Empty;
+        public bool? Actif { get; set; } = true;
+        public string GetLabel() => Libelle;
     }
 }
