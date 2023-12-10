@@ -22,7 +22,7 @@ namespace ProspectManagerWebApi.Enpoints
             [AllowAnonymous] async (LoginRequestDTO user, ProspectManagerDbContext db) =>
             {
                 var utilisateur = await db.Utilisateurs
-                                          .FirstAsync(u => (u.Login == user.Login
+                                          .FirstOrDefaultAsync(u => (u.Login == user.Login
                                                            || u.Email == user.Login)
                                                            && u.Actif);
 

@@ -143,13 +143,13 @@ namespace ProspectManagerWebApi.Enpoints
                 db.Entry(existingProspect).CurrentValues.SetValues(updatedProspect);
 
                 if (updatedProspect.Statut.Id != existingProspect.Statut.Id)
-                    existingProspect.Statut = await db.Statuts.FindAsync(updatedProspect.Statut.Id);
+                    existingProspect.Statut = await db.Statuts.FindAsync(updatedProspect.Statut.Id) ?? throw new KeyNotFoundException("Le statut n'a pas été trouvé !");
 
                 if (updatedProspect.TypeOrganisme.Id != existingProspect.TypeOrganisme.Id)
-                    existingProspect.TypeOrganisme = await db.TypesOrganisme.FindAsync(updatedProspect.TypeOrganisme.Id);
+                    existingProspect.TypeOrganisme = await db.TypesOrganisme.FindAsync(updatedProspect.TypeOrganisme.Id) ?? throw new KeyNotFoundException("Le type d'organisme n'a pas été trouvé !");
 
                 if (updatedProspect.SecteurGeographique.Id != existingProspect.SecteurGeographique.Id)
-                    existingProspect.SecteurGeographique = await db.SecteursGeographiques.FindAsync(updatedProspect.SecteurGeographique.Id);
+                    existingProspect.SecteurGeographique = await db.SecteursGeographiques.FindAsync(updatedProspect.SecteurGeographique.Id) ?? throw new KeyNotFoundException("Le secteur géographique n'a pas été trouvé !");
 
                 await db.SaveChangesAsync();
 

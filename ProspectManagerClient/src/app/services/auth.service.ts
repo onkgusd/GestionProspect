@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { ReinitMotDePasseDto } from '../modules/gestion-prospect/dto/reinit-motdepasse-dto';
 import { Utilisateur } from '../modules/gestion-prospect/models/utilisateur';
 import { SnackbarService } from './snackbar.service';
+import { SearchService } from '../modules/gestion-prospect/services/search.service';
 
 interface AuthResponse {
   token: string;
@@ -31,7 +32,7 @@ export class AuthService {
   private _isAdmin = new BehaviorSubject<boolean>(false);
   isAdmin$ = this._isAdmin.asObservable();
 
-  constructor(private http: HttpClient, private snackbarService: SnackbarService) {
+  constructor(private http: HttpClient, private snackbarService: SnackbarService, private searchService: SearchService) {
     if (this.token)
       this.readToken(this.token);
   }
@@ -62,6 +63,7 @@ export class AuthService {
     this.userName = void 0;
     localStorage.removeItem("token");
     localStorage.removeItem("expires_at");
+    this.searchService.reinitSearch();
     this._userName.next("");
     this._isLoggedIn.next(false);
     this._isAdmin.next(false);

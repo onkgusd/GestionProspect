@@ -49,13 +49,13 @@ export class EvenementFormComponent implements OnInit {
   ngOnInit(): void {
     this.contactService.getAll(this.idProspect).subscribe(
       {
-        next: contacts => this.contacts = contacts,
+        next: contacts => this.contacts = contacts.filter(c => c.actif || c.id === this.evenement.contact.id),
         error: () => this.snackbarService.openErrorSnackBar("😖 Impossible de lister les contacts.")
       });
 
     this.typeEvenementService.getAll().subscribe(
       {
-        next: typeEvenements => this.typeEvenements = typeEvenements,
+        next: typeEvenements => this.typeEvenements = typeEvenements.filter(te => te.actif || te.id === this.evenement.typeEvenement.id),
         error: () => this.snackbarService.openErrorSnackBar("😒 Impossible de lister les types d'évenement...")
       });
 

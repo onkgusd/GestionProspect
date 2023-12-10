@@ -45,4 +45,9 @@ export class SearchService {
   hasBeenLaunched(){
     return this.launched;
   }
+
+  reinitSearch(){
+    this.prospectSearchDto = new ProspectSearchRequestDto();
+    this.searchResult = [];
+  }
 }

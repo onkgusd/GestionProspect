@@ -16,7 +16,7 @@ namespace ProspectManagerWebApi.Services
         public async Task<Utilisateur> GetCurrentUser()
         {
             var login = _httpContextAccessor.HttpContext?.User.Identity?.Name;
-            var utilisateur = await _dbContext.Utilisateurs.FirstOrDefaultAsync(u => u.Login == login);
+            var utilisateur = await _dbContext.Utilisateurs.FirstOrDefaultAsync(u => u.Login == login) ?? throw new Exception("L'utilisateur n'a pas été retrouvé !");
             return utilisateur;
         }
     }

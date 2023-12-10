@@ -96,6 +96,11 @@ namespace ProspectManagerWebApi.Enpoints
                     prospects = prospects.Where(predicate);
                 }
 
+                if (!prospectSearch.InclureInactif)
+                {
+                    prospects = prospects.Where(p => p.Actif);
+                }
+
                 return Results.Ok(await prospects.Select(p => mapper.Map<ProspectSummaryResponseDto>(p)).ToListAsync());
             });
         }

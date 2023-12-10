@@ -4,10 +4,7 @@ import { Injectable, ApplicationRef, Injector, Type, ComponentRef, ViewContainer
   providedIn: 'root'
 })
 export class PrintService {
-  constructor(
-    private appRef: ApplicationRef,
-    private injector: Injector
-  ) { }
+  constructor( ) { }
 
   printComponent<T>(component: Type<T>, viewContainerRef: ViewContainerRef, inputs: { [key: string]: any } = {}): void {
     // Créer une instance du composant

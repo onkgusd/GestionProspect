@@ -10,5 +10,6 @@ namespace ProspectManagerWebApi.DTO.Request
         public string[] SecteursActivite { get; set; } = new string[0];
         public Produit[] Produits { get; set; } = new Produit[0];
         public TypeOrganisme[] TypesOrganisme { get; set; } = new TypeOrganisme[0];
+        public bool InclureInactif { get; set; } = false;
     }
 }

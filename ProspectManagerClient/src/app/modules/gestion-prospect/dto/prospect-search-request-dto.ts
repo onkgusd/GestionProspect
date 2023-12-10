@@ -10,4 +10,5 @@ export class ProspectSearchRequestDto {
     secteursActivite: string[] = [];
     produits: Produit[] = [];
     typesOrganisme: TypeOrganisme[] = [];
+    inclureInactif: boolean = false;
 }

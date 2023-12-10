@@ -35,13 +35,13 @@ export class ProspectFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.statutService.getAll().subscribe(statuts =>
-      this.statuts = statuts
+      this.statuts = statuts.filter(s => s.actif || s.id === this.prospect.statut?.id)
     );
     this.typeOrganismeService.getAll().subscribe(typesOrganisme =>
-      this.typesOrganisme = typesOrganisme
+      this.typesOrganisme = typesOrganisme.filter(to => to.actif || to.id === this.prospect.typeOrganisme?.id)
     );
     this.secteurGeographiqueService.getAll().subscribe(secteursGeographiques =>
-      this.secteursGeographiques = secteursGeographiques
+      this.secteursGeographiques = secteursGeographiques.filter(sg => sg.actif || sg.id === this.prospect.secteurGeographique?.id)
     );
   }
 

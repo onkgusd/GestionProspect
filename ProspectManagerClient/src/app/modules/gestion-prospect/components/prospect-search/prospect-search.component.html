@@ -32,7 +32,9 @@
                     [matChipInputFor]="chipGridProduits" [matAutocomplete]="produitsAuto"
                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="addProduit($event)" />
                 <mat-autocomplete #produitsAuto="matAutocomplete" (optionSelected)="selectedProduit($event)">
-                    <mat-option *ngFor="let produit of filteredProduits | async" [value]="produit.libelle">
+                    <mat-option *ngFor="let produit of filteredProduits | async"
+                        [value]="produit.libelle"
+                        [ngClass]="{'inactif-style': !produit.actif}">
                         {{produit.libelle}}
                     </mat-option>
                 </mat-autocomplete>
@@ -53,7 +55,9 @@
                     [matChipInputFor]="chipGridStatuts" [matAutocomplete]="statutsAuto"
                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="addStatut($event)" />
                 <mat-autocomplete #statutsAuto="matAutocomplete" (optionSelected)="selectedStatut($event)">
-                    <mat-option *ngFor="let statut of filteredStatuts | async" [value]="statut.libelle">
+                    <mat-option *ngFor="let statut of filteredStatuts | async"
+                    [value]="statut.libelle"
+                    [ngClass]="{'inactif-style': !statut.actif}">
                         {{statut.libelle}}
                     </mat-option>
                 </mat-autocomplete>
@@ -78,7 +82,8 @@
                 <mat-autocomplete #typesOrganismeAuto="matAutocomplete"
                     (optionSelected)="selectedTypeOrganisme($event)">
                     <mat-option *ngFor="let typeOrganisme of filteredTypesOrganisme | async"
-                        [value]="typeOrganisme.libelle">
+                        [value]="typeOrganisme.libelle"
+                        [ngClass]="{'inactif-style': !typeOrganisme.actif}">
                         {{typeOrganisme.libelle}}
                     </mat-option>
                 </mat-autocomplete>
@@ -121,11 +126,14 @@
                 <mat-autocomplete #secteursGeographiquesAuto="matAutocomplete"
                     (optionSelected)="selectedSecteurGeographique($event)">
                     <mat-option *ngFor="let secteurGeographique of filteredSecteursGeographiques | async"
-                        [value]="secteurGeographique.libelle">
+                        [value]="secteurGeographique.libelle"
+                        [ngClass]="{'inactif-style': !secteurGeographique.actif}">
                         {{secteurGeographique.libelle}}
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
+
+            <mat-checkbox name="actif" [(ngModel)]="prospectSearchDto.inclureInactif">Inclure les prospects inactifs</mat-checkbox>
         </div>
 
         <!-- Bouton de Recherche -->

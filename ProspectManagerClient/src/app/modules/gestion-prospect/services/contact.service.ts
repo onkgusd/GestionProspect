@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, tap } from 'rxjs';
 import { Contact } from '../models/contact';
 import { environment } from 'src/environments/environment';
-import { IEntityService } from './IEntity.service';
 import { DeleteResponseDto } from '../dto/delete-response-dto';
 
 @Injectable({
