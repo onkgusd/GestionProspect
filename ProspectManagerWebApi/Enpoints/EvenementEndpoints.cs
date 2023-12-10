@@ -83,7 +83,7 @@ namespace ProspectManagerWebApi.Enpoints
                     existingEvenement.TypeEvenement = await db.TypesEvenement.FindAsync(updatedEvenement.TypeEvenement?.Id);
 
                 if (existingEvenement.Contact?.Id != updatedEvenement.Contact?.Id)
-                    existingEvenement.Contact = await db.Contacts.FindAsync(updatedEvenement.Contact?.Id);
+                    existingEvenement.Contact = await db.Contacts.FindAsync(updatedEvenement.Contact?.Id) ?? throw new KeyNotFoundException("Le contact n'existe pas !");
 
                 await db.SaveChangesAsync();
 

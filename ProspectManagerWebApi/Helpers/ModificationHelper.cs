@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using ProspectManagerWebApi.Models;
+﻿using ProspectManagerWebApi.Models;
 using System.Collections;
 using System.Reflection;
 
@@ -14,8 +12,8 @@ namespace ProspectManagerWebApi.Helpers
 
             if (typeof(ILabelable).IsAssignableFrom(typeof(TOriginal)) && !string.IsNullOrEmpty(parentProperty))
             {
-                var originalLibelle = (original as ILabelable)?.GetLabel();
-                var updatedLibelle = (updated as ILabelable)?.GetLabel();
+                var originalLibelle = (original as ILabelable)?.GetLabel() ?? "";
+                var updatedLibelle = (updated as ILabelable)?.GetLabel() ?? "";
 
                 if (!Equals(originalLibelle, updatedLibelle))
                 {
