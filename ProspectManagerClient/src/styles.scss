@@ -33,9 +33,20 @@ body {
 button.floating-button,
 div.floating-button {
     position: fixed;
-    bottom: 25px;
-    right: 25px;
+    bottom: -0em;
+    right: -0em;
     z-index: 1;
+
+    transition: transform 0.3s ease-in-out,  opacity 0.3s ease-in-out;;
+    transform: scale(0.7);
+    opacity: 0.9;
+
+    &:hover {
+        transform: scale(1.2);
+        right: 1em;
+        bottom: 1em;
+        opacity: 1;
+    }
 
     & button {
         margin-bottom: 10px;

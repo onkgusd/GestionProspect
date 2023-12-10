@@ -40,7 +40,7 @@ namespace ProspectManagerWebApi.Enpoints
                 return Results.Ok(existingSecteurGeographique);
             });
 
-            app.MapDelete("/secteurs-geographiques/{idtypeorganisme:int}", [Authorize(Policy = "Admin")] async (int idSecteurGeographique, ProspectManagerDbContext db) =>
+            app.MapDelete("/secteurs-geographiques/{idsecteurgeographique:int}", [Authorize(Policy = "Admin")] async (int idSecteurGeographique, ProspectManagerDbContext db) =>
             {
                 var existingSecteurGeographique = await db.SecteursGeographiques.FindAsync(idSecteurGeographique);
                 if (existingSecteurGeographique == null)

@@ -23,6 +23,7 @@ export class ProspectListComponent implements OnInit {
   prospects: MatTableDataSource<ProspectSummaryResponseDto>;
   displayedColumns: string[] = ['type-organisme', 'nom', 'statut', 'secteurGeographique', 'secteurActivite', 'telephone', 'mail', 'dateCreation', 'actions'];
   isLoading: boolean = true;
+  areButtonsExpanded: boolean = false;
 
   @ViewChild(MatSort)
   set sort(value: MatSort) {
@@ -63,6 +64,10 @@ export class ProspectListComponent implements OnInit {
 
   printList() {
     window.print();
+  }
+  
+  zoomButtons() {
+    this.areButtonsExpanded = true;
   }
 
   exportToCsv() {
