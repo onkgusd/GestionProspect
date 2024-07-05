@@ -29,6 +29,8 @@ namespace ProspectManagerWebApi.Enpoints
                 if (utilisateur == null || !PasswordHelper.VerifyPassword(user.Password.Replace("\\\\", "\\"), utilisateur.Empreinte))
                     return Results.Unauthorized();
 
+                var dateConnexion = utilisateur.DateConnexion;
+
                 utilisateur.DateConnexion = DateTime.UtcNow;
                 await db.SaveChangesAsync();
 
@@ -51,7 +53,10 @@ namespace ProspectManagerWebApi.Enpoints
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var stringToken = tokenHandler.WriteToken(token);
 
-                return Results.Ok(new LoginResponseDTO() { Token = stringToken, ExpirationDate = expirationDate, Utilisateur = mapper.Map<UtilisateurResponseDTO>(utilisateur) });
+                var utilisateurDTO = mapper.Map<UtilisateurResponseDTO>(utilisateur);
+                utilisateurDTO.DateConnexion = dateConnexion;
+
+                return Results.Ok(new LoginResponseDTO() { Token = stringToken, ExpirationDate = expirationDate, Utilisateur = utilisateurDTO });
             });
 
             app.MapPost("/authentication/demande-reinitialisation", async (HttpContext http, PasswordManagerService resetService, [FromBody] PasswordResetLinkRequestDTO passwordResetLinkRequest) =>

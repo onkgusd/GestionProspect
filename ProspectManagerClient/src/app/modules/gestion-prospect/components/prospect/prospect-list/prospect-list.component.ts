@@ -106,7 +106,7 @@ export class ProspectListComponent implements OnInit {
 
   openDeleteConfirmationDialog(prospect: Prospect): void {
     const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
-      data: { message: "Voulez-vous vraiment supprimer ce produit ?" }
+      data: { message: "Voulez-vous vraiment supprimer ce prospect ?" }
     });
 
     dialogRef.afterClosed()
@@ -135,7 +135,7 @@ export class ProspectListComponent implements OnInit {
           }
           else {
             prospect.actif = false;
-            this.snackbarService.openWarningSnackBar("💤 Ce produit est utilisé, il a été marqué comme inactif.");
+            this.snackbarService.openWarningSnackBar("💤 Ce prospect est utilisé, il a été marqué comme inactif.");
           }
         },
         error: () => this.snackbarService.openErrorSnackBar("🙄 Erreur lors de la suppression.")
